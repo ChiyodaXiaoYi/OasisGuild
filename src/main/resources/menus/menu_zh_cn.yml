@@ -1,0 +1,87 @@
+guildInfo:
+  title: '%guild% &3公会信息'
+  info:
+    material: 'GREEN_BANNER'
+    name: '%guild%&f 公会信息'
+    lore:
+      - '&7&m--------------------'
+      - '&7简介: %desc%'
+      - '&7人数: %memberNum% / %maxMemberNum%'
+      - '&7等级: %level%'
+      - '&7坐标: %world% | %x%, %y%, %z%'
+      - '&7队伤: %pvp%'
+      - '&7&m--------------------'
+      - '&a左键传送到公会坐标'
+    lore_admin:
+      - '&2右键提升公会等级'
+      - '&7升级消耗等级: %exp%'
+  members:
+    material: 'PLAYER_HEAD'
+    lore:
+      - '&7&m---------------'
+      - '&7职位: %job%'
+      - '&7&m---------------'
+    lore_admin:
+      - '&7&m---------------'
+      - '&7职位: %job%'
+      - '&c按Q键踢出公会'
+      - '&7&m---------------'
+  frame:
+    material: 'GRAY_STAINED_GLASS_PANE'
+    name: '&7公会信息'
+  admin:
+    material: 'WRITABLE_BOOK'
+    name: '&e公会管理'
+  quit:
+    material: 'BARRIER'
+    name: '&c退出公会'
+  disband:
+    material: 'BARRIER'
+    name: '&c解散公会'
+guildList:
+  title: '&3&l绿洲公会列表'
+  guilds:
+    lore:
+      - '&7&m--------------------'
+      - '&7简介: %desc%'
+      - '&7人数: %memberNum% / %maxMemberNum%'
+      - '&7等级: %level%'
+      - '&7队伤: %pvp%'
+      - '&7&m--------------------'
+      - '&a右键提交入会申请'
+  frame:
+    material: 'GRAY_STAINED_GLASS_PANE'
+    name: '&7公会列表'
+guildEdit:
+  title: '%guild% &3&l公会管理'
+  frame:
+    material: 'GRAY_STAINED_GLASS_PANE'
+    name: '&7公会管理'
+  rename:
+    material: 'NAME_TAG'
+    name: '&e公会重命名'
+  setDesc:
+    material: 'OAK_SIGN'
+    name: '&e设置简介'
+  handleApply:
+    material: 'BOOK'
+    name: '&e处理入会申请'
+  setPvp:
+    material: 'DIAMOND_SWORD'
+    open:
+      name: '&a关闭队伤'
+      light: true
+    close:
+      name: '&c开启队伤'
+      light: false
+  setLoc:
+    material: 'BEACON'
+    name: '&e设置公会坐标'
+guildApplyList:
+  title: '%guild% &3&l公会申请列表'
+  apply:
+    material: 'PLAYER_HEAD'
+    lore:
+      - '&7&m--------------------'
+      - '&a左键同意 &7| &c右键拒绝'
+      - '&7&m--------------------'

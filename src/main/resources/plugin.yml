@@ -1,0 +1,16 @@
+name: OasisGuild
+version: '${project.version}'
+main: top.oasismc.oasisguild.OasisGuild
+api-version: 1.13
+load: STARTUP
+softdepend: [ PlaceholderAPI ]
+authors: [ StringStream_, ChiyodaXiaoYi ]
+commands:
+  guild:
+    aliases:
+      - g
+permissions:
+  oasis.guild.create:
+    default: op
+  oasis.guild.admin:
+    default: op
