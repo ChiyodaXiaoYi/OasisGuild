@@ -151,10 +151,10 @@ public class DefMenuListener implements IMenuListener {
                     return;
                 if (event1.isNewPvp()) {
                     getDataHandler().getGuildDao().changePvp(gName, 1);
-                    MsgTool.sendMsg(event.getWhoClicked(), "command.pvp.close");
+                    MsgTool.sendMsg(event.getWhoClicked(), "command.pvp.open");
                 } else {
                     getDataHandler().getGuildDao().changePvp(gName, 0);
-                    MsgTool.sendMsg(event.getWhoClicked(), "command.pvp.open");
+                    MsgTool.sendMsg(event.getWhoClicked(), "command.pvp.close");
                 }
                 event.getWhoClicked().closeInventory();
                 break;

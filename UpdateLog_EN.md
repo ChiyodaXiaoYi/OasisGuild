@@ -1,3 +1,7 @@
+### 2022/01/20 Update
+* Fixed the bug that the guild PVP could not be opened
+* Add LICENSE
+
 ### 2022/01/18 Update
 * Add guild related logging
 * Fix bugs

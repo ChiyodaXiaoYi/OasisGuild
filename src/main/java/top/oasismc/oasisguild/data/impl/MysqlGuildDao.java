@@ -343,16 +343,6 @@ public class MysqlGuildDao implements IGuildDao {
 
     @Override
     public boolean changePvp(String gName, int pvp) {
-        //传递当前PVP的状态
-        switch (pvp) {
-            case 1:
-                pvp = 0;
-                break;
-            case 0:
-                pvp = 1;
-                break;
-        }
-        int finalPvp = pvp;
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -360,7 +350,7 @@ public class MysqlGuildDao implements IGuildDao {
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gPvp` = ? WHERE `gName` = ?;");
-                    ps.setInt(1, finalPvp);
+                    ps.setInt(1, pvp);
                     ps.setString(2, gName);
                     ps.executeUpdate();
                     ps.close();
