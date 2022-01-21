@@ -29,12 +29,14 @@ public class MysqlTool {
     }
 
     public Connection getConnection() {
+        Connection conn;
         try {
-            return DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+            conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
+            conn = getConnection();
         }
-        return null;
+        return conn;
     }
 
     public void initDriver() {
