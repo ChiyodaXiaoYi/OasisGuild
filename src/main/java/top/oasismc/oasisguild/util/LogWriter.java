@@ -20,8 +20,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.util.MsgTool.color;
-import static top.oasismc.oasisguild.util.MsgTool.info;
 
 public class LogWriter implements Listener {
 
@@ -92,12 +90,11 @@ public class LogWriter implements Listener {
     public void mysqlWarn(SQLException e, Class<?> stack) {
         long time = System.currentTimeMillis() - lastMysqlWarnTime;
         if (time >= 7200000) {
-            info(color("&c" + e.getMessage()));
-            info(color("&cat " + stack.getPackage() + "." + stack));
+            e.printStackTrace();
             lastMysqlWarnTime = System.currentTimeMillis();
         }
         write2LogFile(e.getMessage());
-        write2LogFile("at " + stack.getPackage() + "." + stack.getName());
+        write2LogFile("at " + stack.getName());
     }
 
     public static LogWriter getLogWriter() { return logWriter; }
@@ -147,7 +144,7 @@ public class LogWriter implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoinGuild(PlayerJoinGuildEvent event) {
-        write2LogFile("Player Join Guild | " + "Guild: " + event.getGuildName() + ", Player: " + event.getPlayer() + "; Reason: " + event.getReason());
+        write2LogFile("Player Join Guild | " + "Guild: " + event.getGuildName() + "; Player: " + event.getPlayer() + "; Reason: " + event.getReason());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

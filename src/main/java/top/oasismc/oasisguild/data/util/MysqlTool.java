@@ -14,7 +14,6 @@ public class MysqlTool {
 
     private String dbUserName, dbPassword, dbUrl;
     private static final MysqlTool mysqlTool;
-    private Connection connection;
 
     static {
         mysqlTool = new MysqlTool();
@@ -22,11 +21,6 @@ public class MysqlTool {
 
     private MysqlTool() {
         initDriver();
-        try {
-            connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         loadDatabase();
     }
 
@@ -36,12 +30,11 @@ public class MysqlTool {
 
     public Connection getConnection() {
         try {
-            if (connection.isClosed())
-                connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+            return DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
         }
-        return connection;
+        return null;
     }
 
     public void initDriver() {
@@ -49,7 +42,7 @@ public class MysqlTool {
         String dbHost = config.getString("data.mysql_host");
         String dbPort = config.getString("data.mysql_port");
         String dbName = config.getString("data.mysql_database");
-        dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
         dbUserName = config.getString("data.mysql_username");
         dbPassword = config.getString("data.mysql_userPwd");
         try {

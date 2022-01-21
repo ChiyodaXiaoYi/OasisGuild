@@ -32,6 +32,8 @@ public class MysqlGuildDao implements IGuildDao {
         Connection conn = getMysqlTool().getConnection();
         PreparedStatement ps = null;
         try {
+            if (conn.isClosed())
+                conn = getMysqlTool().getConnection();
             ps = conn.prepareStatement(
                     "SELECT * FROM `GuildInfo` ORDER BY `gLevel` DESC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -57,6 +59,8 @@ public class MysqlGuildDao implements IGuildDao {
             List<GuildMember> players;
             PreparedStatement ps = null;
             try {
+                if (conn.isClosed())
+                    conn = getMysqlTool().getConnection();
                 conn = getMysqlTool().getConnection();
                 ps = conn.prepareStatement(
                         "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob`;",
@@ -86,6 +90,8 @@ public class MysqlGuildDao implements IGuildDao {
             Location location;
             PreparedStatement ps = null;
             try {
+                if (conn.isClosed())
+                    conn = getMysqlTool().getConnection();
                 ps = conn.prepareStatement(
                         "SELECT * FROM `GuildLocation` WHERE `gName` = ?;",
                         ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -116,6 +122,8 @@ public class MysqlGuildDao implements IGuildDao {
             List<GuildApply> applyList;
             PreparedStatement ps = null;
             try {
+                if (conn.isClosed())
+                    conn = getMysqlTool().getConnection();
                 conn = getMysqlTool().getConnection();
                 ps = conn.prepareStatement("SELECT * FROM `GuildApply` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 ps.setString(1, guildList.get(i).getGuildName());
@@ -142,6 +150,8 @@ public class MysqlGuildDao implements IGuildDao {
             Set<GuildChunk> chunkSet;
             PreparedStatement ps = null;
             try {
+                if (conn.isClosed())
+                    conn = getMysqlTool().getConnection();
                 ps = conn.prepareStatement("SELECT * FROM `GuildChunks` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 ps.setString(1, guildList.get(i).getGuildName());
                 ResultSet set = ps.executeQuery();
