@@ -49,7 +49,9 @@ public class MsgCatcher implements Listener {
     }
 
     public void endCatch(Player player) {
-        catchSwitchMap.put(player.getUniqueId(), false);
+        catchSwitchMap.remove(player.getUniqueId());
+        catchMsgMap.remove(player.getUniqueId());
+        catchFunMap.remove(player.getUniqueId());
     }
 
 }

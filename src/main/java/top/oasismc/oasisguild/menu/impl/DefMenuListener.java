@@ -83,8 +83,10 @@ public class DefMenuListener implements IMenuListener {
             sendMsg(event.getWhoClicked(), "catcher.needGName");
             getCatcher().startCatch((Player) event.getWhoClicked(), guild -> {
                 sendMsg(event.getWhoClicked(), "catcher.needDesc");
-                getCatcher().startCatch((Player) event.getWhoClicked(),
-                        desc -> GuildFactory.createGuild(guild, (Player) event.getWhoClicked(), desc));
+                getCatcher().startCatch((Player) event.getWhoClicked(), desc -> {
+                    GuildFactory.createGuild(guild, (Player) event.getWhoClicked(), desc);
+                    getCatcher().endCatch((Player) event.getWhoClicked());
+                });
             });
         }
     }
