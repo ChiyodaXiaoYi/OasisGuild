@@ -15,6 +15,7 @@ import top.oasismc.oasisguild.data.objects.GuildMember;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static top.oasismc.oasisguild.OasisGuild.*;
 
@@ -59,11 +60,11 @@ public class DataHandler extends BukkitRunnable {
     }
 
     private void initDataRegister() {
-        guildList = new ArrayList<>();
-        guildMembers = new HashMap<>();
-        guildLocationMap = new HashMap<>();
-        guildApplyListMap = new HashMap<>();
-        guildChunkSetMap = new HashMap<>();
+        guildList = Collections.synchronizedList(new ArrayList<>());
+        guildMembers = new ConcurrentHashMap<>();
+        guildLocationMap = new ConcurrentHashMap<>();
+        guildApplyListMap = new ConcurrentHashMap<>();
+        guildChunkSetMap = new ConcurrentHashMap<>();
     }
 
     public static DataHandler getDataHandler() {

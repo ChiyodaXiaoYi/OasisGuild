@@ -59,6 +59,9 @@ messages:
     destroy: '&c你不能够破坏%guild%&c的领地!'
     use: '&c你无法在%guild%&c的领地使用这个!'
     container: '&c你无法在%guild%&c的领地打开这个容器!'
+  catcher:
+    needGName: '&a请输入公会名字'
+    needDesc: '&a请输入公会简介'
 job:
   -1: '会长'
   0: '成员'

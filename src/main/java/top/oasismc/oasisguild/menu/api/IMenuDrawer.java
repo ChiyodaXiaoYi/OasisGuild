@@ -13,7 +13,7 @@ public interface IMenuDrawer {
 
     Inventory drawGuildEditMenu(String gName);
 
-    Inventory drawGuildListMenu();
+    Inventory drawGuildListMenu(int page);
 
     Inventory drawGuildInfoMenu(List<GuildMember> players, String gName, Player opener);
 

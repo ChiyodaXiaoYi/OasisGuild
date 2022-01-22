@@ -1,3 +1,8 @@
+### 2022/01/22 Update
+* Fix the bug of too many mysql connections
+* Optimize the underlying code architecture
+* Optimize the process of creating a guild
+
 ### 2022/01/20 Update
 * Fixed the bug that the guild PVP could not be opened
 * Add LICENSE

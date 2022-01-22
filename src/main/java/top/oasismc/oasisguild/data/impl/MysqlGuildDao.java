@@ -46,7 +46,6 @@ public class MysqlGuildDao implements IGuildDao {
             closeStatement(ps);
         }
 
-        closeConnection(conn);
         return guilds;
     }
 
@@ -77,7 +76,6 @@ public class MysqlGuildDao implements IGuildDao {
             }
         }
 
-        closeConnection(conn);
         return guildMemberMap;
     }
 
@@ -110,7 +108,6 @@ public class MysqlGuildDao implements IGuildDao {
             }
         }
 
-        closeConnection(conn);
         return guildLocationMap;
     }
 
@@ -137,7 +134,6 @@ public class MysqlGuildDao implements IGuildDao {
             }
         }
 
-        closeConnection(conn);
         return applyListMap;
     }
 
@@ -164,7 +160,6 @@ public class MysqlGuildDao implements IGuildDao {
             }
         }
 
-        closeConnection(conn);
         return guildChunkSetMap;
     }
 
@@ -205,7 +200,7 @@ public class MysqlGuildDao implements IGuildDao {
                         closeStatement(ps);
                     }
 
-                    closeConnection(conn);
+                    getDataHandler().getData();
                 }
             }.runTaskAsynchronously(OasisGuild.getPlugin());
         }
@@ -254,8 +249,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                     closeStatement(ps);
                 }
-
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -277,7 +271,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                 }
 
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -317,8 +311,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                     closeStatement(ps);
                 }
-
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(getPlugin());
         return true;
@@ -343,8 +336,7 @@ public class MysqlGuildDao implements IGuildDao {
                         e.printStackTrace();
                         closeStatement(ps);
                     }
-
-                    closeConnection(conn);
+                    getDataHandler().getData();
                 }
             }.runTaskAsynchronously(OasisGuild.getPlugin());
         }
@@ -368,8 +360,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                     closeStatement(ps);
                 }
-
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -395,8 +386,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                     closeStatement(ps);
                 }
-
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -421,8 +411,7 @@ public class MysqlGuildDao implements IGuildDao {
                     e.printStackTrace();
                     closeStatement(ps);
                 }
-
-                closeConnection(conn);
+                getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return false;
@@ -506,14 +495,6 @@ public class MysqlGuildDao implements IGuildDao {
             chunkSet.add(new GuildChunk(cX, cZ));
         }
         return chunkSet;
-    }
-    
-    private void closeConnection(Connection conn) {
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            getLogWriter().mysqlWarn(e, this.getClass());
-        }
     }
     
     private void closeStatement(PreparedStatement statement) {

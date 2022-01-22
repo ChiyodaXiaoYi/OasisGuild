@@ -3,14 +3,17 @@ package top.oasismc.oasisguild;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.command.GuildCommand;
+import top.oasismc.oasisguild.data.util.MysqlTool;
 import top.oasismc.oasisguild.listener.ChatListener;
 import top.oasismc.oasisguild.listener.CombatListener;
 import top.oasismc.oasisguild.listener.GuildProtectListener;
 import top.oasismc.oasisguild.menu.impl.DefMenuListener;
 import top.oasismc.oasisguild.papi.GuildExpansion;
 import top.oasismc.oasisguild.util.LogWriter;
+import top.oasismc.oasisguild.util.MsgCatcher;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import static top.oasismc.oasisguild.util.MsgTool.info;
 
@@ -36,6 +39,11 @@ public final class OasisGuild extends JavaPlugin {
             LogWriter.getLogWriter().getWriter().flush();
             LogWriter.getLogWriter().getWriter().close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            MysqlTool.getMysqlTool().getConnection().close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         info("Plugin Disabled");
@@ -64,6 +72,7 @@ public final class OasisGuild extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(GuildProtectListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(ChatListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
+        Bukkit.getPluginManager().registerEvents(MsgCatcher.getCatcher(), this);
     }
 
     private void loadCommands() {

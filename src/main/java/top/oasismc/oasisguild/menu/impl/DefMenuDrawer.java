@@ -104,25 +104,37 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
     }
 
     @Override
-    public Inventory drawGuildListMenu() {
+    public Inventory drawGuildListMenu(int page) {
         MenuHolder holder = new MenuHolder(MenuType.LIST);
         String title = menuFile.getConfig().getString("guildList.title", "Guild List");
         List<Guild> guilds = DataHandler.getDataHandler().getGuildList();
         Inventory inventory = Bukkit.createInventory(holder, 54, color(title));
-        for (int i = 0; i < 54 && i < guilds.size(); i++) {
-            ItemStack itemStack = new ItemStack(Material.matchMaterial(guilds.get(i).getIcon()), 1);
-            ItemMeta meta = itemStack.getItemMeta();
-            meta.setDisplayName(color("&f" + guilds.get(i).getGuildName()));
+        ItemStack frame = getNameOnlyItem("guildList.frame.", "GRAY_STAINED_GLASS_PANE");
+        int[] frameSlotList = {0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 47, 48, 50, 51, 53};
+        for (int k : frameSlotList) {
+            inventory.setItem(k, frame);
+        }
+        ItemStack previous, next, create;
+        previous = getNameOnlyItem("guildList.previous.", "PRISMARINE_SHARD");
+        next = getNameOnlyItem("guildList.next.", "AMETHYST_SHARD");
+        create = getNameOnlyItem("guildList.create.", "END_CRYSTAL");
+        inventory.setItem(46, previous);
+        inventory.setItem(49, create);
+        inventory.setItem(52, next);
+        for (int i = 9; i < 45 && i - 9 < guilds.size(); i++) {
+            ItemStack guild = new ItemStack(Material.matchMaterial(guilds.get(i - 9).getIcon()), 1);
+            ItemMeta meta = guild.getItemMeta();
+            meta.setDisplayName(color(guilds.get(i - 9).getGuildName()));
             List<String> lore = menuFile.getConfig().getStringList("guildList.guilds.lore");
             for (int j = 0; j < lore.size(); j++) {
-                String l = replaceOnGuild(lore.get(j), guilds.get(i));
+                String l = replaceOnGuild(lore.get(j), guilds.get(i - 9));
                 l = color(l);
                 lore.set(j, l);
             }
-            lore.set(lore.size() - 1, getDrawer().replaceOnGuild(lore.get(lore.size() - 1), guilds.get(i)));
+            lore.set(lore.size() - 1, getDrawer().replaceOnGuild(lore.get(lore.size() - 1), guilds.get(i - 9)));
             meta.setLore(lore);
-            itemStack.setItemMeta(meta);
-            inventory.setItem(i, itemStack);
+            guild.setItemMeta(meta);
+            inventory.setItem(i, guild);
         }
         return inventory;
     }
@@ -276,7 +288,7 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
     }
 
     public String replaceOnMember(String str, GuildMember player) {
-        String gJob = getMsgTool().getLangFile().getConfig().getString("job." + player.getJob());
+        String gJob = getMsgTool().getLangFile().getConfig().getString("job." + player.getJob(), player.getJob() + "");
         str = str.replace("%job%", gJob);
         str = color(str);
         return str;

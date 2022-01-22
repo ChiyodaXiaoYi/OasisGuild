@@ -97,7 +97,7 @@ public class GuildCommand implements TabExecutor {
     }
 
     private void regDefaultSubCommands() {
-        regSubCommand("list", (sender, args) -> getCommandManager().openGuildListMenu(sender));
+        regSubCommand("list", (sender, args) -> getCommandManager().openGuildListMenu(sender, 0));
         regSubCommand("apply", (sender, args) -> {
             if (args.length < 2) {
                 sendMsg(sender, "command.missingValue.needGuildName");
