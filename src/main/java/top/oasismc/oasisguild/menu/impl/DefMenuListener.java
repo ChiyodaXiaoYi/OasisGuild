@@ -21,7 +21,7 @@ import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.factory.GuildFactory.*;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
-import static top.oasismc.oasisguild.util.MsgTool.sendMsg;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class DefMenuListener implements IMenuListener {
 
@@ -62,7 +62,8 @@ public class DefMenuListener implements IMenuListener {
         }
     }
 
-    private void handleGuildListMenuEvent(InventoryClickEvent event) {
+    @Override
+    public void handleGuildListMenuEvent(InventoryClickEvent event) {
         if (event.getSlot() >= 9 && event.getSlot() < 45) {
             String gName = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&");
             String holderGuildName = getDataHandler().getGuildNameByPlayer(event.getWhoClicked().getName());
@@ -70,7 +71,7 @@ public class DefMenuListener implements IMenuListener {
                 getGuildCommand().getCommandManager().openGuildInfoMenu(event.getWhoClicked(), gName);
             } else {
                 if (event.isRightClick()) {
-                    getGuildCommand().getCommandManager().applyGuild(event.getWhoClicked(), gName);
+                    getGuildCommand().getCommandManager().playerApplyGuildByCmd(event.getWhoClicked(), gName);
                     event.getWhoClicked().closeInventory();
                 }
             }
@@ -80,18 +81,21 @@ public class DefMenuListener implements IMenuListener {
             getDrawer().drawGuildListMenu(0);
         } else if (event.getSlot() == 49) {
             event.getWhoClicked().closeInventory();
-            sendMsg(event.getWhoClicked(), "catcher.needGName");
+            sendMsg(event.getWhoClicked(), "menu.create.needGName");
             getCatcher().startCatch((Player) event.getWhoClicked(), guild -> {
-                sendMsg(event.getWhoClicked(), "catcher.needDesc");
+                sendMsg(event.getWhoClicked(), "menu.create.needDesc");
                 getCatcher().startCatch((Player) event.getWhoClicked(), desc -> {
-                    GuildFactory.createGuild(guild, (Player) event.getWhoClicked(), desc);
+                    if (GuildFactory.createGuild(guild, (Player) event.getWhoClicked(), desc)) {
+                        sendMsg(event.getWhoClicked(), "menu.create.success");
+                    }
                     getCatcher().endCatch((Player) event.getWhoClicked());
                 });
             });
         }
     }
 
-    private void handleGuildInfoMenuEvent(InventoryClickEvent event) {
+    @Override
+    public void handleGuildInfoMenuEvent(InventoryClickEvent event) {
         int inventorySize = event.getInventory().getSize();
         int clickSlot = event.getSlot();
         String clickedName = event.getWhoClicked().getName();
@@ -100,36 +104,53 @@ public class DefMenuListener implements IMenuListener {
         if (pJob == -1) {
             if (clickSlot == 4) {
                 if (event.isLeftClick()) {
-                    tpGuildLoc((Player) event.getWhoClicked());
+                    playerTpGuildLoc((Player) event.getWhoClicked());
                 } else if (event.isRightClick()){
-                    guildLevelUp((Player) event.getWhoClicked(), gName);
+                    guildLevelUpOnMenu((Player) event.getWhoClicked(), gName);
                 }
             } else if (clickSlot > 8 && clickSlot < inventorySize - 9) {
                 String name = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&");
                 name = name.substring(2);
                 if (!name.equals(event.getWhoClicked().getName()))
-                    kickMember(event.getAction(), name, (Player) event.getWhoClicked());
+                    kickMemberOnMenu(event.getAction(), name, (Player) event.getWhoClicked());
             } else if (clickSlot == inventorySize - 8) {
                 event.getWhoClicked().openInventory(getDrawer().drawGuildEditMenu(gName));
             } else if (clickSlot == inventorySize - 2) {
-                getGuildCommand().getCommandManager().disbandGuild((Player) event.getWhoClicked());
+                getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
                 event.getWhoClicked().closeInventory();
             }
         } else {
             if (clickSlot == 4) {
-                tpGuildLoc((Player) event.getWhoClicked());
+                playerTpGuildLoc((Player) event.getWhoClicked());
             } else if (clickSlot == inventorySize - 5) {
                 String pName = event.getWhoClicked().getName();
                 playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.QUIT);
-                sendMsg(event.getWhoClicked(), "command.quit.success", getDataHandler().getGuildByName(gName));
+                sendMsg(event.getWhoClicked(), "menu.quit.success", getDataHandler().getGuildByName(gName));
             }
         }
     }
 
-    private void handleGuildEditMenuEvent(InventoryClickEvent event) {
+    @Override
+    public void handleGuildEditMenuEvent(InventoryClickEvent event) {
         String gName = getDataHandler().getGuildNameByPlayer(event.getWhoClicked().getName());
         switch (event.getSlot()) {
             case 9:
+                event.getWhoClicked().closeInventory();
+                sendMsg(event.getWhoClicked(), "menu.rename.needNewName");
+                getCatcher().startCatch((Player) event.getWhoClicked(), newName -> {
+                    switch (GuildFactory.guildRename(gName, newName)) {
+                        case -1:
+                            sendMsg(event.getWhoClicked(), "menu.rename.sameName");
+                            break;
+                        case 0:
+                            sendMsg(event.getWhoClicked(), "menu.rename.success");
+                            break;
+                        case -2:
+                            sendMsg(event.getWhoClicked(), "menu.rename.nameTooLong");
+                            break;
+                    }
+                });
+                break;
             case 11:
                 break;//待完成
             case 13:
@@ -137,34 +158,22 @@ public class DefMenuListener implements IMenuListener {
                 break;
             case 15:
                 if (changeGuildPvp(gName)) {
-                    sendMsg(event.getWhoClicked(), "command.pvp.open");
+                    sendMsg(event.getWhoClicked(), "menu.pvp.open");
                 } else {
-                    sendMsg(event.getWhoClicked(), "command.pvp.close");
+                    sendMsg(event.getWhoClicked(), "menu.pvp.close");
                 }
                 event.getWhoClicked().closeInventory();
                 break;
             case 17:
                 if (changeGuildLoc(gName, event.getWhoClicked().getLocation()))
-                    sendMsg(event.getWhoClicked(), "command.changeLoc.success");
+                    sendMsg(event.getWhoClicked(), "menu.changeLoc.success");
                 event.getWhoClicked().closeInventory();
                 break;
         }
     }
 
-    private void kickMember(InventoryAction action, String pName, Player click) {
-        if (action == InventoryAction.DROP_ONE_SLOT) {
-            String gName = getDataHandler().getGuildNameByPlayer(pName);
-            playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.KICK);
-            sendMsg(click, "command.kick.success", pName);
-            Player member = Bukkit.getPlayer(pName);
-            if (member != null && member.isOnline()) {
-                sendMsg(member, "command.kick.member", getDataHandler().getGuildByName(gName));
-            }
-            click.closeInventory();
-        }
-    }
-
-    private void handleGuildApply(InventoryClickEvent event) {
+    @Override
+    public void handleGuildApply(InventoryClickEvent event) {
         Player admin = (Player) event.getWhoClicked();
         String gName = getDataHandler().getGuildNameByPlayer(admin.getName());
         String pName = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&").substring(2);
@@ -173,33 +182,46 @@ public class DefMenuListener implements IMenuListener {
             int maxNum = getDataHandler().getGuildByName(gName).getMaxMember();
             if (memberNum < maxNum) {
                 playerJoinGuild(gName, pName, PlayerJoinGuildEvent.JoinReason.ACCEPT);
-                sendMsg(admin, "command.accept.admin", pName);
+                sendMsg(admin, "menu.accept.admin", pName);
                 if (Bukkit.getPlayer(pName) != null && Bukkit.getPlayer(pName).isOnline())
-                    sendMsg(Bukkit.getPlayer(pName), "command.accept.member", getDataHandler().getGuildByName(gName));
+                    sendMsg(Bukkit.getPlayer(pName), "menu.accept.member", getDataHandler().getGuildByName(gName));
             } else {
-                sendMsg(admin, "command.accept.full");
+                sendMsg(admin, "menu.accept.full");
             }
         } else {
             getDataHandler().getGuildDao().handleApply(gName, "deny", pName);
-            sendMsg(admin, "command.deny.admin", pName);
+            sendMsg(admin, "menu.deny.admin", pName);
             if (Bukkit.getPlayer(pName) != null && Bukkit.getPlayer(pName).isOnline())
-                sendMsg(Bukkit.getPlayer(pName), "command.deny.member", getDataHandler().getGuildByName(gName));
+                sendMsg(Bukkit.getPlayer(pName), "menu.deny.member", getDataHandler().getGuildByName(gName));
         }
         event.getWhoClicked().closeInventory();
     }
 
-    private void guildLevelUp(Player player, String gName) {
+    private void kickMemberOnMenu(InventoryAction action, String pName, Player click) {
+        if (action == InventoryAction.DROP_ONE_SLOT) {
+            String gName = getDataHandler().getGuildNameByPlayer(pName);
+            playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.KICK);
+            sendMsg(click, "menu.kick.success", pName);
+            Player member = Bukkit.getPlayer(pName);
+            if (member != null && member.isOnline()) {
+                sendMsg(member, "menu.kick.member", getDataHandler().getGuildByName(gName));
+            }
+            click.closeInventory();
+        }
+    }
+
+    private void guildLevelUpOnMenu(Player player, String gName) {
         int gLvl = getDataHandler().getGuildByName(gName).getGuildLevel();
         int code = GuildFactory.guildLevelUp(player, gName, gLvl, 1);
         switch (code) {
             case -1:
-                sendMsg(player, "command.levelUp.limit");
+                sendMsg(player, "menu.levelUp.limit");
                 break;
             case 0:
-                sendMsg(player, "command.levelUp.success");
+                sendMsg(player, "menu.levelUp.success");
                 break;
             case 1:
-                sendMsg(player, "command.levelUp.lackLvl");
+                sendMsg(player, "menu.levelUp.lackLvl");
                 break;
         }
         player.closeInventory();

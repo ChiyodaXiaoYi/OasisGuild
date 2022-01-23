@@ -3,13 +3,14 @@ package top.oasismc.oasisguild.papi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import top.oasismc.oasisguild.OasisGuild;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.util.MsgTool.getMsgTool;
+import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 
 public class GuildExpansion extends PlaceholderExpansion {
 
@@ -33,22 +34,22 @@ public class GuildExpansion extends PlaceholderExpansion {
             if (getDataHandler().getGuildNameByPlayer(pName) != null) {
                 return getDataHandler().getGuildNameByPlayer(pName);
             } else {
-                return getMsgTool().getLangFile().getConfig().getString("papi.noGuild");
+                return getMsgSender().getLangFile().getConfig().getString("papi.noGuild");
             }
         });
         regParam("job", pName -> {
             String gName = getDataHandler().getGuildNameByPlayer(pName);
             if (gName != null) {
                 int job = getDataHandler().getPlayerJob(gName, pName);
-                return getMsgTool().getLangFile().getConfig().getString("job." + job);
+                return getMsgSender().getLangFile().getConfig().getString("job." + job);
             } else {
-                return getMsgTool().getLangFile().getConfig().getString("papi.noGuild");
+                return getMsgSender().getLangFile().getConfig().getString("papi.noGuild");
             }
         });
         regParam("guildlevel", pName -> {
             String gName = getDataHandler().getGuildNameByPlayer(pName);
             if (gName == null) {
-                return getMsgTool().getLangFile().getConfig().getString("papi.noGuild");
+                return getMsgSender().getLangFile().getConfig().getString("papi.noGuild");
             }
             int level = getDataHandler().getGuildByName(gName).getGuildLevel();
             return level + "";
@@ -81,7 +82,7 @@ public class GuildExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0";
+        return OasisGuild.getPlugin().getDescription().getVersion();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GuildExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         return papiMap.getOrDefault(params,
-                param -> getMsgTool().getLangFile().getConfig().getString("papi.null")
+                param -> getMsgSender().getLangFile().getConfig().getString("papi.null")
         ).apply(player.getName());
     }
 

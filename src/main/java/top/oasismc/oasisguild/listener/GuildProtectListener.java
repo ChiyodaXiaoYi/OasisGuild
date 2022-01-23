@@ -2,22 +2,17 @@ package top.oasismc.oasisguild.listener;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.EquipmentSlot;
-
-import java.util.Objects;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.util.MsgTool.sendMsg;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class GuildProtectListener implements Listener {
 

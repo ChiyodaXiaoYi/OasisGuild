@@ -15,14 +15,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.util.LogWriter.getLogWriter;
-import static top.oasismc.oasisguild.util.MsgTool.color;
-import static top.oasismc.oasisguild.util.MsgTool.info;
 
 public class MysqlGuildDao implements IGuildDao {
 
@@ -52,7 +51,7 @@ public class MysqlGuildDao implements IGuildDao {
     @Override
     public Map<String, List<GuildMember>> getGuildMembers(List<Guild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, List<GuildMember>> guildMemberMap = new HashMap<>();
+        Map<String, List<GuildMember>> guildMemberMap = new ConcurrentHashMap<>();
 
         for (int i = 0; i < guildList.size(); i++) {
             List<GuildMember> players;
@@ -82,7 +81,7 @@ public class MysqlGuildDao implements IGuildDao {
     @Override
     public Map<String, Location> getGuildLocationMap(List<Guild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, Location> guildLocationMap = new HashMap<>();
+        Map<String, Location> guildLocationMap = new ConcurrentHashMap<>();
         
         for (int i = 0; i < guildList.size(); i++) {
             Location location;
@@ -114,7 +113,7 @@ public class MysqlGuildDao implements IGuildDao {
     @Override
     public Map<String, List<GuildApply>> getGuildApplyListMap(List<Guild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, List<GuildApply>> applyListMap = new HashMap<>();
+        Map<String, List<GuildApply>> applyListMap = new ConcurrentHashMap<>();
         for (int i = 0; i < guildList.size(); i++) {
             List<GuildApply> applyList;
             PreparedStatement ps = null;
@@ -140,7 +139,7 @@ public class MysqlGuildDao implements IGuildDao {
     @Override
     public Map<String, Set<GuildChunk>> getGuildChunkSetMap(List<Guild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, Set<GuildChunk>> guildChunkSetMap = new HashMap<>();
+        Map<String, Set<GuildChunk>> guildChunkSetMap = new ConcurrentHashMap<>();
 
         for (int i = 0; i < guildList.size(); i++) {
             Set<GuildChunk> chunkSet;
@@ -414,7 +413,31 @@ public class MysqlGuildDao implements IGuildDao {
                 getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
-        return false;
+        return true;
+    }
+
+    @Override
+    public void guildRename(String gName, String newName) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    String []tableNameList = {"GuildInfo", "GuildMembers", "GuildApply", "GuildChunks", "GuildLocation"};
+                    for (String table : tableNameList) {
+                        ps = conn.prepareStatement("UPDATE `" + table + "` SET `gName` = ? WHERE `gName` = ?;");
+                        ps.setString(1, newName);
+                        ps.setString(2, gName);
+                        ps.executeUpdate();
+                    }
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    closeStatement(ps);
+                }
+            }
+        }.runTaskAsynchronously(getPlugin());
     }
 
     private List<GuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {

@@ -1,4 +1,5 @@
 messages:
+  prefix: '&8[&3公会系统&8] &r'
   command:
     notPlayer: '&c该命令只能玩家使用!'
     reload: '&a插件重载完毕!'
@@ -31,6 +32,29 @@ messages:
       confirm: '&c你确定要解散公会吗,请输入/guild disband确认解散'
       notJoinGuild: '&c你还没加入任何公会'
       notLeader: '&c你不是公会的管理员,无法解散公会!'
+    rename:
+      success: '&a改名成功'
+      notJoinGuild: '&c你没有加入任何公会'
+      sameName: '&c已经存在此名字的公会了'
+      needNewName: '&c请输入新的公会名字'
+      nameTooLong: '&c新的名字太长了,请重新取名'
+  protect:
+    join: '&e你已进入%guild%&e的领地范围'
+    leave: '&e你已离开%guild%&e的领地范围'
+    place: '&c你无法在%guild%&c的领地放置方块!'
+    destroy: '&c你不能够破坏%guild%&c的领地!'
+    use: '&c你无法在%guild%&c的领地使用这个!'
+    container: '&c你无法在%guild%&c的领地打开这个容器!'
+  menu:
+    create:
+      success: '&a改名成功'
+      needGName: '&a请输入公会名字'
+      needDesc: '&a请输入公会简介'
+    rename:
+      success: '&a改名成功'
+      needNewName: '&a请输入新的公会名字'
+      sameName: '&c已经存在此名字的公会了'
+      nameTooLong: '&c新的名字太长了,请重新取名'
     kick:
       success: '&a你已成功踢出%player%'
       member: '&c你已经被%guild%&c踢出'
@@ -52,16 +76,6 @@ messages:
       success: '&a升级成功'
       lackLvl: '&c你的等级不足以给公会升级!'
       limit: '&c公会等级已达上限,无法升级'
-  protect:
-    join: '&e你已进入%guild%&e的领地范围'
-    leave: '&e你已离开%guild%&e的领地范围'
-    place: '&c你无法在%guild%&c的领地放置方块!'
-    destroy: '&c你不能够破坏%guild%&c的领地!'
-    use: '&c你无法在%guild%&c的领地使用这个!'
-    container: '&c你无法在%guild%&c的领地打开这个容器!'
-  catcher:
-    needGName: '&a请输入公会名字'
-    needDesc: '&a请输入公会简介'
 job:
   -1: '会长'
   0: '成员'

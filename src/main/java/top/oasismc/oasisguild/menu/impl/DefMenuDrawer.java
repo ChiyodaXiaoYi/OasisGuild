@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
 import top.oasismc.oasisguild.data.DataHandler;
 import top.oasismc.oasisguild.data.objects.Guild;
@@ -21,8 +22,8 @@ import java.util.List;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.util.MsgTool.color;
-import static top.oasismc.oasisguild.util.MsgTool.getMsgTool;
+import static top.oasismc.oasisguild.util.MsgSender.color;
+import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 
 public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawer {
 
@@ -247,7 +248,10 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
 
     public ItemStack getMemberItem(GuildMember player, int pJob) {
         String material = menuFile.getConfig().getString("guildInfo.members.material");
-        ItemStack icon = new ItemStack(Material.matchMaterial(material), 1);
+        Material iconType = Material.matchMaterial(material);
+        if (iconType == null)
+            iconType = Material.PLAYER_HEAD;
+        ItemStack icon = new ItemStack(iconType, 1);
         ItemMeta meta = icon.getItemMeta();
         String iconName = color("&f" + player.getPlayerName());
         meta.setDisplayName(iconName);
@@ -266,6 +270,8 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
         if (player.getJob() == -1) {
             icon.setAmount(2);
         }
+        if (iconType == Material.PLAYER_HEAD)
+            ((SkullMeta) meta).setOwningPlayer(Bukkit.getOfflinePlayer(player.getPlayerName()));
         icon.setItemMeta(meta);
         return icon;
     }
@@ -288,7 +294,7 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
     }
 
     public String replaceOnMember(String str, GuildMember player) {
-        String gJob = getMsgTool().getLangFile().getConfig().getString("job." + player.getJob(), player.getJob() + "");
+        String gJob = getMsgSender().getLangFile().getConfig().getString("job." + player.getJob(), player.getJob() + "");
         str = str.replace("%job%", gJob);
         str = color(str);
         return str;

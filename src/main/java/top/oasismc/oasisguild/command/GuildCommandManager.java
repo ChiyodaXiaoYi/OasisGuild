@@ -11,7 +11,7 @@ import java.util.List;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
-import static top.oasismc.oasisguild.util.MsgTool.sendMsg;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class GuildCommandManager {
 
@@ -20,8 +20,8 @@ public class GuildCommandManager {
         ((Player) sender).openInventory(inventory);
     }
 
-    public void applyGuild(CommandSender sender, String guildName) {
-        int success = GuildFactory.applyGuild(guildName, (Player) sender);
+    public void playerApplyGuildByCmd(CommandSender sender, String guildName) {
+        int success = GuildFactory.playerApplyGuild(guildName, (Player) sender);
         if (success == 1) {
             sendMsg(sender, "command.apply.failed");
         } else if (success == 0) {
@@ -37,13 +37,32 @@ public class GuildCommandManager {
         ((Player) sender).openInventory(inventory);
     }
 
-    public void createGuild(CommandSender sender, String gName, String desc) {
+    public void createGuildByCmd(CommandSender sender, String gName, String desc) {
         if (GuildFactory.createGuild(gName, (Player) sender, desc)) {
             sendMsg(sender, "command.create.success");
         }
     }
 
-    public void disbandGuild(Player player) {
+    public void guildRenameByCmd(Player player, String newName) {
+        String gName = getDataHandler().getGuildNameByPlayer(player.getName());
+        if (gName == null) {
+            sendMsg(player, "command.rename.notJoinGuild");
+            return;
+        }
+        switch (GuildFactory.guildRename(gName, newName)) {
+            case -1:
+                sendMsg(player, "command.rename.sameName");
+                break;
+            case 0:
+                sendMsg(player, "command.rename.success");
+                break;
+            case -2:
+                sendMsg(player, "command.rename.nameTooLong");
+                break;
+        }
+    }
+
+    public void disbandGuildByCmd(Player player) {
         int code = GuildFactory.disbandGuild(player);
         switch (code) {
             case -1:

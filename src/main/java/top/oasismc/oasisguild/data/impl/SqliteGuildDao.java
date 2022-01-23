@@ -76,4 +76,9 @@ public class SqliteGuildDao implements IGuildDao {
     public boolean levelUp(String gName, int oldLevel) {
         return false;
     }
+
+    @Override
+    public void guildRename(String gName, String newName) {
+
+    }
 }

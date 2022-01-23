@@ -1,3 +1,8 @@
+### 2022/01/23 Update
+* Optimized language file architecture
+* Added guild rename function
+* Fixed the bug that the catcher could not take effect in some cases
+
 ### 2022/01/22 Update
 * Fix the bug of too many mysql connections
 * Optimize the underlying code architecture

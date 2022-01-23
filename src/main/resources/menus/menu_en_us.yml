@@ -1,5 +1,5 @@
 guildInfo:
-  title: '&3公会信息'
+  title: '%guild% &3公会信息'
   info:
     material: 'GREEN_BANNER'
     name: '%guild%&f 公会信息'
@@ -52,8 +52,17 @@ guildList:
   frame:
     material: 'GRAY_STAINED_GLASS_PANE'
     name: '&7公会列表'
+  previous:
+    material: 'PRISMARINE_SHARD'
+    name: '&7上一页'
+  next:
+    material: 'AMETHYST_SHARD'
+    name: '&7下一页'
+  create:
+    material: 'END_CRYSTAL'
+    name: '&a创建新公会'
 guildEdit:
-  title: '&3&l公会管理'
+  title: '%guild% &3&l公会管理'
   frame:
     material: 'GRAY_STAINED_GLASS_PANE'
     name: '&7公会管理'
@@ -78,7 +87,7 @@ guildEdit:
     material: 'BEACON'
     name: '&e设置公会坐标'
 guildApplyList:
-  title: '&f%guild% &3&l公会申请列表'
+  title: '%guild% &3&l公会申请列表'
   apply:
     material: 'PLAYER_HEAD'
     lore:

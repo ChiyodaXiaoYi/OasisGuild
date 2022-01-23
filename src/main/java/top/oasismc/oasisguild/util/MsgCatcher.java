@@ -1,5 +1,6 @@
 package top.oasismc.oasisguild.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+
+import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
 public class MsgCatcher implements Listener {
 
@@ -28,12 +31,15 @@ public class MsgCatcher implements Listener {
         catchFunMap = new ConcurrentHashMap<>();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void catcher(AsyncPlayerChatEvent event) {
         if (catchSwitchMap.getOrDefault(event.getPlayer().getUniqueId(), false)) {
             event.setCancelled(true);
             catchMsgMap.put(event.getPlayer().getUniqueId(), event.getMessage());
-            catchFunMap.get(event.getPlayer().getUniqueId()).accept(event.getMessage());
+            Bukkit.getScheduler().callSyncMethod(getPlugin(), () -> {
+                catchFunMap.get(event.getPlayer().getUniqueId()).accept(event.getMessage());
+                return null;
+            });
         }
     }
 

@@ -34,4 +34,5 @@ public interface IGuildDao {
     boolean changeLoc(String gName, Location loc);
     boolean levelUp(String gName, int oldLevel);
 
+    void guildRename(String gName, String newName);
 }

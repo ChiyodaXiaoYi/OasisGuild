@@ -2,7 +2,6 @@ package top.oasismc.oasisguild.data.util;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.oasismc.oasisguild.OasisGuild;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -45,6 +44,19 @@ public class MysqlTool {
     }
 
     public void initDriver() {
+        setConnectDBInfo();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
+
+    public void setConnectDBInfo() {
         YamlConfiguration config = (YamlConfiguration) getPlugin().getConfig();
         String dbHost = config.getString("data.mysql_host");
         String dbPort = config.getString("data.mysql_port");
@@ -52,17 +64,6 @@ public class MysqlTool {
         dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
         dbUserName = config.getString("data.mysql_username");
         dbPassword = config.getString("data.mysql_userPwd");
-        try {
-            String jdbc_driver = "com.mysql.cj.jdbc.Driver";
-            Class.forName(jdbc_driver);
-        } catch (ClassNotFoundException e) {
-            try {
-                String jdbc_driver = "com.mysql.jdbc.Driver";
-                Class.forName(jdbc_driver);
-            } catch (ClassNotFoundException e2) {
-                e2.printStackTrace();
-            }
-        }
     }
 
     private void loadDatabase() {

@@ -12,9 +12,10 @@ import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.OasisGuild.*;
 import static top.oasismc.oasisguild.data.DataHandler.*;
+import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
-import static top.oasismc.oasisguild.util.MsgTool.getMsgTool;
-import static top.oasismc.oasisguild.util.MsgTool.sendMsg;
+import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class GuildCommand implements TabExecutor {
 
@@ -103,7 +104,7 @@ public class GuildCommand implements TabExecutor {
                 sendMsg(sender, "command.missingValue.needGuildName");
                 return;
             }
-            guildCommandManager.applyGuild(sender, args[1]);
+            guildCommandManager.playerApplyGuildByCmd(sender, args[1]);
         }, () -> getDataHandler().getGuildNameList());
         regSubCommand("info", (sender, args) -> {
             String guildName = getDataHandler().getGuildNameByPlayer(sender.getName());
@@ -137,15 +138,23 @@ public class GuildCommand implements TabExecutor {
                 sendMsg(sender, "command.create.needDesc");
                 return;
             }
-            guildCommandManager.createGuild(sender, args[1], args[2]);
+            guildCommandManager.createGuildByCmd(sender, args[1], args[2]);
         });
-        regSubCommand("disband", (sender, strings) -> guildCommandManager.disbandGuild((Player) sender));
+        regSubCommand("disband", (sender, args) -> guildCommandManager.disbandGuildByCmd((Player) sender));
+        regSubCommand("rename", ((sender, args) -> {
+            if (args.length < 1) {
+                sendMsg(sender, "command.rename.needNewName");
+                return;
+            }
+            guildCommandManager.guildRenameByCmd((Player) sender, args[0]);
+        }));
     }
 
     private void reloadPlugin() {
         getPlugin().reloadConfig();
-        getMsgTool().getLangFile().reloadConfig();
+        getMsgSender().getLangFile().reloadConfig();
         getDrawer().getMenuFile().reloadConfig();
+        getMysqlTool().setConnectDBInfo();
     }
 
     public static GuildCommand getGuildCommand() {

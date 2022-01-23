@@ -76,7 +76,7 @@ public class DataHandler extends BukkitRunnable {
         getData();
     }
 
-    public void getData() {
+    public synchronized void getData() {
         guildList = guildDao.getGuilds();
         guildMembers = guildDao.getGuildMembers(guildList);
         guildLocationMap = guildDao.getGuildLocationMap(guildList);

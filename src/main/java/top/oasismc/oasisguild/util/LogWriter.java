@@ -139,7 +139,7 @@ public class LogWriter implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGuildRename(GuildRenameEvent event) {
-        write2LogFile("Guild Rename | " + "Old Name: " + event.getOldName() + "; New Name: " + event.getNewName());
+        write2LogFile("Guild Rename | " + "Old Name: " + event.getGuildName() + "; New Name: " + event.getNewName());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

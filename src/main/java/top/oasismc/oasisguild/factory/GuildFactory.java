@@ -27,8 +27,8 @@ import static top.oasismc.oasisguild.event.guild.GuildLocChangeEvent.createGuild
 import static top.oasismc.oasisguild.event.guild.GuildPvpChangeEvent.createGuildPvpChangeEvent;
 import static top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
 import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
-import static top.oasismc.oasisguild.util.MsgTool.color;
-import static top.oasismc.oasisguild.util.MsgTool.sendMsg;
+import static top.oasismc.oasisguild.util.MsgSender.color;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class GuildFactory {
 
@@ -54,18 +54,12 @@ public class GuildFactory {
         getDataHandler().getGuildDao().memberQuit(gName, pName);
     }
 
-    //返回状态码，-1为不满足
+    //返回创建是否成功
     public static boolean createGuild(String gName, Player creator, String desc) {
         String world = creator.getWorld().getName();
         List<String> canSetWorlds = getPlugin().getConfig().getStringList("guildSettings.canSetWorlds");
         if (!canSetWorlds.contains(world)) {
             sendMsg(creator, "command.create.notAllowedWorld");
-            return false;
-        }
-
-        //检查是否有同名公会
-        if (getDataHandler().getGuildByName(gName) != null) {
-            sendMsg(creator, "command.create.sameName");
             return false;
         }
 
@@ -75,11 +69,16 @@ public class GuildFactory {
             return false;
         }
 
-        //检查公会名字长度
-        int maxNameLength = getPlugin().getConfig().getInt("guildSettings.name.maxLength", 15);
-        if (gName.length() > maxNameLength) {
-            sendMsg(creator, "command.create.nameTooLong");
-            return false;
+        switch (checkGuildName(gName)) {
+            case -1:
+                sendMsg(creator, "command.create.sameName");
+                return false;
+            case -2:
+                sendMsg(creator, "command.create.nameTooLong");
+                return false;
+            case 1:
+                String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
+                gName = defaultColor + gName;
         }
 
         //检查公会描述长度
@@ -87,12 +86,6 @@ public class GuildFactory {
         if (desc.length() > maxDescLength) {
             sendMsg(creator, "command.create.descTooLong");
             return false;
-        }
-
-        //检查公会是否带颜色代码
-        if (!gName.startsWith("&")) {
-            String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
-            gName = defaultColor + gName;
         }
 
         //检查玩家是否能够创建
@@ -151,6 +144,24 @@ public class GuildFactory {
         return getDataHandler().getGuildDao().createGuild(event.getGuildName(), event.getCreator().getName(), event.getDesc(), event.getLoc());
     }
 
+    //用于检查公会名字是否符合要求,-2为长度不符合，0为符合，1为颜色代码不符合，-1为已经有同名公会
+    public static int checkGuildName(String gName) {
+        //检查是否有同名公会
+        if (getDataHandler().getGuildNameList().contains(gName)) {
+            return -1;
+        }
+        //检查公会名字长度
+        int maxNameLength = getPlugin().getConfig().getInt("guildSettings.name.maxLength", 15);
+        if (gName.length() > maxNameLength) {
+            return -2;
+        }
+        //检查公会是否带颜色代码
+        if (!color(gName).startsWith("§")) {
+            return 1;
+        }
+        return 0;
+    }
+
     //返回-1为未加入公会，-2为不是会长，0为正常，1为需要确认，2为被取消
     public static int disbandGuild(Player player) {
         String guildName = getDataHandler().getGuildNameByPlayer(player.getName());
@@ -182,7 +193,7 @@ public class GuildFactory {
         }
     }
 
-    public static void tpGuildLoc(Player player) {
+    public static void playerTpGuildLoc(Player player) {
         String guild = getDataHandler().getGuildNameByPlayer(player.getName());
         if (guild == null)
             return;
@@ -222,8 +233,24 @@ public class GuildFactory {
         }
     }
 
-    public static void guildRename(String gName, String newName) {
-
+    //返回状态码，-1为已经有此名字的公会，0为修改成功，2为被取消，-2为长度不符合要求
+    public static int guildRename(String gName, String newName) {
+        switch (checkGuildName(newName)) {
+            case -1:
+                return -1;
+            case -2:
+                return -2;
+            case 1:
+                String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
+                gName = defaultColor + gName;
+                break;
+        }
+        GuildRenameEvent event = GuildRenameEvent.createGuildRenameEvent(gName, newName);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return 2;
+        getDataHandler().getGuildDao().guildRename(event.getGuildName(), event.getNewName());
+        return 0;
     }
 
     //返回状态码, -1为等级到达上限，1为不能满足升级条件，0为能够升级, 2为被取消
@@ -248,7 +275,7 @@ public class GuildFactory {
     }
 
     //返回状态码
-    public static int applyGuild(String guild, Player player) {
+    public static int playerApplyGuild(String guild, Player player) {
         PlayerApplyGuildEvent event = createPlayerApplyGuildEvent(guild, player.getName());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())

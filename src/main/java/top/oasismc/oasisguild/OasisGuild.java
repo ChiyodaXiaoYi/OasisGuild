@@ -4,9 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.command.GuildCommand;
 import top.oasismc.oasisguild.data.util.MysqlTool;
-import top.oasismc.oasisguild.listener.ChatListener;
-import top.oasismc.oasisguild.listener.CombatListener;
 import top.oasismc.oasisguild.listener.GuildProtectListener;
+import top.oasismc.oasisguild.listener.GuildPvpListener;
 import top.oasismc.oasisguild.menu.impl.DefMenuListener;
 import top.oasismc.oasisguild.papi.GuildExpansion;
 import top.oasismc.oasisguild.util.LogWriter;
@@ -15,7 +14,7 @@ import top.oasismc.oasisguild.util.MsgCatcher;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static top.oasismc.oasisguild.util.MsgTool.info;
+import static top.oasismc.oasisguild.util.MsgSender.info;
 
 public final class OasisGuild extends JavaPlugin {
 
@@ -29,7 +28,7 @@ public final class OasisGuild extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         loadModules();
-        info("Plugin Enabled");
+        info("&3Plugin Enabled");
     }
 
     @Override
@@ -68,9 +67,8 @@ public final class OasisGuild extends JavaPlugin {
 
     private void loadListeners() {
         Bukkit.getPluginManager().registerEvents(DefMenuListener.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(CombatListener.getListener(), this);
+        Bukkit.getPluginManager().registerEvents(GuildPvpListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(GuildProtectListener.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(ChatListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
         Bukkit.getPluginManager().registerEvents(MsgCatcher.getCatcher(), this);
     }
@@ -84,7 +82,7 @@ public final class OasisGuild extends JavaPlugin {
         try {
             Class.forName("top.oasismc.oasisguild.data.DataHandler");
             Class.forName("top.oasismc.oasisguild.menu.impl.DefMenuDrawer");
-            Class.forName("top.oasismc.oasisguild.util.MsgTool");
+            Class.forName("top.oasismc.oasisguild.util.MsgSender");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
