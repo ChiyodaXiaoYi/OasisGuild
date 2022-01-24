@@ -2,20 +2,15 @@ package top.oasismc.oasisguild.factory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.oasismc.oasisguild.event.guild.*;
 import top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent;
-import top.oasismc.oasisguild.util.LoreTool;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
@@ -28,7 +23,6 @@ import static top.oasismc.oasisguild.event.guild.GuildPvpChangeEvent.createGuild
 import static top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
 import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
 import static top.oasismc.oasisguild.util.MsgSender.color;
-import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
 public class GuildFactory {
 
@@ -56,91 +50,10 @@ public class GuildFactory {
 
     //返回创建是否成功
     public static boolean createGuild(String gName, Player creator, String desc) {
-        String world = creator.getWorld().getName();
-        List<String> canSetWorlds = getPlugin().getConfig().getStringList("guildSettings.canSetWorlds");
-        if (!canSetWorlds.contains(world)) {
-            sendMsg(creator, "command.create.notAllowedWorld");
-            return false;
-        }
-
-        //检查玩家是否已经有公会
-        if (getDataHandler().getGuildNameByPlayer(creator.getName()) != null) {
-            sendMsg(creator, "command.create.hasGuild");
-            return false;
-        }
-
-        switch (checkGuildName(gName)) {
-            case -1:
-                sendMsg(creator, "command.create.sameName");
-                return false;
-            case -2:
-                sendMsg(creator, "command.create.nameTooLong");
-                return false;
-            case 1:
-                String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
-                gName = defaultColor + gName;
-        }
-
-        //检查公会描述长度
-        int maxDescLength = getPlugin().getConfig().getInt("guildSettings.desc.maxLength", 15);
-        if (desc.length() > maxDescLength) {
-            sendMsg(creator, "command.create.descTooLong");
-            return false;
-        }
-
-        //检查玩家是否能够创建
-        ItemStack item = creator.getInventory().getItemInMainHand();
-        if (getPlugin().getConfig().getBoolean("conditions.create.item.enable")) {
-            String material = getPlugin().getConfig().getString("conditions.create.item.material");
-            String name = color(getPlugin().getConfig().getString("conditions.create.item.name"));
-            String lore = color(getPlugin().getConfig().getString("conditions.create.item.lore"));
-            if (item.getType() != Material.getMaterial(material)) {
-                sendMsg(creator, "command.create.needItem");
-                return false;
-            }
-            ItemMeta meta = item.getItemMeta();
-            if (meta == null) {
-                sendMsg(creator, "command.create.needItem");
-                return false;
-            }
-            if (!meta.hasDisplayName()) {
-                sendMsg(creator, "command.create.needItem");
-                return false;
-            }
-            if (!meta.getDisplayName().equals(name)) {
-                sendMsg(creator, "command.create.needItem");
-                return false;
-            }
-            if (!LoreTool.hasLore(lore, meta.getLore())) {
-                sendMsg(creator, "command.create.needItem");
-                return false;
-            }
-        }
-        //检查权限
-        String perm = getPlugin().getConfig().getString("conditions.create.perm");
-        if (perm != null && !perm.equals("")) {
-            if (!creator.hasPermission(perm)) {
-                sendMsg(creator, "command.create.needPerm");
-                return false;
-            }
-        }
-
-        //检查等级
-        int needLvl = getPlugin().getConfig().getInt("conditions.create.exp", 100);
-        if (needLvl != 0) {
-            if (creator.getLevel() < needLvl) {
-                sendMsg(creator, "command.create.needLvl");
-                return false;
-            }
-        }
-
         GuildCreateEvent event = createGuildCreateEvent(gName, creator, desc, creator.getLocation());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
             return false;
-        item.setAmount(item.getAmount() - 1);
-        creator.getInventory().setItemInMainHand(item);
-        creator.setLevel(creator.getLevel() - needLvl);
         return getDataHandler().getGuildDao().createGuild(event.getGuildName(), event.getCreator().getName(), event.getDesc(), event.getLoc());
     }
 
@@ -234,7 +147,7 @@ public class GuildFactory {
     }
 
     //返回状态码，-1为已经有此名字的公会，0为修改成功，2为被取消，-2为长度不符合要求
-    public static int guildRename(String gName, String newName) {
+    public static int guildRename(String gName, String newName, Player renamer) {
         switch (checkGuildName(newName)) {
             case -1:
                 return -1;
@@ -242,10 +155,10 @@ public class GuildFactory {
                 return -2;
             case 1:
                 String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
-                gName = defaultColor + gName;
+                newName = defaultColor + newName;
                 break;
         }
-        GuildRenameEvent event = GuildRenameEvent.createGuildRenameEvent(gName, newName);
+        GuildRenameEvent event = GuildRenameEvent.createGuildRenameEvent(gName, newName, renamer);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
             return 2;

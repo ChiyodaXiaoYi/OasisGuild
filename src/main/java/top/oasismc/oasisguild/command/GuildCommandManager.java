@@ -4,12 +4,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.factory.GuildFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
+import static top.oasismc.oasisguild.factory.GuildFactory.playerQuitGuild;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
@@ -49,7 +51,10 @@ public class GuildCommandManager {
             sendMsg(player, "command.rename.notJoinGuild");
             return;
         }
-        switch (GuildFactory.guildRename(gName, newName)) {
+        if (getDataHandler().getPlayerJob(gName, player.getName()) != -1) {
+            sendMsg(player, "command.rename.notLeader");
+        }
+        switch (GuildFactory.guildRename(gName, newName, player)) {
             case -1:
                 sendMsg(player, "command.rename.sameName");
                 break;
@@ -78,7 +83,20 @@ public class GuildCommandManager {
                 sendMsg(player, "command.disband.confirm");
                 break;
         }
+    }
 
+    public void playerQuitGuildByCmd(Player player) {
+        String gName = getDataHandler().getGuildNameByPlayer(player.getName());
+        if (gName == null) {
+            sendMsg(player, "command.quit.notJoinGuild");
+            return;
+        }
+        if (getDataHandler().getPlayerJob(gName, player.getName()) == -1) {
+            sendMsg(player, "command.quit.isLeader");
+            return;
+        }
+        playerQuitGuild(gName, player.getName(), PlayerQuitGuildEvent.QuitReason.QUIT);
+        sendMsg(player, "command.quit.success", getDataHandler().getGuildByName(gName));
     }
 
 }

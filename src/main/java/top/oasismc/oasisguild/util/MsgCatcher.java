@@ -17,7 +17,6 @@ import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 public class MsgCatcher implements Listener {
 
     private final Map<UUID, Boolean> catchSwitchMap;
-    private final Map<UUID, String> catchMsgMap;
     private final Map<UUID, Consumer<String>> catchFunMap;
     private static final MsgCatcher catcher;
 
@@ -26,7 +25,6 @@ public class MsgCatcher implements Listener {
     }
 
     private MsgCatcher() {
-        catchMsgMap = new ConcurrentHashMap<>();
         catchSwitchMap = new ConcurrentHashMap<>();
         catchFunMap = new ConcurrentHashMap<>();
     }
@@ -35,7 +33,6 @@ public class MsgCatcher implements Listener {
     public void catcher(AsyncPlayerChatEvent event) {
         if (catchSwitchMap.getOrDefault(event.getPlayer().getUniqueId(), false)) {
             event.setCancelled(true);
-            catchMsgMap.put(event.getPlayer().getUniqueId(), event.getMessage());
             Bukkit.getScheduler().callSyncMethod(getPlugin(), () -> {
                 catchFunMap.get(event.getPlayer().getUniqueId()).accept(event.getMessage());
                 return null;
@@ -45,10 +42,6 @@ public class MsgCatcher implements Listener {
 
     public static MsgCatcher getCatcher() { return catcher; }
 
-    public String getCatchMsg(Player player) {
-        return catchMsgMap.getOrDefault(player.getUniqueId(), "");
-    }
-
     public void startCatch(Player player, Consumer<String> consumer) {
         catchSwitchMap.put(player.getUniqueId(), true);
         catchFunMap.put(player.getUniqueId(), consumer);
@@ -56,8 +49,12 @@ public class MsgCatcher implements Listener {
 
     public void endCatch(Player player) {
         catchSwitchMap.remove(player.getUniqueId());
-        catchMsgMap.remove(player.getUniqueId());
         catchFunMap.remove(player.getUniqueId());
+    }
+
+    public void reloadCatcher() {
+        catchFunMap.clear();
+        catchSwitchMap.clear();
     }
 
 }

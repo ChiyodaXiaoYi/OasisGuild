@@ -1,5 +1,6 @@
 package top.oasismc.oasisguild.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -14,6 +15,7 @@ import static top.oasismc.oasisguild.OasisGuild.*;
 import static top.oasismc.oasisguild.data.DataHandler.*;
 import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
+import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
@@ -85,7 +87,7 @@ public class GuildCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             if (!sender.hasPermission("oasis.guild.admin")) {
-                ArrayList<String> subCommands = new ArrayList<>(subAdminCommandList);
+                ArrayList<String> subCommands = new ArrayList<>(subCommandList);
                 subCommands.removeAll(subAdminCommandList);
                 return subCommands;
             } else {
@@ -101,7 +103,7 @@ public class GuildCommand implements TabExecutor {
         regSubCommand("list", (sender, args) -> getCommandManager().openGuildListMenu(sender, 0));
         regSubCommand("apply", (sender, args) -> {
             if (args.length < 2) {
-                sendMsg(sender, "command.missingValue.needGuildName");
+                sendMsg(sender, "command.missingValue.guildName");
                 return;
             }
             guildCommandManager.playerApplyGuildByCmd(sender, args[1]);
@@ -116,22 +118,22 @@ public class GuildCommand implements TabExecutor {
         });
         regSubCommand("reload", (sender, args) -> {
             if (!sender.hasPermission("oasis.guild.admin")) {
-                sendMsg(sender, "command.noPerm");
+                sendMsg(sender, "noPerm");
                 return;
             }
             reloadPlugin();
             sendMsg(sender, "command.reload");
-        });
+        }, true);
         regSubCommand("version", (sender, args) -> {
             if (!sender.hasPermission("oasis.guild.admin")) {
-                sendMsg(sender, "command.noPerm");
+                sendMsg(sender, "noPerm");
                 return;
             }
             sendMsg(sender, "command.version");
-        });
+        }, true);
         regSubCommand("create", (sender, args) -> {
             if (args.length < 2) {
-                sendMsg(sender, "command.missingValue.needGuildName");
+                sendMsg(sender, "command.missingValue.guildName");
                 return;
             }
             if (args.length < 3) {
@@ -142,12 +144,13 @@ public class GuildCommand implements TabExecutor {
         });
         regSubCommand("disband", (sender, args) -> guildCommandManager.disbandGuildByCmd((Player) sender));
         regSubCommand("rename", ((sender, args) -> {
-            if (args.length < 1) {
+            if (args.length < 2) {
                 sendMsg(sender, "command.rename.needNewName");
                 return;
             }
-            guildCommandManager.guildRenameByCmd((Player) sender, args[0]);
+            guildCommandManager.guildRenameByCmd((Player) sender, args[1]);
         }));
+        regSubCommand("quit", (sender, args) -> guildCommandManager.playerQuitGuildByCmd((Player) sender));
     }
 
     private void reloadPlugin() {
@@ -155,6 +158,7 @@ public class GuildCommand implements TabExecutor {
         getMsgSender().getLangFile().reloadConfig();
         getDrawer().getMenuFile().reloadConfig();
         getMysqlTool().setConnectDBInfo();
+        getCatcher().reloadCatcher();
     }
 
     public static GuildCommand getGuildCommand() {

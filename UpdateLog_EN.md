@@ -1,3 +1,8 @@
+### 2022/01/24 Update
+* Optimize code structure
+* Added quit guild command
+* Added guild creation, disbandment and renaming permission control
+
 ### 2022/01/23 Update
 * Optimized language file architecture
 * Added guild rename function

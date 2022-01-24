@@ -81,13 +81,15 @@ public class DefMenuListener implements IMenuListener {
             getDrawer().drawGuildListMenu(0);
         } else if (event.getSlot() == 49) {
             event.getWhoClicked().closeInventory();
+            if (getDataHandler().getGuildNameByPlayer(event.getWhoClicked().getName()) != null) {
+                sendMsg(event.getWhoClicked(), "command.create.hasGuild");
+                return;
+            }
             sendMsg(event.getWhoClicked(), "menu.create.needGName");
             getCatcher().startCatch((Player) event.getWhoClicked(), guild -> {
                 sendMsg(event.getWhoClicked(), "menu.create.needDesc");
                 getCatcher().startCatch((Player) event.getWhoClicked(), desc -> {
-                    if (GuildFactory.createGuild(guild, (Player) event.getWhoClicked(), desc)) {
-                        sendMsg(event.getWhoClicked(), "menu.create.success");
-                    }
+                    getGuildCommand().getCommandManager().createGuildByCmd(event.getWhoClicked(), guild, desc);
                     getCatcher().endCatch((Player) event.getWhoClicked());
                 });
             });
@@ -123,9 +125,7 @@ public class DefMenuListener implements IMenuListener {
             if (clickSlot == 4) {
                 playerTpGuildLoc((Player) event.getWhoClicked());
             } else if (clickSlot == inventorySize - 5) {
-                String pName = event.getWhoClicked().getName();
-                playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.QUIT);
-                sendMsg(event.getWhoClicked(), "menu.quit.success", getDataHandler().getGuildByName(gName));
+                getGuildCommand().getCommandManager().playerQuitGuildByCmd((Player) event.getWhoClicked());
             }
         }
     }
@@ -138,17 +138,8 @@ public class DefMenuListener implements IMenuListener {
                 event.getWhoClicked().closeInventory();
                 sendMsg(event.getWhoClicked(), "menu.rename.needNewName");
                 getCatcher().startCatch((Player) event.getWhoClicked(), newName -> {
-                    switch (GuildFactory.guildRename(gName, newName)) {
-                        case -1:
-                            sendMsg(event.getWhoClicked(), "menu.rename.sameName");
-                            break;
-                        case 0:
-                            sendMsg(event.getWhoClicked(), "menu.rename.success");
-                            break;
-                        case -2:
-                            sendMsg(event.getWhoClicked(), "menu.rename.nameTooLong");
-                            break;
-                    }
+                    getGuildCommand().getCommandManager().guildRenameByCmd((Player) event.getWhoClicked(), newName);
+                    getCatcher().endCatch((Player) event.getWhoClicked());
                 });
                 break;
             case 11:

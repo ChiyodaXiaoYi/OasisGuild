@@ -6,7 +6,7 @@
 
     <groupId>top.oasismc</groupId>
     <artifactId>OasisGuild</artifactId>
-    <version>0.0.1.20220123.alpha</version>
+    <version>0.0.1.20220124.alpha</version>
     <packaging>jar</packaging>
 
     <name>OasisGuild</name>

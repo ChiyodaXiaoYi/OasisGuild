@@ -6,6 +6,7 @@ import top.oasismc.oasisguild.command.GuildCommand;
 import top.oasismc.oasisguild.data.util.MysqlTool;
 import top.oasismc.oasisguild.listener.GuildProtectListener;
 import top.oasismc.oasisguild.listener.GuildPvpListener;
+import top.oasismc.oasisguild.listener.GuildEventListener;
 import top.oasismc.oasisguild.menu.impl.DefMenuListener;
 import top.oasismc.oasisguild.papi.GuildExpansion;
 import top.oasismc.oasisguild.util.LogWriter;
@@ -45,7 +46,7 @@ public final class OasisGuild extends JavaPlugin {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        info("Plugin Disabled");
+        info("&cPlugin Disabled");
     }
 
     public static OasisGuild getPlugin() {
@@ -71,6 +72,7 @@ public final class OasisGuild extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(GuildProtectListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
         Bukkit.getPluginManager().registerEvents(MsgCatcher.getCatcher(), this);
+        Bukkit.getPluginManager().registerEvents(GuildEventListener.getListener(), this);
     }
 
     private void loadCommands() {

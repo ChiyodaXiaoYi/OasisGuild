@@ -13,3 +13,15 @@ Get the player's position in the guild
 %oasisguild_guildlevel%
 Get the level of the guild the player belongs to
 ```
+
+## Permissions
+```
+oasis.guild.create
+Permission required to create a guild
+oasis.guild.disband
+Permission required to disband a guild
+oasis.guild.rename
+Permission required for guild renaming
+oasis.guild.admin
+Guild plugin administrator permission
+```

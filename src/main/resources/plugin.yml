@@ -12,5 +12,9 @@ commands:
 permissions:
   oasis.guild.create:
     default: op
+  oasis.guild.disband:
+    default: op
+  oasis.guild.rename:
+    default: op
   oasis.guild.admin:
     default: op
