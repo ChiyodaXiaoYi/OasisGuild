@@ -8,10 +8,12 @@ public class GuildChunk {
 
     private final int x;
     private final int z;
+    private final String world;
 
-    public GuildChunk(int x, int z) {
+    public GuildChunk(int x, int z, String world) {
         this.x = x;
         this.z = z;
+        this.world = world;
     }
 
     public boolean hasOwner(Chunk chunk) {
@@ -39,4 +41,7 @@ public class GuildChunk {
         return Objects.hash(x, z);
     }
 
+    public String getWorld() {
+        return world;
+    }
 }

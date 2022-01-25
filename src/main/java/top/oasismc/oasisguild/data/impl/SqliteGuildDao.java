@@ -48,6 +48,11 @@ public class SqliteGuildDao implements IGuildDao {
     }
 
     @Override
+    public int addGuildChunk(String gName, List<GuildChunk> chunkList) {
+        return 0;
+    }
+
+    @Override
     public boolean disbandGuild(String gName) {
         return false;
     }

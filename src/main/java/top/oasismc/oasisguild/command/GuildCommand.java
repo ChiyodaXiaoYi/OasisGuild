@@ -1,6 +1,5 @@
 package top.oasismc.oasisguild.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -151,6 +150,13 @@ public class GuildCommand implements TabExecutor {
             guildCommandManager.guildRenameByCmd((Player) sender, args[1]);
         }));
         regSubCommand("quit", (sender, args) -> guildCommandManager.playerQuitGuildByCmd((Player) sender));
+        regSubCommand("chunk", (sender, args) -> {
+            if (args.length < 2) {
+                sendMsg(sender, "command.noArgs");
+                return;
+            }
+            guildCommandManager.playerSelChunk((Player) sender, args[1]);
+        }, () -> Arrays.asList("start", "confirm", "cancel"));
     }
 
     private void reloadPlugin() {

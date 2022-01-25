@@ -1,3 +1,7 @@
+### 2022/01/25 Update
+* Change the build tool to gradle
+* Add guild chunk system
+
 ### 2022/01/24 Update
 * Optimize code structure
 * Added quit guild command

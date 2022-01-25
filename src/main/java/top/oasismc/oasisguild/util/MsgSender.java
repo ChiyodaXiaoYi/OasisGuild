@@ -30,34 +30,33 @@ public class MsgSender {
         Bukkit.getConsoleSender().sendMessage(color("&8[&3Oasis&bGuild&8] &bINFO &8| &r" + text));
     }
 
-
     public static void sendMsg(CommandSender sender, String key) {
-        sendMsg(sender, key, false, null, false, null);
+        sendMsg(sender, key, "", "", false, null);
     }
 
-    public static void sendMsg(CommandSender sender, String key, String pName) {
-        sendMsg(sender, key, true, pName, false, null);
+    public static void sendMsg4replacePlayer(CommandSender sender, String key, String playerName) {
+        sendMsg(sender, key, "%player%", playerName, false, null);
     }
 
-    public static void sendMsg(CommandSender sender, String key, Guild guild) {
-        sendMsg(sender, key, false, null, true, guild.getGuildName());
+    public static void sendMsg4replaceOtherStr(CommandSender sender, String key, String replaceStr, String other) {
+        sendMsg(sender, key, replaceStr, other, false, null);
+    }
+
+    public static void sendMsg4replaceGuild(CommandSender sender, String key, Guild guild) {
+        sendMsg(sender, key, "", "", true, guild.getGuildName());
     }
 
     public static void sendMsg(CommandSender sender, String key, String pName, Guild guild) {
-        sendMsg(sender, key, true, pName, true, guild.getGuildName());
+        sendMsg(sender, key, "%player%", pName, true, guild.getGuildName());
     }
 
-    public static void sendMsg(CommandSender sender, String key, boolean replaceOther, String other, boolean replaceGuild, String gName) {
+    public static void sendMsg(CommandSender sender, String key, String replaceStr, String other, boolean replaceGuild, String gName) {
         String prefix = getMsgSender().langFile.getConfig().getString("messages.prefix", "");
         if (sender == null) {
             return;
         }
         String message = getMsgSender().getLangFile().getConfig().getString("messages." + key, key);
-        if (!replaceOther) {
-            message = message.replace("%player%", sender.getName());
-        } else {
-            message = message.replace("%player%", other);
-        }
+        message = message.replace(replaceStr, other);
         if (replaceGuild) {
             message = message.replace("%guild%", gName);
         }

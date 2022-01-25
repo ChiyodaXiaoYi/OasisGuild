@@ -109,7 +109,8 @@ public class MysqlTool {
                             "CREATE TABLE IF NOT EXISTS `GuildChunks` (\n" +
                                     "  `gName` varchar(20) NOT NULL DEFAULT '',\n" +
                                     "  `cX` int NOT NULL DEFAULT '0',\n" +
-                                    "  `cZ` int NOT NULL DEFAULT '0'\n" +
+                                    "  `cZ` int NOT NULL DEFAULT '0',\n" +
+                                    "  `cWorld` VARCHAR(50) NOT NULL DEFAULT ''" +
                                     ") DEFAULT CHARSET=utf8mb3;"
                     );
                     ps.execute();

@@ -1,5 +1,5 @@
 name: OasisGuild
-version: ${project.version}
+version: ${version}
 main: top.oasismc.oasisguild.OasisGuild
 api-version: 1.13
 load: STARTUP

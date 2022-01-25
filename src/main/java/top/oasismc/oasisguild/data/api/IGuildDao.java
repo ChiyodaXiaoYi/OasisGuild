@@ -23,6 +23,7 @@ public interface IGuildDao {
     //insert
     int putApply(String gName, String pName);
     boolean createGuild(String gName, String pName, String desc, Location loc);
+    int addGuildChunk(String gName, List<GuildChunk> chunkList);
 
     //delete
     boolean disbandGuild(String gName);

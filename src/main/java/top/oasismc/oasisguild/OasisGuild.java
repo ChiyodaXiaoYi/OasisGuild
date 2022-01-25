@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.command.GuildCommand;
 import top.oasismc.oasisguild.data.util.MysqlTool;
-import top.oasismc.oasisguild.listener.GuildProtectListener;
+import top.oasismc.oasisguild.listener.GuildChunkListener;
 import top.oasismc.oasisguild.listener.GuildPvpListener;
 import top.oasismc.oasisguild.listener.GuildEventListener;
 import top.oasismc.oasisguild.menu.impl.DefMenuListener;
@@ -69,7 +69,7 @@ public final class OasisGuild extends JavaPlugin {
     private void loadListeners() {
         Bukkit.getPluginManager().registerEvents(DefMenuListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(GuildPvpListener.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(GuildProtectListener.getListener(), this);
+        Bukkit.getPluginManager().registerEvents(GuildChunkListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
         Bukkit.getPluginManager().registerEvents(MsgCatcher.getCatcher(), this);
         Bukkit.getPluginManager().registerEvents(GuildEventListener.getListener(), this);

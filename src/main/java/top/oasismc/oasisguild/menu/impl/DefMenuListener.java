@@ -11,6 +11,7 @@ import top.oasismc.oasisguild.factory.GuildFactory;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.menu.MenuType;
 import top.oasismc.oasisguild.menu.api.IMenuListener;
+import top.oasismc.oasisguild.util.MsgSender;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,17 +174,17 @@ public class DefMenuListener implements IMenuListener {
             int maxNum = getDataHandler().getGuildByName(gName).getMaxMember();
             if (memberNum < maxNum) {
                 playerJoinGuild(gName, pName, PlayerJoinGuildEvent.JoinReason.ACCEPT);
-                sendMsg(admin, "menu.accept.admin", pName);
+                MsgSender.sendMsg4replacePlayer(admin, "menu.accept.admin", pName);
                 if (Bukkit.getPlayer(pName) != null && Bukkit.getPlayer(pName).isOnline())
-                    sendMsg(Bukkit.getPlayer(pName), "menu.accept.member", getDataHandler().getGuildByName(gName));
+                    MsgSender.sendMsg4replaceGuild(Bukkit.getPlayer(pName), "menu.accept.member", getDataHandler().getGuildByName(gName));
             } else {
                 sendMsg(admin, "menu.accept.full");
             }
         } else {
             getDataHandler().getGuildDao().handleApply(gName, "deny", pName);
-            sendMsg(admin, "menu.deny.admin", pName);
+            MsgSender.sendMsg4replacePlayer(admin, "menu.deny.admin", pName);
             if (Bukkit.getPlayer(pName) != null && Bukkit.getPlayer(pName).isOnline())
-                sendMsg(Bukkit.getPlayer(pName), "menu.deny.member", getDataHandler().getGuildByName(gName));
+                MsgSender.sendMsg4replaceGuild(Bukkit.getPlayer(pName), "menu.deny.member", getDataHandler().getGuildByName(gName));
         }
         event.getWhoClicked().closeInventory();
     }
@@ -192,10 +193,10 @@ public class DefMenuListener implements IMenuListener {
         if (action == InventoryAction.DROP_ONE_SLOT) {
             String gName = getDataHandler().getGuildNameByPlayer(pName);
             playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.KICK);
-            sendMsg(click, "menu.kick.success", pName);
+            MsgSender.sendMsg4replacePlayer(click, "menu.kick.success", pName);
             Player member = Bukkit.getPlayer(pName);
             if (member != null && member.isOnline()) {
-                sendMsg(member, "menu.kick.member", getDataHandler().getGuildByName(gName));
+                MsgSender.sendMsg4replaceGuild(member, "menu.kick.member", getDataHandler().getGuildByName(gName));
             }
             click.closeInventory();
         }

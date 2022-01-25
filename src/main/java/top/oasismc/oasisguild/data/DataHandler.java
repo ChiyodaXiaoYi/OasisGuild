@@ -139,8 +139,9 @@ public class DataHandler extends BukkitRunnable {
     public String getChunkOwner(Chunk chunk) {
         int x = chunk.getX();
         int z = chunk.getZ();
+        String world = chunk.getWorld().getName();
         String ownerGuild = null;
-        GuildChunk tmp = new GuildChunk(x, z);
+        GuildChunk tmp = new GuildChunk(x, z, world);
         Set<String> guilds = guildChunkSetMap.keySet();
         for (String g : guilds) {
             if (guildChunkSetMap.get(g).contains(tmp))
@@ -168,4 +169,7 @@ public class DataHandler extends BukkitRunnable {
         return list;
     }
 
+    public Set<GuildChunk> getGuildChunkSet(String guildName) {
+        return guildChunkSetMap.getOrDefault(guildName, new HashSet<>());
+    }
 }

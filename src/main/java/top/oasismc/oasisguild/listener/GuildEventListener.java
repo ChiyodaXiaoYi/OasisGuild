@@ -1,6 +1,5 @@
 package top.oasismc.oasisguild.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,13 +10,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.event.guild.GuildCreateEvent;
 import top.oasismc.oasisguild.event.guild.GuildDisbandEvent;
 import top.oasismc.oasisguild.event.guild.GuildRenameEvent;
-import top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.factory.GuildFactory;
 import top.oasismc.oasisguild.util.LoreTool;
 
 import java.util.List;
-import java.util.Objects;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;

@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +39,11 @@ public class MsgCatcher implements Listener {
                 return null;
             });
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void endCatch4PlayerQuit(PlayerQuitEvent event) {
+        endCatch(event.getPlayer());
     }
 
     public static MsgCatcher getCatcher() { return catcher; }

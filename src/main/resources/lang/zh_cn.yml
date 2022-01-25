@@ -42,7 +42,18 @@ messages:
       confirm: '&c你确定要解散公会吗,请输入/guild disband确认解散'
       notJoinGuild: '&c你还没加入任何公会'
       notLeader: '&c你不是公会的管理员,无法解散公会!'
-  protect:
+    chunk:
+      start: '&a公会区块认领选择器开启'
+      notJoinGuild: '&c你还没加入任何公会'
+      notLeader: '&c你不是公会的管理员,无法为公会认领区块!'
+      click: '&a你已选择区块%chunk%'
+      hasOwner: '&c此区块已经有公会认领了'
+      limit: '&c你公会所能认领的区块数量已经达到上限!'
+      notAllowedWorld: '&c此世界不允许认领公会区块!'
+      confirm: '&a成功认领选择的区块'
+      notSelect: '&c你还没选择任何区块来认领'
+      cancel: '&c已取消区块认领'
+  chunk:
     join: '&e你已进入%guild%&e的领地范围'
     leave: '&e你已离开%guild%&e的领地范围'
     place: '&c你无法在%guild%&c的领地放置方块!'

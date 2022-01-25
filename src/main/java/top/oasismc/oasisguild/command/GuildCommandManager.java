@@ -3,9 +3,12 @@ package top.oasismc.oasisguild.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import top.oasismc.oasisguild.data.objects.GuildChunk;
 import top.oasismc.oasisguild.data.objects.GuildMember;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.factory.GuildFactory;
+import top.oasismc.oasisguild.listener.GuildChunkListener;
+import top.oasismc.oasisguild.util.MsgSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +88,39 @@ public class GuildCommandManager {
         }
     }
 
+    public void playerSelChunk(Player player, String subCmd) {
+        String gName = getDataHandler().getGuildNameByPlayer(player.getName());
+        if (gName == null) {
+            sendMsg(player, "command.chunk.notJoinGuild");
+            return;
+        }
+        int job = getDataHandler().getPlayerJob(gName, player.getName());
+        if (job != -1) {
+            sendMsg(player, "command.chunk.notLeader");
+            return;
+        }
+        switch (subCmd) {
+            case "start":
+                sendMsg(player, "command.chunk.start");
+                GuildChunkListener.getListener().startChunkSelect(player);
+                break;
+            case "confirm":
+                List<GuildChunk> chunkList = GuildChunkListener.getListener().getSelChunkMap().get(gName);
+                if (chunkList == null || chunkList.size() == 0) {
+                    sendMsg(player, "command.chunk.notSelect");
+                    return;
+                }
+                GuildChunkListener.getListener().endChunkSelect(player);
+                GuildFactory.addGuildChunks(gName, chunkList);
+                sendMsg(player, "command.chunk.confirm");
+                break;
+            case "cancel":
+                sendMsg(player, "command.chunk.cancel");
+                GuildChunkListener.getListener().endChunkSelect(player);
+                break;
+        }
+    }
+
     public void playerQuitGuildByCmd(Player player) {
         String gName = getDataHandler().getGuildNameByPlayer(player.getName());
         if (gName == null) {
@@ -96,7 +132,7 @@ public class GuildCommandManager {
             return;
         }
         playerQuitGuild(gName, player.getName(), PlayerQuitGuildEvent.QuitReason.QUIT);
-        sendMsg(player, "command.quit.success", getDataHandler().getGuildByName(gName));
+        MsgSender.sendMsg4replaceGuild(player, "command.quit.success", getDataHandler().getGuildByName(gName));
     }
 
 }

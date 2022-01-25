@@ -195,7 +195,7 @@ public class MysqlGuildDao implements IGuildDao {
                         ps.executeUpdate();
                         ps.close();
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        getLogWriter().mysqlWarn(e, this.getClass());
                         closeStatement(ps);
                     }
 
@@ -245,13 +245,40 @@ public class MysqlGuildDao implements IGuildDao {
                     ps.executeUpdate();
                     ps.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    getLogWriter().mysqlWarn(e, this.getClass());
                     closeStatement(ps);
                 }
                 getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
+    }
+
+    @Override
+    public int addGuildChunk(String gName, List<GuildChunk> chunkList) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = getMysqlTool().getConnection();
+                chunkList.parallelStream().forEach((chunk) -> {
+                    PreparedStatement ps = null;
+                    try {
+                        ps = conn.prepareStatement("INSERT INTO `GuildChunks`(`gName`, `cX`, `cZ`, `cWorld`) VALUES (?, ?, ?, ?);");
+                        ps.setString(1, gName);
+                        ps.setInt(2, chunk.getX());
+                        ps.setInt(3, chunk.getZ());
+                        ps.setString(4, chunk.getWorld());
+                        ps.executeUpdate();
+                        ps.close();
+                    } catch (SQLException e) {
+                        getLogWriter().mysqlWarn(e, this.getClass());
+                        closeStatement(ps);
+                    }
+                });
+                getDataHandler().getData();
+            }
+        }.runTaskAsynchronously(getPlugin());
+        return 0;
     }
 
     @Override
@@ -267,7 +294,7 @@ public class MysqlGuildDao implements IGuildDao {
                     execSql4disband("DELETE FROM `GuildLocation` WHERE `gName` = ?;", gName, conn);
                     execSql4disband("DELETE FROM `GuildChunks` WHERE `gName` = ?;", gName, conn);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    getLogWriter().mysqlWarn(e, this.getClass());
                 }
 
                 getDataHandler().getData();
@@ -511,11 +538,13 @@ public class MysqlGuildDao implements IGuildDao {
         }
         int cX = resultSet.getInt("cX");
         int cZ = resultSet.getInt("cZ");
-        chunkSet.add(new GuildChunk(cX, cZ));
+        String cWorld = resultSet.getString("cWorld");
+        chunkSet.add(new GuildChunk(cX, cZ, cWorld));
         while (resultSet.next()) {
             cX = resultSet.getInt("cX");
             cZ = resultSet.getInt("cZ");
-            chunkSet.add(new GuildChunk(cX, cZ));
+            cWorld = resultSet.getString("cWorld");
+            chunkSet.add(new GuildChunk(cX, cZ, cWorld));
         }
         return chunkSet;
     }

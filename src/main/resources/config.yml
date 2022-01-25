@@ -29,9 +29,11 @@ guildSettings:
   #公会区块设置
   guildChunks:
     default: 36
-    perLvlAdd: 10
-    protectBlocks:
-
+    perLvlAdd: 8
+    canSetWorlds:
+      - 'world'
+      - 'world_nether'
+      - 'world_the_end'
   #Set whether the guild will enable team damage by default
   #设置公会默认是否开启队伍伤害
   pvp: false
