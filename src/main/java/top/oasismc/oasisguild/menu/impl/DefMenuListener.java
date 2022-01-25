@@ -23,6 +23,7 @@ import static top.oasismc.oasisguild.factory.GuildFactory.*;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.job.Jobs.*;
 
 public class DefMenuListener implements IMenuListener {
 
@@ -104,22 +105,30 @@ public class DefMenuListener implements IMenuListener {
         String clickedName = event.getWhoClicked().getName();
         String gName = getDataHandler().getGuildNameByPlayer(clickedName);
         int pJob = getDataHandler().getPlayerJob(gName, event.getWhoClicked().getName());
-        if (pJob == -1) {
+
+        if (pJob >= MEDIUM) { //大于等于优秀成员时显示的是带公会管理的界面
             if (clickSlot == 4) {
-                if (event.isLeftClick()) {
+                if (pJob >= ADVANCED) {
+                    if (event.isLeftClick()) {
+                        playerTpGuildLoc((Player) event.getWhoClicked());
+                    } else if (event.isRightClick()) {
+                        guildLevelUpOnMenu((Player) event.getWhoClicked(), gName);
+                    }
+                } else {
                     playerTpGuildLoc((Player) event.getWhoClicked());
-                } else if (event.isRightClick()){
-                    guildLevelUpOnMenu((Player) event.getWhoClicked(), gName);
                 }
             } else if (clickSlot > 8 && clickSlot < inventorySize - 9) {
                 String name = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&");
                 name = name.substring(2);
-                if (!name.equals(event.getWhoClicked().getName()))
+                if (pJob > VICE_LEADER && getDataHandler().getPlayerJob(gName, name) < pJob)
                     kickMemberOnMenu(event.getAction(), name, (Player) event.getWhoClicked());
             } else if (clickSlot == inventorySize - 8) {
                 event.getWhoClicked().openInventory(getDrawer().drawGuildEditMenu(gName));
             } else if (clickSlot == inventorySize - 2) {
-                getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
+                if (pJob >= LEADER)
+                    getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
+                else
+                    getGuildCommand().getCommandManager().playerQuitGuildByCmd((Player) event.getWhoClicked());
                 event.getWhoClicked().closeInventory();
             }
         } else {
@@ -134,8 +143,14 @@ public class DefMenuListener implements IMenuListener {
     @Override
     public void handleGuildEditMenuEvent(InventoryClickEvent event) {
         String gName = getDataHandler().getGuildNameByPlayer(event.getWhoClicked().getName());
+        int pJob = getDataHandler().getPlayerJob(gName, event.getWhoClicked().getName());
         switch (event.getSlot()) {
             case 9:
+                if (pJob < VICE_LEADER) {
+                    sendMsg(event.getWhoClicked(), "noPerm");
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
                 event.getWhoClicked().closeInventory();
                 sendMsg(event.getWhoClicked(), "menu.rename.needNewName");
                 getCatcher().startCatch((Player) event.getWhoClicked(), newName -> {
@@ -144,11 +159,26 @@ public class DefMenuListener implements IMenuListener {
                 });
                 break;
             case 11:
+                if (pJob < VICE_LEADER) {
+                    sendMsg(event.getWhoClicked(), "noPerm");
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
                 break;//待完成
             case 13:
-                event.getWhoClicked().openInventory(getDrawer().drawGuildApplyListMenu(gName));
+                if (pJob >= ADVANCED)
+                    event.getWhoClicked().openInventory(getDrawer().drawGuildApplyListMenu(gName));
+                else {
+                    sendMsg(event.getWhoClicked(), "noPerm");
+                    event.getWhoClicked().closeInventory();
+                }
                 break;
             case 15:
+                if (pJob < MEDIUM) {
+                    sendMsg(event.getWhoClicked(), "noPerm");
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
                 if (changeGuildPvp(gName)) {
                     sendMsg(event.getWhoClicked(), "menu.pvp.open");
                 } else {
@@ -157,6 +187,11 @@ public class DefMenuListener implements IMenuListener {
                 event.getWhoClicked().closeInventory();
                 break;
             case 17:
+                if (pJob < VICE_LEADER) {
+                    sendMsg(event.getWhoClicked(), "noPerm");
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
                 if (changeGuildLoc(gName, event.getWhoClicked().getLocation()))
                     sendMsg(event.getWhoClicked(), "menu.changeLoc.success");
                 event.getWhoClicked().closeInventory();

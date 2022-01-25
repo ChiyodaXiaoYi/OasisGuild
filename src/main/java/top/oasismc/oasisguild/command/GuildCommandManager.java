@@ -17,6 +17,7 @@ import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.factory.GuildFactory.playerQuitGuild;
 import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.job.Jobs.*;
 
 public class GuildCommandManager {
 
@@ -54,7 +55,7 @@ public class GuildCommandManager {
             sendMsg(player, "command.rename.notJoinGuild");
             return;
         }
-        if (getDataHandler().getPlayerJob(gName, player.getName()) != -1) {
+        if (getDataHandler().getPlayerJob(gName, player.getName()) < VICE_LEADER) {
             sendMsg(player, "command.rename.notLeader");
         }
         switch (GuildFactory.guildRename(gName, newName, player)) {
@@ -95,7 +96,7 @@ public class GuildCommandManager {
             return;
         }
         int job = getDataHandler().getPlayerJob(gName, player.getName());
-        if (job != -1) {
+        if (job < ADVANCED) {
             sendMsg(player, "command.chunk.notLeader");
             return;
         }
@@ -127,7 +128,7 @@ public class GuildCommandManager {
             sendMsg(player, "command.quit.notJoinGuild");
             return;
         }
-        if (getDataHandler().getPlayerJob(gName, player.getName()) == -1) {
+        if (getDataHandler().getPlayerJob(gName, player.getName()) >= 250) {
             sendMsg(player, "command.quit.isLeader");
             return;
         }

@@ -17,7 +17,7 @@ guildSettings:
   #简介限制
   desc:
     maxLength: 20
-  #Level limit, set to -1 to not limit
+  #Level limit, set to 299 to not limit
   #等级限制, 设置为-1则不限制
   maxLvl: -1
   #Maximum number of members

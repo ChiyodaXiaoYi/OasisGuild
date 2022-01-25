@@ -61,7 +61,7 @@ public class MysqlGuildDao implements IGuildDao {
                     conn = getMysqlTool().getConnection();
                 conn = getMysqlTool().getConnection();
                 ps = conn.prepareStatement(
-                        "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob`;",
+                        "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob` DESC;",
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
                 ps.setString(1, guildList.get(i).getGuildName());
@@ -232,7 +232,7 @@ public class MysqlGuildDao implements IGuildDao {
                     ps = conn.prepareStatement("INSERT INTO `GuildMembers`(`gName`, `pName`, `pJob`) VALUES (?, ?, ?)");
                     ps.setString(1, gName);
                     ps.setString(2, pName);
-                    ps.setInt(3, -1);
+                    ps.setInt(3, 299);
                     ps.executeUpdate();
                     ps.close();
                     ps = conn.prepareStatement("INSERT INTO `GuildLocation`(`gName`, `gX`, `gY`, `gZ`, `gWorld`)" +

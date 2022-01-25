@@ -24,6 +24,7 @@ import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.util.MsgSender.color;
 import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
+import static top.oasismc.oasisguild.job.Jobs.*;
 
 public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawer {
 
@@ -174,7 +175,7 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
         }
         for (int i = inventoryLength - 9; i < inventoryLength; i ++) {
             int j = i - inventoryLength + 9;
-            if (pJob == -1) {
+            if (pJob >= MEDIUM) {
                 switch (j) {
                     case 0:
                     case 2:
@@ -183,14 +184,17 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
                     case 5:
                     case 6:
                     case 8:
-                            inventory.setItem(i, getNameOnlyItem("guildInfo.frame.", "GRAY_STAINED_GLASS_PANE"));
-                            break;
+                        inventory.setItem(i, getNameOnlyItem("guildInfo.frame.", "GRAY_STAINED_GLASS_PANE"));
+                        break;
                     case 1: 
-                            inventory.setItem(i, getNameOnlyItem("guildInfo.admin.", "WRITABLE_BOOK"));
-                            break;
-                    case 7: 
-                            inventory.setItem(i, getNameOnlyItem("guildInfo.disband.", "WRITABLE_BOOK"));
-                            break;
+                        inventory.setItem(i, getNameOnlyItem("guildInfo.admin.", "WRITABLE_BOOK"));
+                        break;
+                    case 7:
+                        if (pJob >= 250)
+                            inventory.setItem(i, getNameOnlyItem("guildInfo.disband.", "BARRIER"));
+                        else
+                            inventory.setItem(i, getNameOnlyItem("guildInfo.quit.", "BARRIER"));
+                        break;
                 }
             }
             else {
@@ -233,7 +237,7 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
         meta.setDisplayName(color(name));
         Guild guild = getDataHandler().getGuildByName(guildName);
         List<String> lore = menuFile.getConfig().getStringList(key + "lore");
-        if (pJob == -1) {
+        if (pJob >= ADVANCED) {
             lore.addAll(menuFile.getConfig().getStringList(key + "lore_admin"));
         }
         for (int i = 0; i < lore.size(); i++) {
@@ -246,32 +250,32 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
         return icon;
     }
 
-    public ItemStack getMemberItem(GuildMember player, int pJob) {
+    public ItemStack getMemberItem(GuildMember member, int pJob) {
         String material = menuFile.getConfig().getString("guildInfo.members.material");
         Material iconType = Material.matchMaterial(material);
         if (iconType == null)
             iconType = Material.PLAYER_HEAD;
         ItemStack icon = new ItemStack(iconType, 1);
         ItemMeta meta = icon.getItemMeta();
-        String iconName = color("&f" + player.getPlayerName());
+        String iconName = color("&f" + member.getPlayerName());
         meta.setDisplayName(iconName);
         List<String> lore;
-        if (pJob == 0 || player.getJob() == -1) {
+        if (pJob < VICE_LEADER || member.getJob() >= VICE_LEADER) {
             lore = menuFile.getConfig().getStringList("guildInfo.members.lore");
         } else {
             lore = menuFile.getConfig().getStringList("guildInfo.members.lore_admin");
         }
         for (int i = 0; i < lore.size(); i++) {
-            String l = replaceOnMember(lore.get(i), player);
+            String l = replaceOnMember(lore.get(i), member);
             l = color(l);
             lore.set(i, l);
         }
         meta.setLore(lore);
-        if (player.getJob() == -1) {
+        if (member.getJob() >= VICE_LEADER) {
             icon.setAmount(2);
         }
         if (iconType == Material.PLAYER_HEAD)
-            ((SkullMeta) meta).setOwningPlayer(Bukkit.getOfflinePlayer(player.getPlayerName()));
+            ((SkullMeta) meta).setOwningPlayer(Bukkit.getOfflinePlayer(member.getPlayerName()));
         icon.setItemMeta(meta);
         return icon;
     }

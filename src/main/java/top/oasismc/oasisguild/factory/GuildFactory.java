@@ -26,6 +26,7 @@ import static top.oasismc.oasisguild.event.guild.GuildPvpChangeEvent.createGuild
 import static top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
 import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
 import static top.oasismc.oasisguild.util.MsgSender.color;
+import static top.oasismc.oasisguild.job.Jobs.*;
 
 public class GuildFactory {
 
@@ -86,7 +87,7 @@ public class GuildFactory {
             return -1;
         }
         int job = getDataHandler().getPlayerJob(guildName, player.getName());
-        if (job != -1) {
+        if (job < LEADER) {
 
             return -2;
         }
