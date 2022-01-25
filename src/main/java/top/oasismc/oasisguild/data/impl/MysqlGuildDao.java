@@ -22,6 +22,7 @@ import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.util.LogWriter.getLogWriter;
+import static top.oasismc.oasisguild.job.Jobs.*;
 
 public class MysqlGuildDao implements IGuildDao {
 
@@ -232,7 +233,7 @@ public class MysqlGuildDao implements IGuildDao {
                     ps = conn.prepareStatement("INSERT INTO `GuildMembers`(`gName`, `pName`, `pJob`) VALUES (?, ?, ?)");
                     ps.setString(1, gName);
                     ps.setString(2, pName);
-                    ps.setInt(3, 299);
+                    ps.setInt(3, LEADER);
                     ps.executeUpdate();
                     ps.close();
                     ps = conn.prepareStatement("INSERT INTO `GuildLocation`(`gName`, `gX`, `gY`, `gZ`, `gWorld`)" +

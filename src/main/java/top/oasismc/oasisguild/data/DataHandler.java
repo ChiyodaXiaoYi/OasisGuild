@@ -4,10 +4,9 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.oasismc.oasisguild.OasisGuild;
-import top.oasismc.oasisguild.data.impl.MysqlGuildDao;
 import top.oasismc.oasisguild.data.api.IGuildDao;
+import top.oasismc.oasisguild.data.impl.MysqlGuildDao;
 import top.oasismc.oasisguild.data.impl.SqliteGuildDao;
-import top.oasismc.oasisguild.data.impl.YamlGuildDao;
 import top.oasismc.oasisguild.data.objects.Guild;
 import top.oasismc.oasisguild.data.objects.GuildApply;
 import top.oasismc.oasisguild.data.objects.GuildChunk;
@@ -17,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static top.oasismc.oasisguild.OasisGuild.*;
+import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
 public class DataHandler extends BukkitRunnable {
 
@@ -46,15 +45,13 @@ public class DataHandler extends BukkitRunnable {
     private void loadDao() throws ClassNotFoundException {
         String dataType = getPlugin().getConfig().getString("data.type", "yaml");
         switch (dataType) {
-            case "sqlite":
-                guildDao = new SqliteGuildDao();
-                break;
             case "mysql":
                 Class.forName("top.oasismc.oasisguild.data.util.MysqlTool");
                 guildDao = new MysqlGuildDao();
                 break;
+            case "sqlite":
             default:
-                guildDao = new YamlGuildDao();
+                guildDao = new SqliteGuildDao();
                 break;
         }
     }

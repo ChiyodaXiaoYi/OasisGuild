@@ -41,7 +41,7 @@ public class GuildExpansion extends PlaceholderExpansion {
             String gName = getDataHandler().getGuildNameByPlayer(pName);
             if (gName != null) {
                 int job = getDataHandler().getPlayerJob(gName, pName);
-                return getMsgSender().getLangFile().getConfig().getString("job." + job);
+                return getMsgSender().getLangFile().getConfig().getString("job." + job, job + "");
             } else {
                 return getMsgSender().getLangFile().getConfig().getString("papi.noGuild");
             }
