@@ -33,12 +33,12 @@ public class GuildChunk {
         if (this == o) return true;
         if (!(o instanceof GuildChunk)) return false;
         GuildChunk that = (GuildChunk) o;
-        return x == that.x && z == that.z;
+        return x == that.x && z == that.z && world.equals(that.world);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, z);
+        return Objects.hash(x, z, world);
     }
 
     public String getWorld() {
