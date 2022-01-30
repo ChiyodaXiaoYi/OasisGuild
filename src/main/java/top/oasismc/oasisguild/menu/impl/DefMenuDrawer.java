@@ -73,8 +73,8 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
         MenuHolder holder = new MenuHolder(MenuType.EDIT);
         String title = menuFile.getConfig().getString("guildEdit.title", "Guild List");
         title = title.replace("%guild%", gName);
-        Inventory inventory = Bukkit.createInventory(holder, 27, color(title));
-        for (int i = 0; i < 27; i++) {
+        Inventory inventory = Bukkit.createInventory(holder, 45, color(title));
+        for (int i = 0; i < 45; i++) {
             switch (i) {
                 case 9:
                     ItemStack rename = getNameOnlyItem("guildEdit.rename.", "NAME_TAG");
@@ -95,6 +95,16 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
                 case 17:
                     ItemStack setLoc = getNameOnlyItem("guildEdit.setLoc.", "BEACON");
                     inventory.setItem(i, setLoc);
+                    break;
+                case 27:
+                    break;
+                case 29:
+                    break;
+                case 31:
+                    break;
+                case 33:
+                    break;
+                case 35:
                     break;
                 default:
                     ItemStack frame = getNameOnlyItem("guildEdit.frame.", "GRAY_STAINED_GLASS_PANE");
