@@ -15,6 +15,7 @@ import top.oasismc.oasisguild.data.objects.GuildMember;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
@@ -25,6 +26,7 @@ public class DataHandler extends BukkitRunnable {
     private Map<String, Location> guildLocationMap;
     private Map<String, List<GuildApply>> guildApplyListMap;
     private Map<String, Set<GuildChunk>> guildChunkSetMap;
+    private Map<String, Supplier<IGuildDao>> guildDataImplMap;
     private IGuildDao guildDao;
     private static DataHandler dataHandler;
 
@@ -37,23 +39,32 @@ public class DataHandler extends BukkitRunnable {
     }
 
     private DataHandler() throws ClassNotFoundException {
+        guildDataImplMap = new ConcurrentHashMap<>();
         start(OasisGuild.getPlugin().getConfig().getInt("data.dataCacheTime", 2));
         initDataRegister();
+        regDefaultDataImpl();
         loadDao();
     }
 
-    private void loadDao() throws ClassNotFoundException {
-        String dataType = getPlugin().getConfig().getString("data.type", "yaml");
-        switch (dataType) {
-            case "mysql":
+    public void regDataImpl(String key, Supplier<IGuildDao> impl) {
+        guildDataImplMap.put(key, impl);
+    }
+
+    private void regDefaultDataImpl() {
+        regDataImpl("mysql", () -> {
+            try {
                 Class.forName("top.oasismc.oasisguild.data.util.MysqlTool");
-                guildDao = new MysqlGuildDao();
-                break;
-            case "sqlite":
-            default:
-                guildDao = new SqliteGuildDao();
-                break;
-        }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return new MysqlGuildDao();
+        });
+        regDataImpl("sqlite", SqliteGuildDao::new);
+    }
+
+    private void loadDao() {
+        String dataType = getPlugin().getConfig().getString("data.type", "sqlite");
+        guildDao = guildDataImplMap.getOrDefault(dataType, SqliteGuildDao::new).get();
     }
 
     private void initDataRegister() {
