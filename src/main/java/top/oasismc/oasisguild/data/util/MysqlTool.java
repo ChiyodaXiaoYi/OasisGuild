@@ -1,7 +1,9 @@
 package top.oasismc.oasisguild.data.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
+import top.oasismc.oasisguild.util.MsgSender;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,7 +25,9 @@ public class MysqlTool {
 
     private MysqlTool() {
         initDriver();
-        loadDatabase();
+        getConnection();
+        if (conn != null)
+            loadDatabase();
     }
 
     public static MysqlTool getMysqlTool() {
@@ -38,7 +42,12 @@ public class MysqlTool {
                 conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
-            conn = getConnection();
+            if (!e.getSQLState().equals("28000"))
+                conn = getConnection();
+            else {
+                MsgSender.info("&cMysql connection failed, please check database configuration");
+                Bukkit.getPluginManager().disablePlugin(getPlugin());
+            }
         }
         return conn;
     }

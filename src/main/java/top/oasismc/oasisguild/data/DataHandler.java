@@ -11,6 +11,7 @@ import top.oasismc.oasisguild.data.objects.Guild;
 import top.oasismc.oasisguild.data.objects.GuildApply;
 import top.oasismc.oasisguild.data.objects.GuildChunk;
 import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.data.util.MysqlTool;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -57,6 +58,8 @@ public class DataHandler extends BukkitRunnable {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            if (!getPlugin().isEnabled())
+                return null;
             return new MysqlGuildDao();
         });
         regDataImpl("sqlite", SqliteGuildDao::new);

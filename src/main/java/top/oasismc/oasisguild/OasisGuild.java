@@ -35,15 +35,19 @@ public final class OasisGuild extends JavaPlugin {
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
+        if (getConfig().getString("data.type", "sqlite").equals("mysql")) {
+            if (MysqlTool.getMysqlTool() != null && MysqlTool.getMysqlTool().getConnection() != null) {
+                try {
+                    MysqlTool.getMysqlTool().getConnection().close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         try {
             LogWriter.getLogWriter().getWriter().flush();
             LogWriter.getLogWriter().getWriter().close();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            MysqlTool.getMysqlTool().getConnection().close();
-        } catch (SQLException e) {
             e.printStackTrace();
         }
         info("&cPlugin Disabled");
@@ -60,8 +64,10 @@ public final class OasisGuild extends JavaPlugin {
     }
 
     private void loadModules() {
-        loadCommands();
         loadStaticClasses();
+        if (!this.isEnabled())
+            return;
+        loadCommands();
         loadListeners();
         regPapiParams();
     }
@@ -83,7 +89,6 @@ public final class OasisGuild extends JavaPlugin {
     public void loadStaticClasses() {
         try {
             Class.forName("top.oasismc.oasisguild.data.DataHandler");
-            Class.forName("top.oasismc.oasisguild.menu.impl.DefMenuDrawer");
             Class.forName("top.oasismc.oasisguild.util.MsgSender");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
