@@ -97,6 +97,8 @@ public class DefMenuDrawer implements top.oasismc.oasisguild.menu.api.IMenuDrawe
                     inventory.setItem(i, setLoc);
                     break;
                 case 27:
+                    ItemStack transform = getNameOnlyItem("guildEdit.transform.", "RED_BANNER");
+                    inventory.setItem(i, transform);
                     break;
                 case 29:
                     break;

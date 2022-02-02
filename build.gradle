@@ -41,7 +41,7 @@ dependencies {
 
 group = 'top.oasismc'
 version = '0.0.1'
-def pluginVersion = version + '.22w05b'
+def pluginVersion = version + '.22w05c'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {

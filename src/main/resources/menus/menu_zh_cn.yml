@@ -25,6 +25,8 @@ guildInfo:
       - '&7&m---------------'
       - '&7职位: %job%'
       - '&c按Q键踢出公会'
+      - '&aSHIFT+左键提升官职'
+      - '&eSHIFT+右键降低官职'
       - '&7&m---------------'
   frame:
     material: 'GRAY_STAINED_GLASS_PANE'
@@ -86,6 +88,9 @@ guildEdit:
   setLoc:
     material: 'BEACON'
     name: '&e设置公会坐标'
+  transform:
+    material: 'RED_BANNER'
+    name: '&c转让公会'
 guildApplyList:
   title: '%guild% &3&l公会申请列表'
   apply:

@@ -6,10 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.oasismc.oasisguild.data.objects.GuildChunk;
 import top.oasismc.oasisguild.event.guild.*;
-import top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent;
+import top.oasismc.oasisguild.event.player.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +22,7 @@ import static top.oasismc.oasisguild.event.guild.GuildLocChangeEvent.createGuild
 import static top.oasismc.oasisguild.event.guild.GuildPvpChangeEvent.createGuildPvpChangeEvent;
 import static top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
 import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
+import static top.oasismc.oasisguild.event.player.PlayerJobChangeEvent.createPlayerJobChangeEvent;
 import static top.oasismc.oasisguild.util.MsgSender.color;
 import static top.oasismc.oasisguild.job.Jobs.*;
 
@@ -207,6 +205,14 @@ public class GuildFactory {
         if (event.isCancelled())
             return;
         getDataHandler().getGuildDao().addGuildChunk(event.getGuildName(), event.getChunkList());
+    }
+
+    public static void memberJobChange(String guildName, String member, String leader, int oldJob, int newJob) {
+        PlayerJobChangeEvent event = createPlayerJobChangeEvent(guildName, member, leader, oldJob, newJob);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+        getDataHandler().getGuildDao().changeMemberJob(guildName, member, newJob);
     }
 
 }

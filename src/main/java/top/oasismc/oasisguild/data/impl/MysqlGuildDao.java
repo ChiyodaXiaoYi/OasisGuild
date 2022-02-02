@@ -326,7 +326,7 @@ public class MysqlGuildDao implements IGuildDao {
                                 "VALUES (?, ?, ?);");
                         ps.setString(1, gName);
                         ps.setString(2, pName);
-                        ps.setInt(3, 0);
+                        ps.setInt(3, NORMAL);
                     } else {
                         ps = conn.prepareStatement("DELETE FROM `GuildApply` WHERE `pName` = ? AND `gName` = ?;");
                         ps.setString(1, pName);
@@ -416,6 +416,30 @@ public class MysqlGuildDao implements IGuildDao {
                 getDataHandler().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
+        return true;
+    }
+
+    @Override
+    public boolean changeMemberJob(String gName, String pName, int newJob) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("UPDATE `GuildMembers` SET `pJob` = ? WHERE `pName` = ? AND `gName` = ?;");
+                    ps.setInt(1, newJob);
+                    ps.setString(2, pName);
+                    ps.setString(3, gName);
+                    ps.executeUpdate();
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    closeStatement(ps);
+                }
+                getDataHandler().getData();
+            }
+        }.runTaskAsynchronously(getPlugin());
         return true;
     }
 

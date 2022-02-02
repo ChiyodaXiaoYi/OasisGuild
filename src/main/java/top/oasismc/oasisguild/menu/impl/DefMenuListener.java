@@ -4,11 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.factory.GuildFactory;
+import top.oasismc.oasisguild.job.Jobs;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.menu.MenuType;
 import top.oasismc.oasisguild.menu.api.IMenuListener;
@@ -25,6 +27,7 @@ import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.job.Jobs.*;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg4replacePlayer;
 
 public class DefMenuListener implements IMenuListener {
 
@@ -123,8 +126,8 @@ public class DefMenuListener implements IMenuListener {
             } else if (clickSlot > 8 && clickSlot < inventorySize - 9) {
                 String name = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&");
                 name = name.substring(2);
-                if (pJob > VICE_LEADER && getDataHandler().getPlayerJob(gName, name) < pJob)
-                    kickMemberOnMenu(event.getAction(), name, (Player) event.getWhoClicked());
+                if (pJob > VICE_LEADER)
+                    handleGuildMemberAction(event.getClick(), name, (Player) event.getWhoClicked(), pJob);
             } else if (clickSlot == inventorySize - 8) {
                 event.getWhoClicked().openInventory(getDrawer().drawGuildEditMenu(gName));
             } else if (clickSlot == inventorySize - 2) {
@@ -227,16 +230,63 @@ public class DefMenuListener implements IMenuListener {
         event.getWhoClicked().closeInventory();
     }
 
-    private void kickMemberOnMenu(InventoryAction action, String pName, Player click) {
-        if (action == InventoryAction.DROP_ONE_SLOT) {
-            String gName = getDataHandler().getGuildNameByPlayer(pName);
-            playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.KICK);
-            MsgSender.sendMsg4replacePlayer(click, "menu.kick.success", pName);
-            Player member = Bukkit.getPlayer(pName);
-            if (member != null && member.isOnline()) {
-                MsgSender.sendMsg4replaceGuild(member, "menu.kick.member", getDataHandler().getGuildByName(gName));
-            }
-            click.closeInventory();
+    private void handleGuildMemberAction(ClickType action, String pName, Player clicker, int clickerJob) {
+        String gName = getDataHandler().getGuildNameByPlayer(pName);
+        int pJob = getDataHandler().getPlayerJob(gName, pName);
+        switch (action) {
+            case DROP:
+                if (clickerJob <= pJob)
+                    return;
+                playerQuitGuild(gName, pName, PlayerQuitGuildEvent.QuitReason.KICK);
+                MsgSender.sendMsg4replacePlayer(clicker, "menu.kick.success", pName);
+                Player member = Bukkit.getPlayer(pName);
+                if (member != null && member.isOnline()) {
+                    MsgSender.sendMsg4replaceGuild(member, "menu.kick.member", getDataHandler().getGuildByName(gName));
+                }
+                clicker.closeInventory();
+                break;
+            case SHIFT_LEFT:
+                int newJob;
+                if (pJob < MEDIUM) {
+                    newJob = 149;
+                } else if (pJob < ADVANCED) {
+                    newJob = 199;
+                } else if (pJob < VICE_LEADER) {
+                    newJob = 249;
+                } else if (pJob < LEADER) {
+                    newJob = 299;
+                } else {
+                    newJob = 299;
+                }
+                if (newJob >= clickerJob) {
+                    sendMsg(clicker, "noPerm");
+                    clicker.closeInventory();
+                    return;
+                }
+                GuildFactory.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
+                sendMsg4replacePlayer(clicker, "menu.jobChange.up", pName);
+                clicker.closeInventory();
+                break;
+            case SHIFT_RIGHT:
+                newJob = 0;
+                if (clickerJob <= pJob) {
+                    sendMsg(clicker, "noPerm");
+                    clicker.closeInventory();
+                    return;
+                }
+                if (pJob >= NORMAL && pJob < MEDIUM) {
+                    sendMsg4replacePlayer(clicker, "menu.jobChange.lowest", pName);
+                    clicker.closeInventory();
+                    return;
+                } else if (pJob >= ADVANCED && pJob < VICE_LEADER) {
+                    newJob = 149;
+                } else if (pJob >= VICE_LEADER && pJob < LEADER) {
+                    newJob = 199;
+                }
+                GuildFactory.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
+                sendMsg4replacePlayer(clicker, "menu.jobChange.down", pName);
+                clicker.closeInventory();
+                break;
         }
     }
 

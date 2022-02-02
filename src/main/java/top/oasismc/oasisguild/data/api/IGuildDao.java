@@ -33,6 +33,7 @@ public interface IGuildDao {
     //update
     boolean changePvp(String gName, int pvp);
     boolean changeLoc(String gName, Location loc);
+    boolean changeMemberJob(String gName, String pName, int newJob);
     boolean levelUp(String gName, int oldLevel);
 
     void guildRename(String gName, String newName);

@@ -78,6 +78,11 @@ public class SqliteGuildDao implements IGuildDao {
     }
 
     @Override
+    public boolean changeMemberJob(String gName, String pName, int newJob) {
+        return false;
+    }
+
+    @Override
     public boolean levelUp(String gName, int oldLevel) {
         return false;
     }
