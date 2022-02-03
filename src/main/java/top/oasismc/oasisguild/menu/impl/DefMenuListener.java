@@ -256,7 +256,9 @@ public class DefMenuListener implements IMenuListener {
                 } else if (pJob < LEADER) {
                     newJob = 299;
                 } else {
-                    newJob = 299;
+                    sendMsg(clicker, "menu.jobChange.highest");
+                    clicker.closeInventory();
+                    return;
                 }
                 if (newJob >= clickerJob) {
                     sendMsg(clicker, "noPerm");

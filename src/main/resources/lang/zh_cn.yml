@@ -90,6 +90,7 @@ messages:
       up: '&a提升%player%官职成功'
       down: '&a降低%player%官职成功'
       lowest: '&c%player%的官职已经不能再降低了'
+      highest: '&c%player%的官职已经不能再提升了'
 job:
   299: '会长'
   249: '副会长'
