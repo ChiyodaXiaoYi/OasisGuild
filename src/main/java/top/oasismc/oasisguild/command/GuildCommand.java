@@ -18,7 +18,7 @@ import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
-public class GuildCommand implements TabExecutor {
+public final class GuildCommand implements TabExecutor {
 
     private final GuildCommandManager guildCommandManager;
     private final List<String> subCommandList;

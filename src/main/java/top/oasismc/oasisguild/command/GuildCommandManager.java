@@ -19,7 +19,7 @@ import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.job.Jobs.*;
 
-public class GuildCommandManager {
+public final class GuildCommandManager {
 
     public void openGuildListMenu(CommandSender sender, int page) {
         Inventory inventory = getDrawer().drawGuildListMenu(page);

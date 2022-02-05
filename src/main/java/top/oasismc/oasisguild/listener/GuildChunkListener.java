@@ -26,7 +26,7 @@ import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg4replaceOtherStr;
 
-public class GuildChunkListener implements Listener {
+public final class GuildChunkListener implements Listener {
 
     private static final GuildChunkListener LISTENER;
 

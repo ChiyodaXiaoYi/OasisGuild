@@ -2,7 +2,7 @@ package top.oasismc.oasisguild.util;
 
 import java.util.List;
 
-public class LoreTool {
+public final class LoreTool {
 
     public static boolean hasLore(String need, List<String> lore) {
         if (lore == null)

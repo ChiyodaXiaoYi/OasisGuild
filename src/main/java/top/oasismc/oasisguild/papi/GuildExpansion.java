@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 
-public class GuildExpansion extends PlaceholderExpansion {
+public final class GuildExpansion extends PlaceholderExpansion {
 
     private final Map<String, Function<String, String>> papiMap;
     private static final GuildExpansion expansion;

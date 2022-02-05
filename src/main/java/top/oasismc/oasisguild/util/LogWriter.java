@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
-public class LogWriter implements Listener {
+public final class LogWriter implements Listener {
 
     private BufferedWriter writer;
     private int logNum;

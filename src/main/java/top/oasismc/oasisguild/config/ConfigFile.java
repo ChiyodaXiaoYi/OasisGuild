@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
-public class ConfigFile {
+public final class ConfigFile {
 
     private final File configFile;
     private FileConfiguration config;

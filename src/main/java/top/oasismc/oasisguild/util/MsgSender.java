@@ -9,7 +9,7 @@ import top.oasismc.oasisguild.data.objects.Guild;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
 import static top.oasismc.oasisguild.OasisGuild.*;
 
-public class MsgSender {
+public final class MsgSender {
 
     private ConfigFile langFile;
     private static final MsgSender MSG_SENDER;

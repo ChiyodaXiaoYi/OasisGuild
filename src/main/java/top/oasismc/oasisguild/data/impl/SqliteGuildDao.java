@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SqliteGuildDao implements IGuildDao {
+public final class SqliteGuildDao implements IGuildDao {
     @Override
     public List<Guild> getGuilds() {
         return null;

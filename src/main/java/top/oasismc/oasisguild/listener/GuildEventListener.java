@@ -20,7 +20,7 @@ import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.util.MsgSender.color;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
-public class GuildEventListener implements Listener {
+public final class GuildEventListener implements Listener {
 
     private static final GuildEventListener listener;
 

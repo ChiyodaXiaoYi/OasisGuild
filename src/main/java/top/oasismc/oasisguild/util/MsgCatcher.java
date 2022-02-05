@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
-public class MsgCatcher implements Listener {
+public final class MsgCatcher implements Listener {
 
     private final Map<UUID, Boolean> catchSwitchMap;
     private final Map<UUID, Consumer<String>> catchFunMap;

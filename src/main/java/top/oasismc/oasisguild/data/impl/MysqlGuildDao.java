@@ -24,7 +24,7 @@ import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.util.LogWriter.getLogWriter;
 import static top.oasismc.oasisguild.job.Jobs.*;
 
-public class MysqlGuildDao implements IGuildDao {
+public final class MysqlGuildDao implements IGuildDao {
 
     @Override
     public List<Guild> getGuilds() {

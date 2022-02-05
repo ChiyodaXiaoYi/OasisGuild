@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import static top.oasismc.oasisguild.data.DataHandler.*;
 
-public class GuildPvpListener implements Listener {
+public final class GuildPvpListener implements Listener {
 
     private static final GuildPvpListener listener;
 
