@@ -26,7 +26,6 @@ public final class GuildCommand implements TabExecutor {
     private final Map<String, BiConsumer<CommandSender, String[]>> subCommandMap;
     private final Map<String, Supplier<List<String>>> subCommandArgListMap;
 
-
     private static final GuildCommand guildCommand;
 
     static {
