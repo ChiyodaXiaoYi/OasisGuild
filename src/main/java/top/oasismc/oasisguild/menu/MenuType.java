@@ -4,5 +4,6 @@ public enum MenuType {
     INFO,
     LIST,
     EDIT,
-    APPLY
+    APPLY,
+    BASIC
 }

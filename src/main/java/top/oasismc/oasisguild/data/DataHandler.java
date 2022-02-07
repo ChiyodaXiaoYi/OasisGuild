@@ -115,6 +115,10 @@ public class DataHandler extends BukkitRunnable {
         return guildApplyListMap;
     }
 
+    public List<GuildApply> getGuildApplyList(String gName) {
+        return guildApplyListMap.getOrDefault(gName, new ArrayList<>());
+    }
+
     public IGuildDao getGuildDao() {
         return guildDao;
     }

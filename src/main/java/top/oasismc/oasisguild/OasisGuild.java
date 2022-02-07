@@ -8,6 +8,7 @@ import top.oasismc.oasisguild.listener.GuildChunkListener;
 import top.oasismc.oasisguild.listener.GuildPvpListener;
 import top.oasismc.oasisguild.listener.GuildEventListener;
 import top.oasismc.oasisguild.menu.impl.DefMenuListener;
+import top.oasismc.oasisguild.menu.impl.GuildMenuFactory;
 import top.oasismc.oasisguild.papi.GuildExpansion;
 import top.oasismc.oasisguild.util.LogWriter;
 import top.oasismc.oasisguild.util.MsgCatcher;
@@ -20,9 +21,11 @@ import static top.oasismc.oasisguild.util.MsgSender.info;
 public final class OasisGuild extends JavaPlugin {
 
     private static OasisGuild plugin;
+    private GuildMenuFactory menuFactory;
 
     public OasisGuild() {
         plugin = this;
+        menuFactory = GuildMenuFactory.getFactory();
     }
 
     @Override
@@ -74,6 +77,7 @@ public final class OasisGuild extends JavaPlugin {
 
     private void loadListeners() {
         Bukkit.getPluginManager().registerEvents(DefMenuListener.getListener(), this);
+        Bukkit.getPluginManager().registerEvents(menuFactory, this);
         Bukkit.getPluginManager().registerEvents(GuildPvpListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(GuildChunkListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
@@ -95,5 +99,8 @@ public final class OasisGuild extends JavaPlugin {
         }
     }
 
+    public GuildMenuFactory getMenuFactory() {
+        return menuFactory;
+    }
 
 }

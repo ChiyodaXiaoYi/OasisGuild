@@ -35,4 +35,21 @@ public class MenuHolder implements InventoryHolder {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MenuHolder)) return false;
+
+        MenuHolder holder = (MenuHolder) o;
+
+        if (!inventory.equals(holder.inventory)) return false;
+        return type == holder.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = inventory.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 }

@@ -1,23 +1,25 @@
 package top.oasismc.oasisguild.menu.api;
 
 import org.bukkit.inventory.Inventory;
+import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.menu.MenuType;
-import top.oasismc.oasisguild.menu.impl.GuildMenuIcon;
 
 import java.util.Map;
 
 public interface IGuildMenu {
 
-    Inventory draw();
+    Inventory draw(int page, String guildName);
 
-    GuildMenuIcon getIcon(int slot);
+    IGuildMenuIcon getIcon(int slot);
 
-    Map<Integer, GuildMenuIcon> getIconMap();
+    Map<Integer, IGuildMenuIcon> getIconMap();
 
-    boolean regIcon(IGuildMenuIcon icon, boolean force);
+    boolean regIcon(int slot, IGuildMenuIcon icon, boolean force);
 
-    boolean regIcon(IGuildMenuIcon icon);
+    boolean regIcon(int slot, IGuildMenuIcon icon);
 
     MenuType getMenuType();
+
+    MenuHolder getMenuHolder();
 
 }

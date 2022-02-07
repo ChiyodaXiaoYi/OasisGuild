@@ -5,12 +5,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.factory.GuildFactory;
-import top.oasismc.oasisguild.job.Jobs;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.menu.MenuType;
 import top.oasismc.oasisguild.menu.api.IMenuListener;
@@ -23,7 +21,7 @@ import java.util.function.Consumer;
 import static top.oasismc.oasisguild.command.GuildCommand.getGuildCommand;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.factory.GuildFactory.*;
-import static top.oasismc.oasisguild.menu.impl.DefMenuDrawer.getDrawer;
+import static top.oasismc.oasisguild.menu.impl.GuildMenuFactory.getFactory;
 import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.job.Jobs.*;
@@ -84,9 +82,9 @@ public class DefMenuListener implements IMenuListener {
                 }
             }
         } else if (event.getSlot() == 46) {
-            getDrawer().drawGuildListMenu(0);
+            getFactory().drawGuildListMenu(0);
         } else if (event.getSlot() == 52) {
-            getDrawer().drawGuildListMenu(0);
+            getFactory().drawGuildListMenu(0);
         } else if (event.getSlot() == 49) {
             event.getWhoClicked().closeInventory();
             if (getDataHandler().getGuildNameByPlayer(event.getWhoClicked().getName()) != null) {
@@ -129,7 +127,7 @@ public class DefMenuListener implements IMenuListener {
                 if (pJob > VICE_LEADER)
                     handleGuildMemberAction(event.getClick(), name, (Player) event.getWhoClicked(), pJob);
             } else if (clickSlot == inventorySize - 8) {
-                event.getWhoClicked().openInventory(getDrawer().drawGuildEditMenu(gName));
+                event.getWhoClicked().openInventory(getFactory().drawGuildEditMenu(gName));
             } else if (clickSlot == inventorySize - 2) {
                 if (pJob >= LEADER)
                     getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
@@ -173,7 +171,7 @@ public class DefMenuListener implements IMenuListener {
                 break;//待完成
             case 13:
                 if (pJob >= ADVANCED)
-                    event.getWhoClicked().openInventory(getDrawer().drawGuildApplyListMenu(gName));
+                    event.getWhoClicked().openInventory(getFactory().drawGuildApplyListMenu((Player) event.getWhoClicked(), gName));
                 else {
                     sendMsg(event.getWhoClicked(), "noPerm");
                     event.getWhoClicked().closeInventory();
