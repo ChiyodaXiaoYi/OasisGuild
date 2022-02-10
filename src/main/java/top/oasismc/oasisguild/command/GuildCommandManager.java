@@ -15,14 +15,14 @@ import java.util.List;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.factory.GuildFactory.playerQuitGuild;
-import static top.oasismc.oasisguild.menu.impl.GuildMenuFactory.getFactory;
+import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.job.Jobs.*;
 
 public final class GuildCommandManager {
 
     public void openGuildListMenu(CommandSender sender, int page) {
-        Inventory inventory = getFactory().drawGuildListMenu(page);
+        Inventory inventory = getMenuManager().drawGuildListMenu((Player) sender, page);
         ((Player) sender).openInventory(inventory);
     }
 
@@ -38,8 +38,7 @@ public final class GuildCommandManager {
     }
 
     public void openGuildInfoMenu(CommandSender sender, String guildName) {
-        List<GuildMember> players = getDataHandler().getGuildMembers().getOrDefault(guildName, new ArrayList<>());
-        Inventory inventory = getFactory().drawGuildInfoMenu(players, guildName, (Player) sender);
+        Inventory inventory = getMenuManager().drawGuildInfoMenu(guildName, (Player) sender);
         ((Player) sender).openInventory(inventory);
     }
 

@@ -2,25 +2,27 @@ package top.oasismc.oasisguild.menu.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
 import top.oasismc.oasisguild.data.objects.GuildApply;
+import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
 import top.oasismc.oasisguild.menu.MenuHolder;
-import top.oasismc.oasisguild.menu.MenuType;
-import top.oasismc.oasisguild.menu.api.IGuildMenuIcon;
+import top.oasismc.oasisguild.util.MsgSender;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
+import static top.oasismc.oasisguild.factory.GuildFactory.playerJoinGuild;
+import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.util.MsgSender.color;
+import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 
-public class GuildApplyMenu extends BasicGuildMenu {
+public final class GuildApplyMenu extends BasicGuildMenu {
 
     private GuildApplyMenu(MenuHolder menuHolder) {
         super(menuHolder);
@@ -31,8 +33,8 @@ public class GuildApplyMenu extends BasicGuildMenu {
     }
 
     @Override
-    public Inventory draw(int page, String guildName) {
-        ConfigFile menuFile = getPlugin().getMenuFactory().getMenuFile();
+    public Inventory draw(int page, String guildName, Player opener) {
+        ConfigFile menuFile = getMenuManager().getMenuFile();
         String title = menuFile.getConfig().getString("guildApplyList.title", "%guild%");
         title = title.replace("%guild%", guildName);
         Inventory inventory = Bukkit.createInventory(getMenuHolder(), 54, color(title));
@@ -44,11 +46,45 @@ public class GuildApplyMenu extends BasicGuildMenu {
     }
 
     private void regIcons(int page, String guildName) {
-        getIconMap().clear();
-        ConfigFile menuFile = getPlugin().getMenuFactory().getMenuFile();
+        regApplyIcons(page, guildName);
+        ItemStack frameIcon = GuildMenuManager.getNameOnlyItem("guildApplyList.frame.", "GRAY_STAINED_GLASS_PANE");
+        int []frameSlot = {45, 47, 48, 49, 50, 51, 53};
+        for (int i : frameSlot)
+            regIcon(i, frameIcon);
+        ItemStack previousIcon = GuildMenuManager.getNameOnlyItem("guildApplyList.previous.", "PRISMARINE_SHARD");
+        regIcon(46, new GuildMenuIcon(previousIcon, event -> {
+            event.getWhoClicked().closeInventory();
+        }));
+        ItemStack nextIcon = GuildMenuManager.getNameOnlyItem("guildApplyList.next.", "PRISMARINE_SHARD");
+        regIcon(52, new GuildMenuIcon(nextIcon, event -> {
+            event.getWhoClicked().closeInventory();
+        }));
+    }
+
+    private void regApplyIcons(int page, String guildName) {
+        ConfigFile menuFile = getMenuManager().getMenuFile();
         Consumer<InventoryClickEvent> action4Apply = event -> {
-            int slot = event.getSlot();
-            //TODO
+            Player clicker = (Player) event.getWhoClicked();
+            String gName = getDataHandler().getGuildNameByPlayer(clicker.getName());
+            String clickedMember = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&").substring(2);
+            if (event.isLeftClick()) {
+                int memberNum = getDataHandler().getGuildMembers().get(gName).size();
+                int maxNum = getDataHandler().getGuildByName(gName).getMaxMember();
+                if (memberNum < maxNum) {
+                    playerJoinGuild(gName, clickedMember, PlayerJoinGuildEvent.JoinReason.ACCEPT);
+                    MsgSender.sendMsg4replacePlayer(clicker, "menu.accept.admin", clickedMember);
+                    if (Bukkit.getPlayer(clickedMember) != null && Bukkit.getPlayer(clickedMember).isOnline())
+                        MsgSender.sendMsg4replaceGuild(Bukkit.getPlayer(clickedMember), "menu.accept.member", getDataHandler().getGuildByName(gName));
+                } else {
+                    sendMsg(clicker, "menu.accept.full");
+                }
+            } else {
+                getDataHandler().getGuildDao().handleApply(gName, "deny", clickedMember);
+                MsgSender.sendMsg4replacePlayer(clicker, "menu.deny.admin", clickedMember);
+                if (Bukkit.getPlayer(clickedMember) != null && Bukkit.getPlayer(clickedMember).isOnline())
+                    MsgSender.sendMsg4replaceGuild(Bukkit.getPlayer(clickedMember), "menu.deny.member", getDataHandler().getGuildByName(gName));
+            }
+            event.getWhoClicked().closeInventory();
         };
         List<GuildApply> applyList = getDataHandler().getGuildApplyList(guildName);
         int maxPage = applyList.size() / 45 + 1;
@@ -79,48 +115,6 @@ public class GuildApplyMenu extends BasicGuildMenu {
             icon.setItemMeta(meta);
             regIcon(i, new GuildMenuIcon(icon, action4Apply));
         }
-        ItemStack frameIcon = GuildMenuFactory.getNameOnlyItem("guildApplyList.frame.", "GRAY_STAINED_GLASS_PANE");
-        int []frameSlot = {45, 47, 48, 49, 50, 51, 53};
-        for (int i : frameSlot)
-            regIcon(i, new GuildMenuIcon(frameIcon, event -> {}));
-        ItemStack previousIcon = GuildMenuFactory.getNameOnlyItem("guildApplyList.previous.", "PRISMARINE_SHARD");
-        regIcon(46, new GuildMenuIcon(previousIcon, event -> {
-            //TODO
-        }));
-        ItemStack nextIcon = GuildMenuFactory.getNameOnlyItem("guildApplyList.next.", "PRISMARINE_SHARD");
-        regIcon(52, new GuildMenuIcon(nextIcon, event -> {
-            //TODO
-        }));
-    }
-
-    @Override
-    public IGuildMenuIcon getIcon(int slot) {
-        return getIconMap().get(slot);
-    }
-
-    @Override
-    public Map<Integer, IGuildMenuIcon> getIconMap() {
-        return super.getIconMap();
-    }
-
-    @Override
-    public boolean regIcon(int slot, IGuildMenuIcon icon, boolean force) {
-        return super.regIcon(slot, icon, force);
-    }
-
-    @Override
-    public boolean regIcon(int slot, IGuildMenuIcon icon) {
-        return super.regIcon(slot, icon);
-    }
-
-    @Override
-    public MenuType getMenuType() {
-        return getMenuHolder().getType();
-    }
-
-    @Override
-    public MenuHolder getMenuHolder() {
-        return super.getMenuHolder();
     }
 
 }

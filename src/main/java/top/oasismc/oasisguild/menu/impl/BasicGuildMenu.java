@@ -2,11 +2,10 @@ package top.oasismc.oasisguild.menu.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import top.oasismc.oasisguild.config.ConfigFile;
 import top.oasismc.oasisguild.menu.MenuHolder;
-import top.oasismc.oasisguild.menu.MenuType;
 import top.oasismc.oasisguild.menu.api.IGuildMenu;
 import top.oasismc.oasisguild.menu.api.IGuildMenuIcon;
 
@@ -24,7 +23,7 @@ public class BasicGuildMenu implements IGuildMenu {
     }
 
     @Override
-    public Inventory draw(int page, String guildName) {
+    public Inventory draw(int page, String guildName, Player opener) {
         return Bukkit.createInventory(menuHolder, 54);
     }
 
@@ -58,9 +57,7 @@ public class BasicGuildMenu implements IGuildMenu {
     }
 
     @Override
-    public MenuType getMenuType() {
-        return menuHolder.getType();
-    }
+    public boolean regIcon(int slot, ItemStack icon) { return regIcon(slot, new GuildMenuIcon(icon, event -> {})); }
 
     @Override
     public MenuHolder getMenuHolder() {

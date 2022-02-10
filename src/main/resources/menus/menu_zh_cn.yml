@@ -65,9 +65,6 @@ guildList:
     name: '&a创建新公会'
 guildEdit:
   title: '%guild% &3&l公会管理'
-  frame:
-    material: 'GRAY_STAINED_GLASS_PANE'
-    name: '&7公会管理'
   rename:
     material: 'NAME_TAG'
     name: '&e公会重命名'

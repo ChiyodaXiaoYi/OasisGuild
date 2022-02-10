@@ -108,21 +108,6 @@ public class GuildFactory {
         }
     }
 
-    public static void playerTpGuildLoc(Player player) {
-        String guildName = getDataHandler().getGuildNameByPlayer(player.getName());
-        if (guildName == null)
-            return;
-        Location loc = getDataHandler().getGuildLocationMap().get(guildName);
-        PlayerTpGuildLocEvent event = createPlayerTpGuildLocEvent(guildName, player.getName(), loc);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return;
-        Player tpPlayer = Bukkit.getPlayer(event.getPlayer());
-        if (tpPlayer == null)
-            return;
-        tpPlayer.teleport(event.getLoc());
-    }
-
     //返回是否修改成功
     public static boolean changeGuildLoc(String guildName, Location loc) {
         Location oldLoc = getDataHandler().getGuildLocationMap().get(guildName);

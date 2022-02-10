@@ -1,14 +1,14 @@
 package top.oasismc.oasisguild;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.command.GuildCommand;
 import top.oasismc.oasisguild.data.util.MysqlTool;
 import top.oasismc.oasisguild.listener.GuildChunkListener;
-import top.oasismc.oasisguild.listener.GuildPvpListener;
 import top.oasismc.oasisguild.listener.GuildEventListener;
-import top.oasismc.oasisguild.menu.impl.DefMenuListener;
-import top.oasismc.oasisguild.menu.impl.GuildMenuFactory;
+import top.oasismc.oasisguild.listener.GuildPvpListener;
+import top.oasismc.oasisguild.menu.impl.GuildMenuManager;
 import top.oasismc.oasisguild.papi.GuildExpansion;
 import top.oasismc.oasisguild.util.LogWriter;
 import top.oasismc.oasisguild.util.MsgCatcher;
@@ -21,11 +21,9 @@ import static top.oasismc.oasisguild.util.MsgSender.info;
 public final class OasisGuild extends JavaPlugin {
 
     private static OasisGuild plugin;
-    private GuildMenuFactory menuFactory;
 
     public OasisGuild() {
         plugin = this;
-        menuFactory = GuildMenuFactory.getFactory();
     }
 
     @Override
@@ -76,8 +74,7 @@ public final class OasisGuild extends JavaPlugin {
     }
 
     private void loadListeners() {
-        Bukkit.getPluginManager().registerEvents(DefMenuListener.getListener(), this);
-        Bukkit.getPluginManager().registerEvents(menuFactory, this);
+        Bukkit.getPluginManager().registerEvents(GuildMenuManager.getMenuManager(), this);
         Bukkit.getPluginManager().registerEvents(GuildPvpListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(GuildChunkListener.getListener(), this);
         Bukkit.getPluginManager().registerEvents(LogWriter.getLogWriter(), this);
@@ -86,8 +83,11 @@ public final class OasisGuild extends JavaPlugin {
     }
 
     private void loadCommands() {
-        Bukkit.getPluginCommand("guild").setExecutor(GuildCommand.getGuildCommand());
-        Bukkit.getPluginCommand("guild").setTabCompleter(GuildCommand.getGuildCommand());
+        PluginCommand guildCommand = Bukkit.getPluginCommand("guild");
+        if (guildCommand == null)
+            return;
+        guildCommand.setExecutor(GuildCommand.getGuildCommand());
+        guildCommand.setTabCompleter(GuildCommand.getGuildCommand());
     }
 
     public void loadStaticClasses() {
@@ -97,10 +97,6 @@ public final class OasisGuild extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public GuildMenuFactory getMenuFactory() {
-        return menuFactory;
     }
 
 }

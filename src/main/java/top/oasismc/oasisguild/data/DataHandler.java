@@ -27,7 +27,7 @@ public class DataHandler extends BukkitRunnable {
     private Map<String, Location> guildLocationMap;
     private Map<String, List<GuildApply>> guildApplyListMap;
     private Map<String, Set<GuildChunk>> guildChunkSetMap;
-    private Map<String, Supplier<IGuildDao>> guildDataImplMap;
+    private final Map<String, Supplier<IGuildDao>> guildDataImplMap;
     private IGuildDao guildDao;
     private static DataHandler dataHandler;
 
@@ -171,6 +171,7 @@ public class DataHandler extends BukkitRunnable {
         for (GuildMember player : playerList) {
             if (player.getPlayerName().equals(pName)) {
                 job = player.getJob();
+                break;
             }
         }
         return job;

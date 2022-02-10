@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import static top.oasismc.oasisguild.OasisGuild.*;
 import static top.oasismc.oasisguild.data.DataHandler.*;
 import static top.oasismc.oasisguild.data.util.MysqlTool.getMysqlTool;
-import static top.oasismc.oasisguild.menu.impl.GuildMenuFactory.getFactory;
+import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.util.MsgSender.getMsgSender;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
@@ -161,7 +161,7 @@ public final class GuildCommand implements TabExecutor {
     private void reloadPlugin() {
         getPlugin().reloadConfig();
         getMsgSender().getLangFile().reloadConfig();
-        getFactory().getMenuFile().reloadConfig();
+        getMenuManager().getMenuFile().reloadConfig();
         getMysqlTool().setConnectDBInfo();
         getCatcher().reloadCatcher();
     }
