@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
 import top.oasismc.oasisguild.data.DataHandler;
-import top.oasismc.oasisguild.data.objects.Guild;
+import top.oasismc.oasisguild.objects.api.IGuild;
 import top.oasismc.oasisguild.menu.MenuHolder;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public final class GuildListMenu extends BasicGuildMenu {
     public Inventory draw(int page, String guildName, Player opener) {
         ConfigFile menuFile = getMenuManager().getMenuFile();
         String title = menuFile.getConfig().getString("guildList.title", "Guild List");
-        List<Guild> guilds = DataHandler.getDataHandler().getGuildList();
+        List<IGuild> guilds = DataHandler.getDataHandler().getGuildList();
         Inventory inventory = Bukkit.createInventory(getMenuHolder(), 54, color(title));
         regIcons(guilds, page, menuFile);
         for (Integer i : getIconMap().keySet()) {
@@ -43,7 +43,7 @@ public final class GuildListMenu extends BasicGuildMenu {
         return inventory;
     }
 
-    private void regIcons(List<Guild> guilds, int page, ConfigFile menuFile) {
+    private void regIcons(List<IGuild> guilds, int page, ConfigFile menuFile) {
         ItemStack frame = getNameOnlyItem("guildList.frame.", "GRAY_STAINED_GLASS_PANE");
         int[] frameSlotList = {0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 47, 48, 50, 51, 53};
         for (int slot : frameSlotList) {

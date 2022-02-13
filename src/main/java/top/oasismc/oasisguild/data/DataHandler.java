@@ -7,11 +7,12 @@ import top.oasismc.oasisguild.OasisGuild;
 import top.oasismc.oasisguild.data.api.IGuildDao;
 import top.oasismc.oasisguild.data.impl.MysqlGuildDao;
 import top.oasismc.oasisguild.data.impl.SqliteGuildDao;
-import top.oasismc.oasisguild.data.objects.Guild;
-import top.oasismc.oasisguild.data.objects.GuildApply;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
-import top.oasismc.oasisguild.data.objects.GuildMember;
-import top.oasismc.oasisguild.data.util.MysqlTool;
+import top.oasismc.oasisguild.objects.api.IGuild;
+import top.oasismc.oasisguild.objects.api.IGuildApply;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.api.IGuildMember;
+import top.oasismc.oasisguild.objects.impl.Guild;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -22,11 +23,11 @@ import static top.oasismc.oasisguild.OasisGuild.getPlugin;
 
 public class DataHandler extends BukkitRunnable {
 
-    private List<Guild> guildList;
-    private Map<String, List<GuildMember>> guildMembers;
+    private List<IGuild> guildList;
+    private Map<String, List<IGuildMember>> guildMembers;
     private Map<String, Location> guildLocationMap;
-    private Map<String, List<GuildApply>> guildApplyListMap;
-    private Map<String, Set<GuildChunk>> guildChunkSetMap;
+    private Map<String, List<IGuildApply>> guildApplyListMap;
+    private Map<String, Set<IGuildChunk>> guildChunkSetMap;
     private final Map<String, Supplier<IGuildDao>> guildDataImplMap;
     private IGuildDao guildDao;
     private static DataHandler dataHandler;
@@ -99,11 +100,11 @@ public class DataHandler extends BukkitRunnable {
         this.runTaskTimerAsynchronously(OasisGuild.getPlugin(), interval * 20L, interval * 20L);
     }
 
-    public List<Guild> getGuildList() {
+    public List<IGuild> getGuildList() {
         return guildList;
     }
 
-    public Map<String, List<GuildMember>> getGuildMembers() {
+    public Map<String, List<IGuildMember>> getGuildMembers() {
         return guildMembers;
     }
 
@@ -111,11 +112,11 @@ public class DataHandler extends BukkitRunnable {
         return guildLocationMap;
     }
 
-    public Map<String, List<GuildApply>> getGuildApplyListMap() {
+    public Map<String, List<IGuildApply>> getGuildApplyListMap() {
         return guildApplyListMap;
     }
 
-    public List<GuildApply> getGuildApplyList(String gName) {
+    public List<IGuildApply> getGuildApplyList(String gName) {
         return guildApplyListMap.getOrDefault(gName, new ArrayList<>());
     }
 
@@ -126,9 +127,9 @@ public class DataHandler extends BukkitRunnable {
     @Nullable
     public String getGuildNameByPlayer(String pName) {
         String guildName = null;
-        for (Guild guild : guildList) {
+        for (IGuild guild : guildList) {
             boolean found = false;
-            for (GuildMember player : guildMembers.get(guild.getGuildName())) {
+            for (IGuildMember player : guildMembers.get(guild.getGuildName())) {
                 if (player.getPlayerName().equals(pName)) {
                     guildName = guild.getGuildName();
                     found = true;
@@ -141,8 +142,8 @@ public class DataHandler extends BukkitRunnable {
         return guildName;
     }
 
-    public Guild getGuildByName(String guildName) {
-        for (Guild guild : guildList) {
+    public IGuild getGuildByName(String guildName) {
+        for (IGuild guild : guildList) {
             if (guild.getGuildName().equals(guildName)) {
                 return guild;
             }
@@ -167,8 +168,8 @@ public class DataHandler extends BukkitRunnable {
 
     public int getPlayerJob(String gName, String pName) {
         int job = 0;
-        List<GuildMember> playerList = getGuildMembers().get(gName);
-        for (GuildMember player : playerList) {
+        List<IGuildMember> playerList = getGuildMembers().get(gName);
+        for (IGuildMember player : playerList) {
             if (player.getPlayerName().equals(pName)) {
                 job = player.getJob();
                 break;
@@ -179,13 +180,13 @@ public class DataHandler extends BukkitRunnable {
 
     public List<String> getGuildNameList() {
         List<String> list = new ArrayList<>();
-        for (Guild guild : getGuildList()) {
+        for (IGuild guild : getGuildList()) {
             list.add(guild.getGuildName());
         }
         return list;
     }
 
-    public Set<GuildChunk> getGuildChunkSet(String guildName) {
+    public Set<IGuildChunk> getGuildChunkSet(String guildName) {
         return guildChunkSetMap.getOrDefault(guildName, new HashSet<>());
     }
 }

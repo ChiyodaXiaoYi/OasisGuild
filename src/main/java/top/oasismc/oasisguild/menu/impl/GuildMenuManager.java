@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
 import top.oasismc.oasisguild.data.DataHandler;
-import top.oasismc.oasisguild.data.objects.Guild;
+import top.oasismc.oasisguild.objects.api.IGuild;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.menu.api.IGuildMenu;
 
@@ -112,7 +112,7 @@ public class GuildMenuManager implements Listener {
         return itemStack;
     }
 
-    public static String replaceOnGuild(String str, Guild guild) {
+    public static String replaceOnGuild(String str, IGuild guild) {
         int guildMemberNum = DataHandler.getDataHandler().getGuildMembers().get(guild.getGuildName()).size();
         Location gLoc = getDataHandler().getGuildLocationMap().get(guild.getGuildName());
         str = str.replace("%desc%", guild.getDesc());

@@ -2,10 +2,11 @@ package top.oasismc.oasisguild.data.impl;
 
 import org.bukkit.Location;
 import top.oasismc.oasisguild.data.api.IGuildDao;
-import top.oasismc.oasisguild.data.objects.Guild;
-import top.oasismc.oasisguild.data.objects.GuildApply;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
-import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.objects.api.IGuild;
+import top.oasismc.oasisguild.objects.api.IGuildApply;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.api.IGuildMember;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
 
 import java.util.List;
 import java.util.Map;
@@ -13,27 +14,27 @@ import java.util.Set;
 
 public final class SqliteGuildDao implements IGuildDao {
     @Override
-    public List<Guild> getGuilds() {
+    public List<IGuild> getGuilds() {
         return null;
     }
 
     @Override
-    public Map<String, List<GuildMember>> getGuildMembers(List<Guild> guildList) {
+    public Map<String, List<IGuildMember>> getGuildMembers(List<IGuild> guildList) {
         return null;
     }
 
     @Override
-    public Map<String, Location> getGuildLocationMap(List<Guild> guildList) {
+    public Map<String, Location> getGuildLocationMap(List<IGuild> guildList) {
         return null;
     }
 
     @Override
-    public Map<String, List<GuildApply>> getGuildApplyListMap(List<Guild> guildList) {
+    public Map<String, List<IGuildApply>> getGuildApplyListMap(List<IGuild> guildList) {
         return null;
     }
 
     @Override
-    public Map<String, Set<GuildChunk>> getGuildChunkSetMap(List<Guild> guildList) {
+    public Map<String, Set<IGuildChunk>> getGuildChunkSetMap(List<IGuild> guildList) {
         return null;
     }
 
@@ -48,7 +49,7 @@ public final class SqliteGuildDao implements IGuildDao {
     }
 
     @Override
-    public int addGuildChunk(String gName, List<GuildChunk> chunkList) {
+    public int addGuildChunk(String gName, List<IGuildChunk> chunkList) {
         return 0;
     }
 

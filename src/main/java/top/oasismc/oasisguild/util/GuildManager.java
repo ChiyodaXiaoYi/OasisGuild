@@ -1,10 +1,11 @@
-package top.oasismc.oasisguild.factory;
+package top.oasismc.oasisguild.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
 import top.oasismc.oasisguild.event.guild.*;
 import top.oasismc.oasisguild.event.player.*;
 
@@ -21,12 +22,11 @@ import static top.oasismc.oasisguild.event.guild.GuildLevelUpEvent.createGuildLe
 import static top.oasismc.oasisguild.event.guild.GuildLocChangeEvent.createGuildLocChangeEvent;
 import static top.oasismc.oasisguild.event.guild.GuildPvpChangeEvent.createGuildPvpChangeEvent;
 import static top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
-import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
 import static top.oasismc.oasisguild.event.player.PlayerJobChangeEvent.createPlayerJobChangeEvent;
 import static top.oasismc.oasisguild.util.MsgSender.color;
 import static top.oasismc.oasisguild.job.Jobs.*;
 
-public class GuildFactory {
+public class GuildManager {
 
     private static final Map<String, Boolean> disbandGuildConfirmMap;
 
@@ -184,7 +184,7 @@ public class GuildFactory {
     }
 
     //返回状态码，为2则被取消，0为正常
-    public static void addGuildChunks(String guildName, List<GuildChunk> chunkList) {
+    public static void addGuildChunks(String guildName, List<IGuildChunk> chunkList) {
         GuildAddChunkEvent event = createGuildAddChunkEvent(guildName, chunkList);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())

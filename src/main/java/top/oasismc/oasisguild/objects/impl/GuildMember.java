@@ -1,6 +1,6 @@
-package top.oasismc.oasisguild.data.objects;
+package top.oasismc.oasisguild.objects.impl;
 
-public class GuildMember {
+public class GuildMember implements top.oasismc.oasisguild.objects.api.IGuildMember {
 
     private final String playerName;
     private int job;
@@ -10,10 +10,12 @@ public class GuildMember {
         this.job = job;
     }
 
+    @Override
     public String getPlayerName() {
         return playerName;
     }
 
+    @Override
     public int getJob() {
         return job;
     }

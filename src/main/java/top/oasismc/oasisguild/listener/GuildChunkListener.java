@@ -15,7 +15,8 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
 import top.oasismc.oasisguild.util.MsgSender;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public final class GuildChunkListener implements Listener {
     }
 
     private final Map<UUID, Boolean> chunkSelSwitchMap;
-    private final Map<String, List<GuildChunk>> selChunkMap;
+    private final Map<String, List<IGuildChunk>> selChunkMap;
 
     public static GuildChunkListener getListener() {
         return LISTENER;
@@ -55,7 +56,7 @@ public final class GuildChunkListener implements Listener {
         if (chunkSelSwitchMap.getOrDefault(event.getPlayer().getUniqueId(), false)) {
             event.setCancelled(true);
             Chunk chunk = Objects.requireNonNull(event.getClickedBlock()).getChunk();
-            GuildChunk gChunk = new GuildChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+            IGuildChunk gChunk = new GuildChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
             String gName = getDataHandler().getGuildNameByPlayer(event.getPlayer().getName());
 
             //检查该世界是否能创建公会区块
@@ -105,7 +106,7 @@ public final class GuildChunkListener implements Listener {
         }
     }
 
-    public Map<String, List<GuildChunk>> getSelChunkMap() {
+    public Map<String, List<IGuildChunk>> getSelChunkMap() {
         return selChunkMap;
     }
 
@@ -153,7 +154,10 @@ public final class GuildChunkListener implements Listener {
         String blockGName = getDataHandler().getChunkOwner(event.getBlock().getChunk());
         if (blockGName == null)
             return;
-        String playerGName = getDataHandler().getGuildNameByPlayer(event.getPlayer().getName());
+        Player player = event.getPlayer();
+        if (player == null)
+            return;
+        String playerGName = getDataHandler().getGuildNameByPlayer(player.getName());
         if (!blockGName.equals(playerGName)) {
             event.setCancelled(true);
             MsgSender.sendMsg4replaceGuild(event.getPlayer(), "chunk.use", getDataHandler().getGuildByName(blockGName));

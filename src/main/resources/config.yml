@@ -42,6 +42,10 @@ guildSettings:
     - 'world_nether'
     - 'world_the_end'
 
+guildBuffSettings:
+  periodSecond: 10
+
+
 conditions:
   #Conditions for creating a guild
   #创建公会的条件

@@ -13,8 +13,8 @@ import top.oasismc.oasisguild.menu.MenuHolder;
 
 import static top.oasismc.oasisguild.command.GuildCommand.getGuildCommand;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.factory.GuildFactory.changeGuildLoc;
-import static top.oasismc.oasisguild.factory.GuildFactory.changeGuildPvp;
+import static top.oasismc.oasisguild.util.GuildManager.changeGuildLoc;
+import static top.oasismc.oasisguild.util.GuildManager.changeGuildPvp;
 import static top.oasismc.oasisguild.job.Jobs.*;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getNameOnlyItem;

@@ -5,10 +5,14 @@ import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.oasismc.oasisguild.OasisGuild;
 import top.oasismc.oasisguild.data.api.IGuildDao;
-import top.oasismc.oasisguild.data.objects.Guild;
-import top.oasismc.oasisguild.data.objects.GuildApply;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
-import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.objects.api.IGuild;
+import top.oasismc.oasisguild.objects.api.IGuildApply;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.api.IGuildMember;
+import top.oasismc.oasisguild.objects.impl.Guild;
+import top.oasismc.oasisguild.objects.impl.GuildApply;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
+import top.oasismc.oasisguild.objects.impl.GuildMember;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,8 +31,8 @@ import static top.oasismc.oasisguild.job.Jobs.*;
 public final class MysqlGuildDao implements IGuildDao {
 
     @Override
-    public List<Guild> getGuilds() {
-        List<Guild> guilds = new ArrayList<>();
+    public List<IGuild> getGuilds() {
+        List<IGuild> guilds = new ArrayList<>();
         Connection conn = getMysqlTool().getConnection();
         PreparedStatement ps = null;
         try {
@@ -50,12 +54,12 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
-    public Map<String, List<GuildMember>> getGuildMembers(List<Guild> guildList) {
+    public Map<String, List<IGuildMember>> getGuildMembers(List<IGuild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, List<GuildMember>> guildMemberMap = new ConcurrentHashMap<>();
+        Map<String, List<IGuildMember>> guildMemberMap = new ConcurrentHashMap<>();
 
         for (int i = 0; i < guildList.size(); i++) {
-            List<GuildMember> players;
+            List<IGuildMember> players;
             PreparedStatement ps = null;
             try {
                 if (conn.isClosed())
@@ -80,7 +84,7 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
-    public Map<String, Location> getGuildLocationMap(List<Guild> guildList) {
+    public Map<String, Location> getGuildLocationMap(List<IGuild> guildList) {
         Connection conn = getMysqlTool().getConnection();
         Map<String, Location> guildLocationMap = new ConcurrentHashMap<>();
         
@@ -112,11 +116,11 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
-    public Map<String, List<GuildApply>> getGuildApplyListMap(List<Guild> guildList) {
+    public Map<String, List<IGuildApply>> getGuildApplyListMap(List<IGuild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, List<GuildApply>> applyListMap = new ConcurrentHashMap<>();
+        Map<String, List<IGuildApply>> applyListMap = new ConcurrentHashMap<>();
         for (int i = 0; i < guildList.size(); i++) {
-            List<GuildApply> applyList;
+            List<IGuildApply> applyList;
             PreparedStatement ps = null;
             try {
                 if (conn.isClosed())
@@ -138,12 +142,12 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
-    public Map<String, Set<GuildChunk>> getGuildChunkSetMap(List<Guild> guildList) {
+    public Map<String, Set<IGuildChunk>> getGuildChunkSetMap(List<IGuild> guildList) {
         Connection conn = getMysqlTool().getConnection();
-        Map<String, Set<GuildChunk>> guildChunkSetMap = new ConcurrentHashMap<>();
+        Map<String, Set<IGuildChunk>> guildChunkSetMap = new ConcurrentHashMap<>();
 
         for (int i = 0; i < guildList.size(); i++) {
-            Set<GuildChunk> chunkSet;
+            Set<IGuildChunk> chunkSet;
             PreparedStatement ps = null;
             try {
                 if (conn.isClosed())
@@ -169,7 +173,7 @@ public final class MysqlGuildDao implements IGuildDao {
         if (getDataHandler().getGuildByName(gName) == null) {
             canPut.set(1);
         }
-        List<GuildApply> guildApplyList = getDataHandler().getGuildApplyListMap().get(gName);
+        List<IGuildApply> guildApplyList = getDataHandler().getGuildApplyListMap().get(gName);
         if (guildApplyList != null) {
             guildApplyList.parallelStream().forEach(apply -> {
                 if (apply.getPName().equals(pName)) {
@@ -256,7 +260,7 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
-    public int addGuildChunk(String gName, List<GuildChunk> chunkList) {
+    public int addGuildChunk(String gName, List<IGuildChunk> chunkList) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -492,8 +496,8 @@ public final class MysqlGuildDao implements IGuildDao {
         }.runTaskAsynchronously(getPlugin());
     }
 
-    private List<GuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {
-        List<GuildApply> applyList = new ArrayList<>();
+    private List<IGuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {
+        List<IGuildApply> applyList = new ArrayList<>();
         if (resultSet.next()) {
             resultSet.first();
         } else {
@@ -510,8 +514,8 @@ public final class MysqlGuildDao implements IGuildDao {
         return applyList;
     }
 
-    private List<GuildMember> createPlayerList(ResultSet resultSet) throws SQLException {
-        List<GuildMember> players = new ArrayList<>();
+    private List<IGuildMember> createPlayerList(ResultSet resultSet) throws SQLException {
+        List<IGuildMember> players = new ArrayList<>();
         if (resultSet.next()) {
             resultSet.first();
         } else {
@@ -528,8 +532,8 @@ public final class MysqlGuildDao implements IGuildDao {
         return players;
     }
     
-    private List<Guild> createGuildList(ResultSet resultSet) throws SQLException {
-        List<Guild> guilds = new ArrayList<>();
+    private List<IGuild> createGuildList(ResultSet resultSet) throws SQLException {
+        List<IGuild> guilds = new ArrayList<>();
         if (resultSet.next()) {
             resultSet.first();
         } else {
@@ -554,8 +558,8 @@ public final class MysqlGuildDao implements IGuildDao {
         return guilds;
     }
 
-    private Set<GuildChunk> createGuildChunkSet(ResultSet resultSet) throws SQLException {
-        Set<GuildChunk> chunkSet = new HashSet<>();
+    private Set<IGuildChunk> createGuildChunkSet(ResultSet resultSet) throws SQLException {
+        Set<IGuildChunk> chunkSet = new HashSet<>();
         if (resultSet.next()) {
             resultSet.first();
         } else {

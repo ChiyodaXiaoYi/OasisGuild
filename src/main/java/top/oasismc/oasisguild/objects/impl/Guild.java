@@ -1,6 +1,8 @@
-package top.oasismc.oasisguild.data.objects;
+package top.oasismc.oasisguild.objects.impl;
 
-public class Guild {
+import top.oasismc.oasisguild.objects.api.IGuild;
+
+public class Guild implements IGuild {
 
     private String guildName;
     private short guildLevel;
@@ -25,26 +27,32 @@ public class Guild {
         this.setDesc(desc);
     }
 
+    @Override
     public String getGuildName() {
         return guildName;
     }
 
+    @Override
     public short getGuildLevel() {
         return guildLevel;
     }
 
+    @Override
     public short getMaxMember() {
         return maxMember;
     }
 
+    @Override
     public String getIcon() {
         return icon;
     }
 
+    @Override
     public boolean isPvp() {
         return pvp;
     }
 
+    @Override
     public String getDesc() {
         return desc;
     }

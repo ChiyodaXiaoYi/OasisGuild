@@ -8,7 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
-import top.oasismc.oasisguild.data.objects.GuildApply;
+import top.oasismc.oasisguild.objects.api.IGuildApply;
 import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.util.MsgSender;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.factory.GuildFactory.playerJoinGuild;
+import static top.oasismc.oasisguild.util.GuildManager.playerJoinGuild;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.util.MsgSender.color;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
@@ -86,7 +86,7 @@ public final class GuildApplyMenu extends BasicGuildMenu {
             }
             event.getWhoClicked().closeInventory();
         };
-        List<GuildApply> applyList = getDataHandler().getGuildApplyList(guildName);
+        List<IGuildApply> applyList = getDataHandler().getGuildApplyList(guildName);
         int maxPage = applyList.size() / 45 + 1;
         if (applyList.size() % 45 == 0 && applyList.size() != 0)
             maxPage -= 1;

@@ -1,10 +1,10 @@
-package top.oasismc.oasisguild.data.objects;
+package top.oasismc.oasisguild.objects.impl;
 
 import org.bukkit.Chunk;
 
 import java.util.Objects;
 
-public class GuildChunk {
+public class GuildChunk implements top.oasismc.oasisguild.objects.api.IGuildChunk {
 
     private final int x;
     private final int z;
@@ -16,14 +16,17 @@ public class GuildChunk {
         this.world = world;
     }
 
+    @Override
     public boolean hasOwner(Chunk chunk) {
         return chunk.getX() == x && chunk.getZ() == z;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getZ() {
         return z;
     }
@@ -41,6 +44,7 @@ public class GuildChunk {
         return Objects.hash(x, z, world);
     }
 
+    @Override
     public String getWorld() {
         return world;
     }

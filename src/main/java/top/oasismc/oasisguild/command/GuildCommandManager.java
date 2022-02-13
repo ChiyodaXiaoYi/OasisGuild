@@ -3,18 +3,17 @@ package top.oasismc.oasisguild.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import top.oasismc.oasisguild.data.objects.GuildChunk;
-import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.objects.api.IGuildChunk;
+import top.oasismc.oasisguild.objects.impl.GuildChunk;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
-import top.oasismc.oasisguild.factory.GuildFactory;
+import top.oasismc.oasisguild.util.GuildManager;
 import top.oasismc.oasisguild.listener.GuildChunkListener;
 import top.oasismc.oasisguild.util.MsgSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
-import static top.oasismc.oasisguild.factory.GuildFactory.playerQuitGuild;
+import static top.oasismc.oasisguild.util.GuildManager.playerQuitGuild;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.util.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.job.Jobs.*;
@@ -27,7 +26,7 @@ public final class GuildCommandManager {
     }
 
     public void playerApplyGuildByCmd(CommandSender sender, String guildName) {
-        int success = GuildFactory.playerApplyGuild(guildName, (Player) sender);
+        int success = GuildManager.playerApplyGuild(guildName, (Player) sender);
         if (success == 1) {
             sendMsg(sender, "command.apply.failed");
         } else if (success == 0) {
@@ -43,7 +42,7 @@ public final class GuildCommandManager {
     }
 
     public void createGuildByCmd(CommandSender sender, String gName, String desc) {
-        if (GuildFactory.createGuild(gName, (Player) sender, desc)) {
+        if (GuildManager.createGuild(gName, (Player) sender, desc)) {
             sendMsg(sender, "command.create.success");
         }
     }
@@ -57,7 +56,7 @@ public final class GuildCommandManager {
         if (getDataHandler().getPlayerJob(gName, player.getName()) < VICE_LEADER) {
             sendMsg(player, "command.rename.notLeader");
         }
-        switch (GuildFactory.guildRename(gName, newName, player)) {
+        switch (GuildManager.guildRename(gName, newName, player)) {
             case -1:
                 sendMsg(player, "command.rename.sameName");
                 break;
@@ -71,7 +70,7 @@ public final class GuildCommandManager {
     }
 
     public void disbandGuildByCmd(Player player) {
-        int code = GuildFactory.disbandGuild(player);
+        int code = GuildManager.disbandGuild(player);
         switch (code) {
             case -1:
                 sendMsg(player, "command.disband.notJoinGuild");
@@ -105,13 +104,13 @@ public final class GuildCommandManager {
                 GuildChunkListener.getListener().startChunkSelect(player);
                 break;
             case "confirm":
-                List<GuildChunk> chunkList = GuildChunkListener.getListener().getSelChunkMap().get(gName);
+                List<IGuildChunk> chunkList = GuildChunkListener.getListener().getSelChunkMap().get(gName);
                 if (chunkList == null || chunkList.size() == 0) {
                     sendMsg(player, "command.chunk.notSelect");
                     return;
                 }
                 GuildChunkListener.getListener().endChunkSelect(player);
-                GuildFactory.addGuildChunks(gName, chunkList);
+                GuildManager.addGuildChunks(gName, chunkList);
                 sendMsg(player, "command.chunk.confirm");
                 break;
             case "cancel":

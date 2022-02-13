@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import top.oasismc.oasisguild.OasisGuild;
 import top.oasismc.oasisguild.config.ConfigFile;
-import top.oasismc.oasisguild.data.objects.Guild;
+import top.oasismc.oasisguild.objects.api.IGuild;
 
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
 import static top.oasismc.oasisguild.OasisGuild.*;
@@ -42,11 +42,11 @@ public final class MsgSender {
         sendMsg(sender, key, replaceStr, other, false, null);
     }
 
-    public static void sendMsg4replaceGuild(CommandSender sender, String key, Guild guild) {
+    public static void sendMsg4replaceGuild(CommandSender sender, String key, IGuild guild) {
         sendMsg(sender, key, "", "", true, guild.getGuildName());
     }
 
-    public static void sendMsg(CommandSender sender, String key, String pName, Guild guild) {
+    public static void sendMsg(CommandSender sender, String key, String pName, IGuild guild) {
         sendMsg(sender, key, "%player%", pName, true, guild.getGuildName());
     }
 

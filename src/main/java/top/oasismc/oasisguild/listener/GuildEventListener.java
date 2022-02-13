@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.event.guild.GuildCreateEvent;
 import top.oasismc.oasisguild.event.guild.GuildDisbandEvent;
 import top.oasismc.oasisguild.event.guild.GuildRenameEvent;
-import top.oasismc.oasisguild.factory.GuildFactory;
+import top.oasismc.oasisguild.util.GuildManager;
 import top.oasismc.oasisguild.util.LoreTool;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public final class GuildEventListener implements Listener {
             return;
         }
 
-        switch (GuildFactory.checkGuildName(gName)) {
+        switch (GuildManager.checkGuildName(gName)) {
             case -1:
                 sendMsg(creator, "command.create.sameName");
                 event.setCancelled(true);

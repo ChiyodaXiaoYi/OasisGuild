@@ -1,6 +1,6 @@
-package top.oasismc.oasisguild.data.objects;
+package top.oasismc.oasisguild.objects.impl;
 
-public class GuildApply {
+public class GuildApply implements top.oasismc.oasisguild.objects.api.IGuildApply {
 
     private String pName;
     private int state;
@@ -10,6 +10,7 @@ public class GuildApply {
         this.state = state;
     }
 
+    @Override
     public String getPName() {
         return pName;
     }
@@ -18,6 +19,7 @@ public class GuildApply {
         this.pName = pName;
     }
 
+    @Override
     public int getState() {
         return state;
     }

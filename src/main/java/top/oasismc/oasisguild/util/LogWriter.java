@@ -5,10 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import top.oasismc.oasisguild.event.guild.*;
-import top.oasismc.oasisguild.event.player.PlayerApplyGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerJoinGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
-import top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent;
+import top.oasismc.oasisguild.event.player.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -163,6 +160,17 @@ public final class LogWriter implements Listener {
                 + "Guild: " + event.getGuildName()
                 + "; Player: " + event.getPlayer()
                 + "; Location: " + getLocationText(event.getLoc())
+        );
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJobChange(PlayerJobChangeEvent event) {
+        write2LogFile("Player Job Change | "
+                + "Guild: " + event.getGuildName()
+                + "; Player: " + event.getPlayer()
+                + "; Old Job: " + event.getOldJob()
+                + "; New Job: " + event.getNewJob()
+                + "; Leader: " + event.getLeader()
         );
     }
 

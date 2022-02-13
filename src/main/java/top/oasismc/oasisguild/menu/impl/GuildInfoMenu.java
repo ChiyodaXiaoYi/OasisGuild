@@ -10,11 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import top.oasismc.oasisguild.config.ConfigFile;
-import top.oasismc.oasisguild.data.objects.Guild;
-import top.oasismc.oasisguild.data.objects.GuildMember;
+import top.oasismc.oasisguild.objects.api.IGuild;
+import top.oasismc.oasisguild.objects.api.IGuildMember;
+import top.oasismc.oasisguild.objects.impl.Guild;
 import top.oasismc.oasisguild.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent;
-import top.oasismc.oasisguild.factory.GuildFactory;
+import top.oasismc.oasisguild.util.GuildManager;
 import top.oasismc.oasisguild.menu.MenuHolder;
 import top.oasismc.oasisguild.util.MsgSender;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import static top.oasismc.oasisguild.command.GuildCommand.getGuildCommand;
 import static top.oasismc.oasisguild.data.DataHandler.getDataHandler;
 import static top.oasismc.oasisguild.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
-import static top.oasismc.oasisguild.factory.GuildFactory.playerQuitGuild;
+import static top.oasismc.oasisguild.util.GuildManager.playerQuitGuild;
 import static top.oasismc.oasisguild.job.Jobs.*;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.menu.impl.GuildMenuManager.getNameOnlyItem;
@@ -45,7 +46,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         String title = menuFile.getConfig().getString("guildInfo.title", "Guild Info");
         title = title.replace("%guild%", guildName);
         int inventoryLength;
-        List<GuildMember> members = getDataHandler().getGuildMembers().get(guildName);
+        List<IGuildMember> members = getDataHandler().getGuildMembers().get(guildName);
         if (members.size() % 9 == 0)
             inventoryLength = 18 + (members.size() / 9) * 9;
         else {
@@ -65,7 +66,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         return inventory;
     }
 
-    private void regIcons(String gName, ConfigFile menuFile, Player opener, List<GuildMember> members, int inventoryLength) {
+    private void regIcons(String gName, ConfigFile menuFile, Player opener, List<IGuildMember> members, int inventoryLength) {
         ItemStack frame = getNameOnlyItem("guildInfo.frame.", "GRAY_STAINED_GLASS_PANE");
         int pJob = getDataHandler().getPlayerJob(gName, opener.getName());
         int []frameSlots = {0, 1, 2, 3, 5, 6, 7, 8};
@@ -140,7 +141,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         name = name.replace("%guild%", guildName);
         if (meta != null) {
             meta.setDisplayName(color(name));
-            Guild guild = getDataHandler().getGuildByName(guildName);
+            IGuild guild = getDataHandler().getGuildByName(guildName);
             List<String> lore = menuFile.getConfig().getStringList("guildInfo.info." + "lore");
             if (pJob >= ADVANCED) {
                 lore.addAll(menuFile.getConfig().getStringList("guildInfo.info." + "lore_admin"));
@@ -156,7 +157,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         return icon;
     }
 
-    public ItemStack getMemberItem(GuildMember member, int pJob, ConfigFile menuFile) {
+    public ItemStack getMemberItem(IGuildMember member, int pJob, ConfigFile menuFile) {
         String material = menuFile.getConfig().getString("guildInfo.members.material", "PLAYER_HEAD");
         Material iconType = Material.matchMaterial(material);
         if (iconType == null)
@@ -188,7 +189,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         return icon;
     }
 
-    public String replaceOnMember(String str, GuildMember player) {
+    public String replaceOnMember(String str, IGuildMember player) {
         String gJob = getMsgSender().getLangFile().getConfig().getString("job." + player.getJob(), player.getJob() + "");
         str = str.replace("%job%", gJob);
         str = color(str);
@@ -198,7 +199,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
 
     private void guildLevelUpOnMenu(Player player, String gName) {
         int gLvl = getDataHandler().getGuildByName(gName).getGuildLevel();
-        int code = GuildFactory.guildLevelUp(player, gName, gLvl, 1);
+        int code = GuildManager.guildLevelUp(player, gName, gLvl, 1);
         switch (code) {
             case -1:
                 sendMsg(player, "menu.levelUp.limit");
@@ -264,7 +265,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                     clicker.closeInventory();
                     return;
                 }
-                GuildFactory.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
+                GuildManager.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
                 sendMsg4replacePlayer(clicker, "menu.jobChange.up", pName);
                 clicker.closeInventory();
                 break;
@@ -284,7 +285,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                 } else if (pJob >= VICE_LEADER && pJob < LEADER) {
                     newJob = 199;
                 }
-                GuildFactory.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
+                GuildManager.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
                 sendMsg4replacePlayer(clicker, "menu.jobChange.down", pName);
                 clicker.closeInventory();
                 break;
