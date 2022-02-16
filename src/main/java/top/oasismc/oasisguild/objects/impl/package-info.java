@@ -1,1 +1,0 @@
-package top.oasismc.oasisguild.objects.impl;

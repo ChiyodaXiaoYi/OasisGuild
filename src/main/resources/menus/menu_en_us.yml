@@ -25,6 +25,8 @@ guildInfo:
       - '&7&m---------------'
       - '&7职位: %job%'
       - '&c按Q键踢出公会'
+      - '&aSHIFT+左键提升官职'
+      - '&eSHIFT+右键降低官职'
       - '&7&m---------------'
   frame:
     material: 'GRAY_STAINED_GLASS_PANE'
@@ -63,9 +65,6 @@ guildList:
     name: '&a创建新公会'
 guildEdit:
   title: '%guild% &3&l公会管理'
-  frame:
-    material: 'GRAY_STAINED_GLASS_PANE'
-    name: '&7公会管理'
   rename:
     material: 'NAME_TAG'
     name: '&e公会重命名'
@@ -86,6 +85,9 @@ guildEdit:
   setLoc:
     material: 'BEACON'
     name: '&e设置公会坐标'
+  transform:
+    material: 'RED_BANNER'
+    name: '&c转让公会'
 guildApplyList:
   title: '%guild% &3&l公会申请列表'
   apply:
@@ -94,3 +96,12 @@ guildApplyList:
       - '&7&m--------------------'
       - '&a左键同意 &7| &c右键拒绝'
       - '&7&m--------------------'
+  frame:
+    material: 'GRAY_STAINED_GLASS_PANE'
+    name: '&7公会申请列表'
+  previous:
+    material: 'PRISMARINE_SHARD'
+    name: '&7上一页'
+  next:
+    material: 'AMETHYST_SHARD'
+    name: '&7下一页'

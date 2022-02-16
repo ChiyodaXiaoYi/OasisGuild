@@ -1,6 +1,6 @@
 name: OasisGuild
 version: ${version}
-main: top.oasismc.oasisguild.OasisGuild
+main: top.oasismc.oasisguild.bukkit.OasisGuild
 api-version: 1.13
 load: STARTUP
 softdepend: [ PlaceholderAPI ]
@@ -9,6 +9,7 @@ commands:
   guild:
     aliases:
       - g
+      - og
 permissions:
   oasis.guild.create:
     default: op
