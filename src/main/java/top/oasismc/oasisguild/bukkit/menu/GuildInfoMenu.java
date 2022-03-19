@@ -252,7 +252,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                 } else if (pJob < LEADER) {
                     newJob = 299;
                 } else {
-                    sendMsg(clicker, "menu.jobChange.highest");
+                    sendMsg4replacePlayer(clicker, "menu.jobChange.highest", pName);
                     clicker.closeInventory();
                     return;
                 }
