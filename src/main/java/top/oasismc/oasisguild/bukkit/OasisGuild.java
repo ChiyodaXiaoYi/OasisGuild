@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.bukkit.command.GuildCommand;
+import top.oasismc.oasisguild.bukkit.data.DataManager;
 import top.oasismc.oasisguild.bukkit.data.MysqlTool;
 import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 import top.oasismc.oasisguild.bukkit.listener.GuildEventListener;

@@ -1,0 +1,83 @@
+#Support zh_cn and en_us
+#支持zh_cn和en_us
+language: 'zh_cn'
+
+#Some settings of the guild
+#公会的一些设置
+guildSettings:
+  #Name limit
+  #名字限制
+  name:
+    maxLength: 15
+    defaultColor: '&f'
+  #The default icon of the guild
+  #公会默认的图标
+  defaultIcon: 'WHITE_BANNER'
+  #Description limit
+  #简介限制
+  desc:
+    maxLength: 20
+  #Level limit, set to 299 to not limit
+  #等级限制, 设置为-1则不限制
+  maxLvl: -1
+  #Maximum number of members
+  #最大人数
+  maxMemberNum:
+    default: 5
+    perLvlAdd: 1
+  #Guild chunk Settings
+  #公会区块设置
+  guildChunks:
+    default: 36
+    perLvlAdd: 8
+    canSetWorlds:
+      - 'world'
+      - 'world_nether'
+      - 'world_the_end'
+  #Set whether the guild will enable team damage by default
+  #设置公会默认是否开启队伍伤害
+  pvp: false
+  canSetWorlds:
+    - 'world'
+    - 'world_nether'
+    - 'world_the_end'
+
+guildBuffSettings:
+  periodSecond: 10
+
+
+conditions:
+  #Conditions for creating a guild
+  #创建公会的条件
+  create:
+    #Item restrictions, check name and lore
+    #物品限制,检查名字和lore
+    item:
+      enable: true
+      material: 'NETHER_STAR'
+      name: '&6集结号令'
+      lore: '&e手持此物,可发起集结号令,创建公会'
+    #Permission check, guild cannot be created without this permission, no check if it is empty
+    #权限检查,无此权限无法创建公会,填空则不检查
+    perm: 'oasis.guild.create'
+    #Level cost, set to 0 to not consume level
+    #等级花费,设置为0不消耗等级
+    exp: 100
+
+log:
+  writePreLine: 100
+
+data:
+  #Choose data storage method, support yaml, sqlite and mysql
+  #选择数据存储的方式,支持yaml,sqlite和mysql
+  type: 'mysql'
+  mysql_host: 'localhost'
+  mysql_port: '3306'
+  mysql_username: 'root'
+  mysql_userPwd: ''
+  #Used database
+  #使用的数据库
+  mysql_database: 'minecraft'
+  #Data cache time
+  #数据的缓存时间
+  dataCacheTime: 2

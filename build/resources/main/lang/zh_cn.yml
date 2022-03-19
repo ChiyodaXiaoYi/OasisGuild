@@ -1,0 +1,102 @@
+messages:
+  prefix: '&8[&3公会系统&8] &r'
+  noPerm: '&c缺少执行此操作的权限'
+  command:
+    notPlayer: '&c该命令只能玩家使用!'
+    reload: '&a插件重载完毕!'
+    version: '插件版本: %version%'
+    noArgs: '&c请输入有效的子命令以执行'
+    info:
+      notJoinGuild: '&c你还没加入任何公会'
+    missingValue:
+      guildName: '&c缺少参数,请输入公会名'
+      playerName: '&c缺少参数,请输入玩家名'
+    create:
+      success: '&a创建成功!请输入/guild info管理公会'
+      notAllowedWorld: '&c公会的传送点不能设置在这里!'
+      sameName: '&c创建失败,已经有叫这个名字的公会了'
+      needDesc: '&c请在命令中输入公会描述'
+      nameTooLong: '&c你输入的公会名字太长了,最多只允许15个字符'
+      descTooLong: '&c你输入的描述太长了,最多只允许20字符'
+      hasGuild: '&c您已经有公会了,无法创建公会'
+      needItem: '&c您缺少创建公会的物品'
+      needLvl: '&c您的等级不足以创建公会'
+      error: '&c出现未知错误,请联系服务器管理员'
+    rename:
+      success: '&a改名成功'
+      notJoinGuild: '&c你还没加入任何公会'
+      needNewName: '&c请输入新的公会名字'
+      sameName: '&c已经存在此名字的公会了'
+      nameTooLong: '&c新的名字太长了,请重新取名'
+      notLeader: '&c你不是公会的管理员,无法修改公会名字'
+    apply:
+      success: '&a申请成功!请等待审核'
+      failed: '&c申请提交失败,请确认公会是否存在或是否重复提交申请'
+      hasGuild: '&c申请提交失败,你已经有公会了'
+    quit:
+      success: '&a你已成功退出%guild%'
+      notJoinGuild: '&c你还没加入任何公会'
+      isLeader: '&c你是公会会长,无法退出'
+    disband:
+      success: '&a已经成功解散公会'
+      confirm: '&c你确定要解散公会吗,请输入/guild disband确认解散'
+      notJoinGuild: '&c你还没加入任何公会'
+      notLeader: '&c你不是公会的管理员,无法解散公会!'
+    chunk:
+      start: '&a公会区块认领选择器开启'
+      notJoinGuild: '&c你还没加入任何公会'
+      notLeader: '&c你不是公会的管理员,无法为公会认领区块!'
+      click: '&a你已选择区块%chunk%'
+      hasOwner: '&c此区块已经有公会认领了'
+      limit: '&c你公会所能认领的区块数量已经达到上限!'
+      notAllowedWorld: '&c此世界不允许认领公会区块!'
+      confirm: '&a成功认领选择的区块'
+      notSelect: '&c你还没选择任何区块来认领'
+      cancel: '&c已取消区块认领'
+  chunk:
+    join: '&e你已进入%guild%&e的领地范围'
+    leave: '&e你已离开%guild%&e的领地范围'
+    place: '&c你无法在%guild%&c的领地放置方块!'
+    destroy: '&c你不能够破坏%guild%&c的领地!'
+    use: '&c你无法在%guild%&c的领地使用这个!'
+    container: '&c你无法在%guild%&c的领地打开这个容器!'
+  menu:
+    create:
+      needGName: '&a请输入公会名字'
+      needDesc: '&a请输入公会简介'
+    rename:
+      needNewName: '&a请在聊天框输入新的公会名字'
+    pvp:
+      open: '&c你已开启队内伤害'
+      close: '&a你已关闭队内伤害'
+    changeLoc:
+      success: '&a你已成功修改公会坐标'
+      notAllowedWorld: '&c公会的传送点不能设置在这里!'
+    kick:
+      success: '&a你已成功踢出%player%'
+      member: '&c你已经被%guild%&c踢出'
+    accept:
+      admin: '&a已同意%player%的申请'
+      member: '&a你已加入%guild%'
+      full: '&c公会人数已达上限!'
+    deny:
+      admin: '&c已拒绝%player%的申请'
+      member: '&c你的申请已经被%guild%拒绝'
+    levelUp:
+      success: '&a升级成功'
+      lackLvl: '&c你的等级不足以给公会升级!'
+      limit: '&c公会等级已达上限,无法升级'
+    jobChange:
+      up: '&a提升%player%官职成功'
+      down: '&a降低%player%官职成功'
+      lowest: '&c%player%的官职已经不能再降低了'
+      highest: '&c%player%的官职已经不能再提升了'
+job:
+  299: '会长'
+  249: '副会长'
+  199: '干部'
+  149: '精英'
+  0: '成员'
+papi:
+  noGuild: '&a游民'
+  null: 'null'
