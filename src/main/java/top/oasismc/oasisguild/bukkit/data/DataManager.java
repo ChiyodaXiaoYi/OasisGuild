@@ -10,7 +10,6 @@ import top.oasismc.oasisguild.bukkit.api.objects.IGuildApply;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
 import top.oasismc.oasisguild.bukkit.data.dao.MysqlGuildDao;
-import top.oasismc.oasisguild.bukkit.data.dao.SqliteGuildDao;
 import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
 
 import javax.annotation.Nullable;
@@ -62,12 +61,11 @@ public class DataManager extends BukkitRunnable {
                 return null;
             return new MysqlGuildDao();
         });
-        regDataImpl("sqlite", SqliteGuildDao::new);
     }
 
     private void loadDao() {
         String dataType = getPlugin().getConfig().getString("data.type", "sqlite");
-        guildDao = guildDataImplMap.getOrDefault(dataType, SqliteGuildDao::new).get();
+        guildDao = guildDataImplMap.getOrDefault(dataType, MysqlGuildDao::new).get();
     }
 
     private void initDataRegister() {

@@ -154,6 +154,17 @@ public class GuildManager {
         return 0;
     }
 
+    public static int guildResetDesc(String guildName, String newDesc) {
+        GuildResetDescEvent event = new GuildResetDescEvent(guildName, newDesc);
+        if (event.isCancelled()) {
+            return 2;
+        }
+        if (newDesc.length() > getPlugin().getConfig().getInt("guildSettings.desc.maxLength"))
+            return 1;
+        getDataManager().getGuildDao().guildResetDesc(event.getGuildName(), event.getNewDesc());
+        return 0;
+    }
+
     //返回状态码, -1为等级到达上限，1为不能满足升级条件，0为能够升级, 2为被取消
     public static int guildLevelUp(Player player, String guildName, int gLvl, int upNum) {
         int maxLvl = getPlugin().getConfig().getInt("guildSettings.maxLvl", -1);

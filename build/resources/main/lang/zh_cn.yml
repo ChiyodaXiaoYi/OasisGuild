@@ -60,12 +60,17 @@ messages:
     destroy: '&c你不能够破坏%guild%&c的领地!'
     use: '&c你无法在%guild%&c的领地使用这个!'
     container: '&c你无法在%guild%&c的领地打开这个容器!'
+    damage: '&c你无法在%guild%&c的领地伤害此实体'
   menu:
     create:
       needGName: '&a请输入公会名字'
       needDesc: '&a请输入公会简介'
     rename:
       needNewName: '&a请在聊天框输入新的公会名字'
+    resetDesc:
+      needNewDesc: '&a请在聊天框输入新的公会描述'
+      success: '&a修改成功'
+      lengthError: '&c简介长度大于最大值!'
     pvp:
       open: '&c你已开启队内伤害'
       close: '&a你已关闭队内伤害'

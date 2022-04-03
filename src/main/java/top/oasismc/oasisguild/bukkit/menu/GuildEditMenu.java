@@ -1,20 +1,21 @@
 package top.oasismc.oasisguild.bukkit.menu;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
+import static top.oasismc.oasisguild.bukkit.core.GuildManager.*;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
-import static top.oasismc.oasisguild.bukkit.core.GuildManager.changeGuildLoc;
-import static top.oasismc.oasisguild.bukkit.core.GuildManager.changeGuildPvp;
 import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
@@ -63,6 +64,20 @@ public final class GuildEditMenu extends BasicGuildMenu {
                 sendMsg(event.getWhoClicked(), "noPerm");
                 event.getWhoClicked().closeInventory();
             }
+            event.getWhoClicked().closeInventory();
+            sendMsg(event.getWhoClicked(), "menu.resetDesc.needNewDesc");
+            getCatcher().startCatch((Player) event.getWhoClicked(), newDesc -> {
+                int code = guildResetDesc(gName, newDesc);
+                switch (code) {
+                    case 0:
+                        sendMsg(event.getWhoClicked(), "menu.resetDesc.success");
+                        break;
+                    case 1:
+                        sendMsg(event.getWhoClicked(), "menu.resetDesc.lengthError");
+                        break;
+                }
+                getCatcher().endCatch((Player) event.getWhoClicked());
+            });
         }));
         ItemStack handleApply = GuildMenuManager.getNameOnlyItem("guildEdit.handleApply.", "BOOK");
         regIcon(13, new GuildMenuIcon(handleApply, event -> {

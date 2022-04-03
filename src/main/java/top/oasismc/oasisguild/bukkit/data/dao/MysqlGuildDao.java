@@ -496,6 +496,27 @@ public final class MysqlGuildDao implements IGuildDao {
         }.runTaskAsynchronously(getPlugin());
     }
 
+    @Override
+    public void guildResetDesc(String gName, String newDesc) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gDesc` = ? WHERE `gName` = ?;");
+                    ps.setString(1, newDesc);
+                    ps.setString(2, gName);
+                    ps.executeUpdate();
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    closeStatement(ps);
+                }
+            }
+        }.runTaskAsynchronously(getPlugin());
+    }
+
     private List<IGuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {
         List<IGuildApply> applyList = new ArrayList<>();
         if (resultSet.next()) {

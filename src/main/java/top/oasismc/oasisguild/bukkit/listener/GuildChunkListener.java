@@ -2,6 +2,8 @@ package top.oasismc.oasisguild.bukkit.listener;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,10 +12,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
@@ -127,6 +129,8 @@ public final class GuildChunkListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDestroyBlock(BlockBreakEvent event) {
+        if (event.getPlayer().isOp())
+            return;
         String blockGName = getDataManager().getChunkOwner(event.getBlock().getChunk());
         if (blockGName == null)
             return;
@@ -138,7 +142,68 @@ public final class GuildChunkListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+        onPlayerUseBucket(event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+        onPlayerUseBucket(event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerBucketEntity(PlayerBucketEntityEvent event) {
+        if (event.getPlayer().isOp())
+            return;
+        String blockGName = getDataManager().getChunkOwner(event.getEntity().getLocation().getChunk());
+        if (blockGName == null)
+            return;
+        String playerGName = getDataManager().getGuildNameByPlayer(event.getPlayer().getName());
+        if (!blockGName.equals(playerGName)) {
+            event.setCancelled(true);
+            MsgSender.sendMsg4replaceGuild(event.getPlayer(), "chunk.use", getDataManager().getGuildByName(blockGName));
+        }
+    }
+
+    private void onPlayerUseBucket(PlayerBucketEvent event) {
+        if (event.getPlayer().isOp())
+            return;
+        String blockGName = getDataManager().getChunkOwner(event.getBlock().getChunk());
+        if (blockGName == null)
+            return;
+        String playerGName = getDataManager().getGuildNameByPlayer(event.getPlayer().getName());
+        if (!blockGName.equals(playerGName)) {
+            event.setCancelled(true);
+            MsgSender.sendMsg4replaceGuild(event.getPlayer(), "chunk.use", getDataManager().getGuildByName(blockGName));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDamageEntity(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (!(damager instanceof Player)) {
+            return;
+        }
+        Player player = (Player) damager;
+        if (player.isOp())
+            return;
+        Entity entity = event.getEntity();
+        if (entity instanceof Monster)
+            return;
+        String entityGName = getDataManager().getChunkOwner(entity.getLocation().getChunk());
+        if (entityGName == null)
+            return;
+        String playerGName = getDataManager().getGuildNameByPlayer(player.getName());
+        if (!entityGName.equals(playerGName)) {
+            event.setCancelled(true);
+            MsgSender.sendMsg4replaceGuild(player, "chunk.damage", getDataManager().getGuildByName(entityGName));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPlaceBlock(BlockPlaceEvent event) {
+        if (event.getPlayer().isOp())
+            return;
         String blockGName = getDataManager().getChunkOwner(event.getBlock().getChunk());
         if (blockGName == null)
             return;
@@ -157,6 +222,8 @@ public final class GuildChunkListener implements Listener {
         Player player = event.getPlayer();
         if (player == null)
             return;
+        if (event.getPlayer().isOp())
+            return;
         String playerGName = getDataManager().getGuildNameByPlayer(player.getName());
         if (!blockGName.equals(playerGName)) {
             event.setCancelled(true);
@@ -165,7 +232,23 @@ public final class GuildChunkListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCreeperExplosion(EntityExplodeEvent event) {
+        Chunk chunk = event.getLocation().getChunk();
+        String eventGName = getDataManager().getChunkOwner(chunk);
+        if (eventGName == null)
+            return;
+        switch (event.getEntityType()) {
+            case CREEPER:
+            case WITHER_SKULL:
+                event.blockList().clear();
+                break;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClickArmorStand(PlayerArmorStandManipulateEvent event) {
+        if (event.getPlayer().isOp())
+            return;
         Chunk chunk = event.getRightClicked().getLocation().getChunk();
         String blockGName = getDataManager().getChunkOwner(chunk);
         if (blockGName == null)
@@ -179,6 +262,8 @@ public final class GuildChunkListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerOpenContainer(InventoryOpenEvent event) {
+        if (event.getPlayer().isOp())
+            return;
         Location invLoc = event.getInventory().getLocation();
         if (invLoc == null)
             return;

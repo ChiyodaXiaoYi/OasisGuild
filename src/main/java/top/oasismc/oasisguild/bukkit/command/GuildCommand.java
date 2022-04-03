@@ -11,6 +11,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.*;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.ADVANCED;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.VICE_LEADER;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.*;
 import static top.oasismc.oasisguild.bukkit.data.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
@@ -142,6 +144,12 @@ public final class GuildCommand implements TabExecutor {
         });
         regSubCommand("disband", (sender, args) -> guildCommandManager.disbandGuildByCmd((Player) sender));
         regSubCommand("rename", ((sender, args) -> {
+            String gName = getDataManager().getGuildNameByPlayer(sender.getName());
+            int job = getDataManager().getPlayerJob(gName, sender.getName());
+            if (job < VICE_LEADER) {
+                sendMsg(sender, "command.chunk.notLeader");
+                return;
+            }
             if (args.length < 2) {
                 sendMsg(sender, "command.rename.needNewName");
                 return;

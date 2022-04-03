@@ -37,4 +37,5 @@ public interface IGuildDao {
     boolean levelUp(String gName, int oldLevel);
 
     void guildRename(String gName, String newName);
+    void guildResetDesc(String gName, String newDesc);
 }
