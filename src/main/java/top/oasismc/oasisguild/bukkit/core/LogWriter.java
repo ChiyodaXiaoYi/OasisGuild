@@ -87,9 +87,9 @@ public final class LogWriter implements Listener {
     public void mysqlWarn(SQLException e, Class<?> stack) {
         long time = System.currentTimeMillis() - lastMysqlWarnTime;
         if (time >= 7200000) {
-            e.printStackTrace();
             lastMysqlWarnTime = System.currentTimeMillis();
         }
+        e.printStackTrace();
         write2LogFile(e.getMessage());
         write2LogFile("at " + stack.getName());
     }

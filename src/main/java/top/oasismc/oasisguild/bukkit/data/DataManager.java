@@ -2,8 +2,6 @@ package top.oasismc.oasisguild.bukkit.data;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
-import top.oasismc.oasisguild.bukkit.OasisGuild;
 import top.oasismc.oasisguild.bukkit.api.data.IGuildDao;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildApply;
@@ -19,7 +17,7 @@ import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 
-public class DataManager extends BukkitRunnable {
+public class DataManager {
 
     private List<IGuild> guildList;
     private Map<String, List<IGuildMember>> guildMembers;
@@ -40,10 +38,10 @@ public class DataManager extends BukkitRunnable {
 
     private DataManager() throws ClassNotFoundException {
         guildDataImplMap = new ConcurrentHashMap<>();
-        start(OasisGuild.getPlugin().getConfig().getInt("data.dataCacheTime", 2));
         initDataRegister();
         regDefaultDataImpl();
         loadDao();
+        getData();
     }
 
     public void regDataImpl(String key, Supplier<IGuildDao> impl) {
@@ -80,21 +78,13 @@ public class DataManager extends BukkitRunnable {
         return dataManager;
     }
 
-    @Override
-    public void run() {
-        getData();
-    }
 
-    public synchronized void getData() {
+    public void getData() {
         guildList = guildDao.getGuilds();
         guildMembers = guildDao.getGuildMembers(guildList);
         guildLocationMap = guildDao.getGuildLocationMap(guildList);
         guildApplyListMap = guildDao.getGuildApplyListMap(guildList);
         guildChunkSetMap = guildDao.getGuildChunkSetMap(guildList);
-    }
-
-    public void start(int interval) {
-        this.runTaskTimerAsynchronously(OasisGuild.getPlugin(), interval * 20L, interval * 20L);
     }
 
     public List<IGuild> getGuildList() {

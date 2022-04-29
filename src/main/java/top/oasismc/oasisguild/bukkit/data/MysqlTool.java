@@ -17,7 +17,6 @@ public class MysqlTool {
 
     private String dbUserName, dbPassword, dbUrl;
     private static final MysqlTool mysqlTool;
-    private Connection conn;
 
     static {
         mysqlTool = new MysqlTool();
@@ -26,8 +25,7 @@ public class MysqlTool {
     private MysqlTool() {
         initDriver();
         getConnection();
-        if (conn != null)
-            loadDatabase();
+        loadDatabase();
     }
 
     public static MysqlTool getMysqlTool() {
@@ -35,19 +33,11 @@ public class MysqlTool {
     }
 
     public Connection getConnection() {
+        Connection conn = null;
         try {
-            if (conn == null)
-                conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-            if (conn.isClosed())
-                conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+            conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
-            if (!e.getSQLState().equals("28000"))
-                conn = getConnection();
-            else {
-                MsgSender.info("&cMysql connection failed, please check database configuration");
-                Bukkit.getPluginManager().disablePlugin(getPlugin());
-            }
         }
         return conn;
     }
@@ -79,8 +69,10 @@ public class MysqlTool {
         new BukkitRunnable() {
             @Override
             public void run() {
+                Connection conn = getConnection();
+                PreparedStatement ps = null;
                 try {
-                    PreparedStatement ps = getConnection().prepareStatement(
+                    ps = conn.prepareStatement(
                             "CREATE TABLE IF NOT EXISTS `GuildInfo` (\n" +
                                     "`gName` varchar(20) NOT NULL,\n" +
                                     "`gIcon` varchar(20) NOT NULL DEFAULT 'STONE',\n" +
@@ -89,21 +81,21 @@ public class MysqlTool {
                                     "`gPvp` tinyint(1) NOT NULL DEFAULT '1',\n" +
                                     "`gDesc` varchar(255) NOT NULL DEFAULT '',\n" +
                                     " PRIMARY KEY (`gName`)) DEFAULT CHARSET=utf8;");
-                    ps.execute();
+                    ps.executeUpdate();
                     ps = getConnection().prepareStatement(
                             "CREATE TABLE IF NOT EXISTS `GuildMembers` (\n" +
                                     "`gName`  varchar(20) NOT NULL ,\n" +
                                     "`pName`  varchar(20) NOT NULL ,\n" +
                                     "`pJob`  int(8) NOT NULL DEFAULT 0 ,\n" +
                                     " PRIMARY KEY (`pName`)) DEFAULT CHARSET=utf8;");
-                    ps.execute();
+                    ps.executeUpdate();
                     ps = getConnection().prepareStatement(
                             "CREATE TABLE IF NOT EXISTS `GuildApply` (\n" +
                                     "`gName`  varchar(20) NOT NULL DEFAULT '' ,\n" +
                                     "`pName`  varchar(20) NOT NULL DEFAULT '' ,\n" +
                                     "`state`  tinyint(1) NOT NULL DEFAULT 0 \n" +
                                     ") DEFAULT CHARSET=utf8;");
-                    ps.execute();
+                    ps.executeUpdate();
                     ps = getConnection().prepareStatement(
                             "CREATE TABLE IF NOT EXISTS `GuildLocation` (\n" +
                                     "`gName`  varchar(20) NOT NULL DEFAULT '' ,\n" +
@@ -113,7 +105,7 @@ public class MysqlTool {
                                     "`gWorld`  varchar(20) NOT NULL DEFAULT '', \n" +
                                     " PRIMARY KEY (`gName`) \n" +
                                     ") DEFAULT CHARSET=utf8;");
-                    ps.execute();
+                    ps.executeUpdate();
                     ps = getConnection().prepareStatement(
                             "CREATE TABLE IF NOT EXISTS `GuildChunks` (\n" +
                                     "  `gName` varchar(20) NOT NULL DEFAULT '',\n" +
@@ -122,10 +114,20 @@ public class MysqlTool {
                                     "  `cWorld` VARCHAR(50) NOT NULL DEFAULT ''" +
                                     ") DEFAULT CHARSET=utf8mb3;"
                     );
-                    ps.execute();
-                    ps.close();
+                    ps.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        if (ps != null) {
+                            ps.close();
+                        }
+                        if (conn != null) {
+                            conn.close();
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }.runTaskAsynchronously(getPlugin());

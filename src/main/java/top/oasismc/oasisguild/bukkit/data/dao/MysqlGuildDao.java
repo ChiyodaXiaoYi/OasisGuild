@@ -609,5 +609,10 @@ public final class MysqlGuildDao implements IGuildDao {
             getLogWriter().mysqlWarn(e, this.getClass());
         }
     }
-    
+
+    public boolean getConnection(Connection conn) {
+        conn = MysqlTool.getMysqlTool().getConnection();
+        return conn != null;
+    }
+
 }
