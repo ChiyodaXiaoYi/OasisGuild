@@ -10,15 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import static top.oasismc.oasisguild.bukkit.OasisGuild.*;
-import static top.oasismc.oasisguild.bukkit.api.job.Jobs.ADVANCED;
+import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.VICE_LEADER;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.*;
+import static top.oasismc.oasisguild.bukkit.core.MsgSender.getMsgSender;
+import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.data.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
-import static top.oasismc.oasisguild.bukkit.core.MsgSender.getMsgSender;
-import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 
 public final class GuildCommand implements TabExecutor {
 

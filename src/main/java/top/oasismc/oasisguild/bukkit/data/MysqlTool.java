@@ -1,9 +1,7 @@
 package top.oasismc.oasisguild.bukkit.data;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.oasismc.oasisguild.bukkit.core.MsgSender;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,5 +1,6 @@
 package top.oasismc.oasisguild.bukkit.data;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import top.oasismc.oasisguild.bukkit.api.data.IGuildDao;
@@ -80,11 +81,27 @@ public class DataManager {
 
 
     public void getData() {
-        guildList = guildDao.getGuilds();
-        guildMembers = guildDao.getGuildMembers(guildList);
-        guildLocationMap = guildDao.getGuildLocationMap(guildList);
-        guildApplyListMap = guildDao.getGuildApplyListMap(guildList);
-        guildChunkSetMap = guildDao.getGuildChunkSetMap(guildList);
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            List<IGuild> tmpGuildList = guildDao.getGuilds();
+            if (tmpGuildList != null)
+                guildList = tmpGuildList;
+
+            Map<String, Location> tmpGuildLocMap = guildDao.getGuildLocationMap(guildList);
+            if (tmpGuildLocMap != null)
+                guildLocationMap = tmpGuildLocMap;
+
+            Map<String, List<IGuildMember>> tmpGuildMembers = guildDao.getGuildMembers(guildList);
+            if (guildMembers != null)
+                guildMembers = tmpGuildMembers;
+
+            Map<String, List<IGuildApply>> tmpGuildApplyListMap = guildDao.getGuildApplyListMap(guildList);
+            if (guildApplyListMap != null)
+                guildApplyListMap = tmpGuildApplyListMap;
+
+            Map<String, Set<IGuildChunk>> tmpGuildChunkSetMap = guildDao.getGuildChunkSetMap(guildList);
+            if (guildChunkSetMap != null)
+                guildChunkSetMap = tmpGuildChunkSetMap;
+        });
     }
 
     public List<IGuild> getGuildList() {
@@ -116,7 +133,7 @@ public class DataManager {
         String guildName = null;
         for (IGuild guild : guildList) {
             boolean found = false;
-            for (IGuildMember player : guildMembers.get(guild.getGuildName())) {
+            for (IGuildMember player : guildMembers.getOrDefault(guild.getGuildName(), new ArrayList<>())) {
                 if (player.getPlayerName().equals(pName)) {
                     guildName = guild.getGuildName();
                     found = true;

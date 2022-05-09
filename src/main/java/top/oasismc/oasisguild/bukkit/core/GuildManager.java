@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildAddChunkEvent.createGuildAddChunkEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildCreateEvent.createGuildCreateEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildDisbandEvent.createGuildDisbandEvent;
@@ -26,6 +24,8 @@ import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildLocChangeEvent.
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildPvpChangeEvent.createGuildPvpChangeEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.player.PlayerApplyGuildEvent.createPlayerApplyGuildEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.player.PlayerJobChangeEvent.createPlayerJobChangeEvent;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.LEADER;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public class GuildManager {
 

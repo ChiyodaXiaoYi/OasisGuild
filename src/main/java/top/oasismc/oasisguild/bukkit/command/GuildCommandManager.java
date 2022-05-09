@@ -3,19 +3,20 @@ package top.oasismc.oasisguild.bukkit.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.api.event.player.PlayerQuitGuildEvent;
+import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.core.GuildManager;
-import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
+import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 
 import java.util.List;
 
-import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.ADVANCED;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.VICE_LEADER;
 import static top.oasismc.oasisguild.bukkit.core.GuildManager.playerQuitGuild;
-import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
+import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 
 public final class GuildCommandManager {
 

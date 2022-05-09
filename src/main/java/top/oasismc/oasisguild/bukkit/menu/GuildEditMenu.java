@@ -1,24 +1,25 @@
 package top.oasismc.oasisguild.bukkit.menu;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.oasismc.oasisguild.bukkit.api.event.guild.GuildTransformEvent;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
+import top.oasismc.oasisguild.bukkit.data.DataManager;
+import top.oasismc.oasisguild.bukkit.util.MsgCatcher;
 
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
 import static top.oasismc.oasisguild.bukkit.core.GuildManager.*;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
-import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
+import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 
 public final class GuildEditMenu extends BasicGuildMenu {
 
@@ -114,7 +115,31 @@ public final class GuildEditMenu extends BasicGuildMenu {
             event.getWhoClicked().closeInventory();
         }));
         ItemStack transform = GuildMenuManager.getNameOnlyItem("guildEdit.transform.", "RED_BANNER");
-        regIcon(27, new GuildMenuIcon(transform, event -> {}));
+        regIcon(27, new GuildMenuIcon(transform, event -> {
+            if (getJob(event) < LEADER) {
+                sendMsg(event.getWhoClicked(), "noPerm");
+                event.getWhoClicked().closeInventory();
+                return;
+            }
+            event.getWhoClicked().closeInventory();
+            sendMsg(event.getWhoClicked(), "menu.transform.enter");
+            MsgCatcher.getCatcher().startCatch((Player) event.getWhoClicked(), (name) -> {
+                String tmpGuildName = DataManager.getDataManager().getGuildNameByPlayer(name);
+                if (tmpGuildName == null || !tmpGuildName.equals(gName)) {
+                    sendMsg(event.getWhoClicked(), "menu.transform.failed");
+                    return;
+                }
+                GuildTransformEvent event1 = GuildTransformEvent.createGuildTransformEvent(gName, event.getWhoClicked().getName(), name);
+                Bukkit.getPluginManager().callEvent(event1);
+
+                if (event1.isCancelled()) {
+                    return;
+                }
+
+                DataManager.getDataManager().getGuildDao().transformGuild(event1.getGuildName(), event1.getOperator(), event1.getNewLeader());
+                sendMsg(event.getWhoClicked(), "menu.transform.success");
+            });
+        }));
     }
 
     private int getJob(InventoryClickEvent event) {

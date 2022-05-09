@@ -3,7 +3,6 @@ package top.oasismc.oasisguild.bukkit.api.event.guild;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 public class GuildEvent extends Event implements Cancellable {
 
@@ -16,7 +15,6 @@ public class GuildEvent extends Event implements Cancellable {
         this.guildName = guildName;
     }
 
-    @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;

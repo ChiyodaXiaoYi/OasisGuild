@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import static top.oasismc.oasisguild.bukkit.data.DataManager.*;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public final class GuildPvpListener implements Listener {
 

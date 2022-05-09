@@ -6,7 +6,7 @@ import top.oasismc.oasisguild.bukkit.OasisGuild;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
-import static top.oasismc.oasisguild.bukkit.OasisGuild.*;
+import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 
 public final class MsgSender {
 

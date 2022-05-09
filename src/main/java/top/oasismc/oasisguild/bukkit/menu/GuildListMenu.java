@@ -6,17 +6,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
-import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 
 import java.util.List;
 
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
-import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
+import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 
 public final class GuildListMenu extends BasicGuildMenu {
 

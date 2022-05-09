@@ -174,6 +174,15 @@ public final class LogWriter implements Listener {
         );
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGuildTransform(GuildTransformEvent event) {
+        write2LogFile("Guild Transform | "
+                + "Guild: " + event.getGuildName()
+                + "; Operator: " + event.getOperator()
+                + "; New Leader: " + event.getNewLeader()
+        );
+    }
+
     public String getLocationText(Location loc) {
         return loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ();
     }

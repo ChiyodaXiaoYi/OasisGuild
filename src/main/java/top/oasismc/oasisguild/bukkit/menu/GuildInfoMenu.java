@@ -9,22 +9,22 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import top.oasismc.oasisguild.bukkit.core.ConfigFile;
-import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
-import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
 import top.oasismc.oasisguild.bukkit.api.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.bukkit.api.event.player.PlayerTpGuildLocEvent;
+import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
+import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
+import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.core.GuildManager;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
 
 import java.util.List;
 
+import static top.oasismc.oasisguild.bukkit.api.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
-import static top.oasismc.oasisguild.bukkit.api.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
 import static top.oasismc.oasisguild.bukkit.core.GuildManager.playerQuitGuild;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.*;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public final class GuildInfoMenu extends BasicGuildMenu {
 

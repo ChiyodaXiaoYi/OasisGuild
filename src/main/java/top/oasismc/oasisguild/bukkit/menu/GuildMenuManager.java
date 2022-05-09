@@ -9,23 +9,22 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.oasismc.oasisguild.bukkit.api.menu.IGuildMenu;
+import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
-import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
-import top.oasismc.oasisguild.bukkit.api.menu.IGuildMenu;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public class GuildMenuManager implements Listener {
 
@@ -131,14 +130,16 @@ public class GuildMenuManager implements Listener {
         str = str.replace("%maxMemberNum%", guild.getMaxMember() + "");
         str = str.replace("%level%", guild.getGuildLevel() + "");
         str = str.replace("%pvp%", guild.isPvp() + "");
-        World world = gLoc.getWorld();
-        if (world == null)
-            str = str.replace("%world%", "world");
-        else
-            str = str.replace("%world%", world.getName());
-        str = str.replace("%x%", (int) gLoc.getX() + "");
-        str = str.replace("%y%", (int) gLoc.getY() + "");
-        str = str.replace("%z%", (int) gLoc.getZ() + "");
+        if (gLoc != null) {
+            World world = gLoc.getWorld();
+            if (world != null) {
+                str = str.replace("%world%", world.getName());
+                str = str.replace("%x%", (int) gLoc.getX() + "");
+                str = str.replace("%y%", (int) gLoc.getY() + "");
+                str = str.replace("%z%", (int) gLoc.getZ() + "");
+            }
+        }
+
         str = str.replace("%exp%", (int)(Math.pow((guild.getGuildLevel() + 1), 1.5)) + "");
         str = color(str);
         return str;

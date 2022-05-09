@@ -16,9 +16,9 @@ import top.oasismc.oasisguild.bukkit.util.LoreTools;
 import java.util.List;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public final class GuildEventListener implements Listener {
 

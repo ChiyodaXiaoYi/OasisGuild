@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.getMsgSender;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public final class GuildExpansion extends PlaceholderExpansion {
 

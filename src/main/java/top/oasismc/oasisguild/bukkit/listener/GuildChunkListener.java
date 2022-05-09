@@ -18,16 +18,16 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
-import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
+import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg4replaceOtherStr;
+import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
 public final class GuildChunkListener implements Listener {
 

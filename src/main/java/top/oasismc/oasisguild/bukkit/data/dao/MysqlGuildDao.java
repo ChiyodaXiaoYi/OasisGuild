@@ -24,8 +24,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.LEADER;
+import static top.oasismc.oasisguild.bukkit.api.job.Jobs.NORMAL;
 import static top.oasismc.oasisguild.bukkit.core.LogWriter.getLogWriter;
 
 public final class MysqlGuildDao implements IGuildDao {
@@ -44,12 +45,11 @@ public final class MysqlGuildDao implements IGuildDao {
                     ResultSet.CONCUR_READ_ONLY);
             ResultSet resultSet = ps.executeQuery();
             guilds = createGuildList(resultSet);
-            ps.close();
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
-            closeStatement(ps);
+        } finally {
+            closeStatement(ps, conn);
         }
-
         return guilds;
     }
 
@@ -57,27 +57,23 @@ public final class MysqlGuildDao implements IGuildDao {
     public Map<String, List<IGuildMember>> getGuildMembers(List<IGuild> guildList) {
         Connection conn = MysqlTool.getMysqlTool().getConnection();
         Map<String, List<IGuildMember>> guildMemberMap = new ConcurrentHashMap<>();
-
-        for (int i = 0; i < guildList.size(); i++) {
-            List<IGuildMember> players;
-            PreparedStatement ps = null;
-            try {
-                if (conn.isClosed())
-                    conn = MysqlTool.getMysqlTool().getConnection();
-                conn = MysqlTool.getMysqlTool().getConnection();
+        PreparedStatement ps = null;
+        try {
+            for (IGuild guild : guildList) {
+                List<IGuildMember> players;
                 ps = conn.prepareStatement(
                         "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob` DESC;",
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
-                ps.setString(1, guildList.get(i).getGuildName());
+                ps.setString(1, guild.getGuildName());
                 ResultSet resultSet = ps.executeQuery();
                 players = createPlayerList(resultSet);
-                guildMemberMap.put(guildList.get(i).getGuildName(), players);
-                ps.close();
-            } catch (SQLException e) {
-                getLogWriter().mysqlWarn(e, this.getClass());
-                closeStatement(ps);
+                guildMemberMap.put(guild.getGuildName(), players);
             }
+        } catch (SQLException e) {
+            getLogWriter().mysqlWarn(e, this.getClass());
+        } finally {
+            closeStatement(ps, conn);
         }
 
         return guildMemberMap;
@@ -87,31 +83,28 @@ public final class MysqlGuildDao implements IGuildDao {
     public Map<String, Location> getGuildLocationMap(List<IGuild> guildList) {
         Connection conn = MysqlTool.getMysqlTool().getConnection();
         Map<String, Location> guildLocationMap = new ConcurrentHashMap<>();
-        
-        for (int i = 0; i < guildList.size(); i++) {
-            Location location;
-            PreparedStatement ps = null;
-            try {
-                if (conn.isClosed())
-                    conn = MysqlTool.getMysqlTool().getConnection();
+
+        PreparedStatement ps = null;
+        try {
+            for (IGuild guild : guildList) {
+                Location location;
                 ps = conn.prepareStatement(
                         "SELECT * FROM `GuildLocation` WHERE `gName` = ?;",
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
-                ps.setString(1, guildList.get(i).getGuildName());
+                ps.setString(1, guild.getGuildName());
                 ResultSet resultSet = ps.executeQuery();
                 resultSet.first();
                 location = new Location(Bukkit.getWorld(
                         resultSet.getString("gWorld")), resultSet.getInt("gX"), resultSet.getInt("gY"), resultSet.getInt("gZ")
                 );
-                guildLocationMap.put(guildList.get(i).getGuildName(), location);
-                ps.close();
-            } catch (SQLException e) {
-                getLogWriter().mysqlWarn(e, this.getClass());
-                closeStatement(ps);
+                guildLocationMap.put(guild.getGuildName(), location);
             }
+        } catch (SQLException e) {
+            getLogWriter().mysqlWarn(e, this.getClass());
+        } finally {
+            closeStatement(ps, conn);
         }
-
         return guildLocationMap;
     }
 
@@ -119,25 +112,22 @@ public final class MysqlGuildDao implements IGuildDao {
     public Map<String, List<IGuildApply>> getGuildApplyListMap(List<IGuild> guildList) {
         Connection conn = MysqlTool.getMysqlTool().getConnection();
         Map<String, List<IGuildApply>> applyListMap = new ConcurrentHashMap<>();
-        for (int i = 0; i < guildList.size(); i++) {
-            List<IGuildApply> applyList;
-            PreparedStatement ps = null;
-            try {
-                if (conn.isClosed())
-                    conn = MysqlTool.getMysqlTool().getConnection();
+        PreparedStatement ps = null;
+        try {
+            for (IGuild guild : guildList) {
+                List<IGuildApply> applyList;
                 conn = MysqlTool.getMysqlTool().getConnection();
                 ps = conn.prepareStatement("SELECT * FROM `GuildApply` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                ps.setString(1, guildList.get(i).getGuildName());
+                ps.setString(1, guild.getGuildName());
                 ResultSet set = ps.executeQuery();
                 applyList = createGuildApplyList(set);
-                applyListMap.put(guildList.get(i).getGuildName(), applyList);
-                ps.close();
-            } catch (SQLException e) {
-                getLogWriter().mysqlWarn(e, this.getClass());
-                closeStatement(ps);
+                applyListMap.put(guild.getGuildName(), applyList);
             }
+        } catch (SQLException e) {
+            getLogWriter().mysqlWarn(e, this.getClass());
+        } finally {
+            closeStatement(ps, conn);
         }
-
         return applyListMap;
     }
 
@@ -146,24 +136,21 @@ public final class MysqlGuildDao implements IGuildDao {
         Connection conn = MysqlTool.getMysqlTool().getConnection();
         Map<String, Set<IGuildChunk>> guildChunkSetMap = new ConcurrentHashMap<>();
 
-        for (int i = 0; i < guildList.size(); i++) {
-            Set<IGuildChunk> chunkSet;
-            PreparedStatement ps = null;
-            try {
-                if (conn.isClosed())
-                    conn = MysqlTool.getMysqlTool().getConnection();
+        PreparedStatement ps = null;
+        try {
+            for (IGuild guild : guildList) {
+                Set<IGuildChunk> chunkSet;
                 ps = conn.prepareStatement("SELECT * FROM `GuildChunks` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                ps.setString(1, guildList.get(i).getGuildName());
+                ps.setString(1, guild.getGuildName());
                 ResultSet set = ps.executeQuery();
                 chunkSet = createGuildChunkSet(set);
-                guildChunkSetMap.put(guildList.get(i).getGuildName(), chunkSet);
-                ps.close();
-            } catch (SQLException e) {
-                getLogWriter().mysqlWarn(e, this.getClass());
-                closeStatement(ps);
+                guildChunkSetMap.put(guild.getGuildName(), chunkSet);
             }
+        } catch (SQLException e) {
+            getLogWriter().mysqlWarn(e, this.getClass());
+        } finally {
+            closeStatement(ps, conn);
         }
-
         return guildChunkSetMap;
     }
 
@@ -198,13 +185,12 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(2, pName);
                         ps.setInt(3, 0);
                         ps.executeUpdate();
-                        ps.close();
+                        DataManager.getDataManager().getData();
                     } catch (SQLException e) {
                         getLogWriter().mysqlWarn(e, this.getClass());
-                        closeStatement(ps);
+                    } finally {
+                        closeStatement(ps, conn);
                     }
-
-                    DataManager.getDataManager().getData();
                 }
             }.runTaskAsynchronously(OasisGuild.getPlugin());
         }
@@ -233,13 +219,11 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(5, getPlugin().getConfig().getInt("guildSettings.maxMemberNum.default"));
                     ps.setString(6, desc);
                     ps.executeUpdate();
-                    ps.close();
                     ps = conn.prepareStatement("INSERT INTO `GuildMembers`(`gName`, `pName`, `pJob`) VALUES (?, ?, ?)");
                     ps.setString(1, gName);
                     ps.setString(2, pName);
                     ps.setInt(3, LEADER);
                     ps.executeUpdate();
-                    ps.close();
                     ps = conn.prepareStatement("INSERT INTO `GuildLocation`(`gName`, `gX`, `gY`, `gZ`, `gWorld`)" +
                                                     "VALUES (?, ?, ?, ?, ?)");
                     ps.setString(1, gName);
@@ -248,12 +232,12 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(4, (int) loc.getZ());
                     ps.setString(5, loc.getWorld().getName());
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     getLogWriter().mysqlWarn(e, this.getClass());
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -274,13 +258,13 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setInt(3, chunk.getZ());
                         ps.setString(4, chunk.getWorld());
                         ps.executeUpdate();
-                        ps.close();
+                        DataManager.getDataManager().getData();
                     } catch (SQLException e) {
                         getLogWriter().mysqlWarn(e, this.getClass());
-                        closeStatement(ps);
+                    } finally {
+                        closeStatement(ps, conn);
                     }
                 });
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(getPlugin());
         return 0;
@@ -298,10 +282,10 @@ public final class MysqlGuildDao implements IGuildDao {
                     execSql4disband("DELETE FROM `GuildApply` WHERE `gName` = ?;", gName, conn);
                     execSql4disband("DELETE FROM `GuildLocation` WHERE `gName` = ?;", gName, conn);
                     execSql4disband("DELETE FROM `GuildChunks` WHERE `gName` = ?;", gName, conn);
+                    conn.close();
                 } catch (SQLException e) {
                     getLogWriter().mysqlWarn(e, this.getClass());
                 }
-
                 DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
@@ -337,12 +321,12 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(2, gName);
                     }
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(getPlugin());
         return true;
@@ -362,12 +346,12 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps = conn.prepareStatement("DELETE FROM `GuildMembers` WHERE `pName` = ?;");
                         ps.setString(1, pName);
                         ps.executeUpdate();
-                        ps.close();
+                        DataManager.getDataManager().getData();
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        closeStatement(ps);
+                    } finally {
+                        closeStatement(ps, conn);
                     }
-                    DataManager.getDataManager().getData();
                 }
             }.runTaskAsynchronously(OasisGuild.getPlugin());
         }
@@ -386,12 +370,12 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(1, pvp);
                     ps.setString(2, gName);
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -412,12 +396,12 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setString(4, loc.getWorld().getName());
                     ps.setString(5, gName);
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -437,11 +421,13 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setString(3, gName);
                     ps.executeUpdate();
                     ps.close();
+                    conn.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(getPlugin());
         return true;
@@ -461,15 +447,38 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(2, DataManager.getDataManager().getGuildByName(gName).getMaxMember() + perLvlAddMaxMember);
                     ps.setString(3, gName);
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
-                DataManager.getDataManager().getData();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
+    }
+
+    @Override
+    public boolean transformGuild(String gName, String oldLeader, String pName) {
+        Bukkit.getScheduler().runTaskAsynchronously(OasisGuild.getPlugin(), () -> {
+            Connection conn = MysqlTool.getMysqlTool().getConnection();
+            PreparedStatement ps = null;
+            try {
+                ps = conn.prepareStatement("UPDATE `GuildMembers` SET `pJob` = ? WHERE `pName` = ?");
+                ps.setInt(1, LEADER);
+                ps.setString(2, pName);
+                ps.executeUpdate();
+                ps.setInt(1, NORMAL);
+                ps.setString(2, oldLeader);
+                ps.executeUpdate();
+                DataManager.getDataManager().getData();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closeStatement(ps, conn);
+            }
+        });
+        return false;
     }
 
     @Override
@@ -486,11 +495,12 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(1, newName);
                         ps.setString(2, gName);
                         ps.executeUpdate();
+                        DataManager.getDataManager().getData();
                     }
-                    ps.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
             }
         }.runTaskAsynchronously(getPlugin());
@@ -508,10 +518,11 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setString(1, newDesc);
                     ps.setString(2, gName);
                     ps.executeUpdate();
-                    ps.close();
+                    DataManager.getDataManager().getData();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    closeStatement(ps);
+                } finally {
+                    closeStatement(ps, conn);
                 }
             }
         }.runTaskAsynchronously(getPlugin());
@@ -599,20 +610,15 @@ public final class MysqlGuildDao implements IGuildDao {
         return chunkSet;
     }
     
-    private void closeStatement(PreparedStatement statement) {
-        if (statement == null) {
-            return;
-        }
+    private void closeStatement(PreparedStatement statement, Connection conn) {
         try {
-            statement.close();
+            if (statement != null)
+                statement.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
         }
-    }
-
-    public boolean getConnection(Connection conn) {
-        conn = MysqlTool.getMysqlTool().getConnection();
-        return conn != null;
     }
 
 }
