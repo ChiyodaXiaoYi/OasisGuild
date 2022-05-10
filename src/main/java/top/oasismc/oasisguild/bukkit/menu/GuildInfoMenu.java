@@ -87,7 +87,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         int size = members.size();
         regIcon(inventoryLength - 1, new GuildMenuIcon(next, event -> {
             Inventory nextPage;
-            if (size > 7) {
+            if (size > 36) {
                 nextPage = GuildMenuManager.getMenuManager().drawGuildInfoMenu(gName, (Player) event.getWhoClicked(), page + 1);
             }
             else {
