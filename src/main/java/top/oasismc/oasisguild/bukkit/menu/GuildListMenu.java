@@ -47,14 +47,24 @@ public final class GuildListMenu extends BasicGuildMenu {
         for (int slot : frameSlotList) {
             regIcon(slot, frame);
         }
+
         ItemStack previous = GuildMenuManager.getNameOnlyItem("guildList.previous.", "PRISMARINE_SHARD");
         regIcon(46, new GuildMenuIcon(previous, event -> {
-            GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+            if (page > 0)
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page - 1);
+            else {
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+            }
         }));
         ItemStack next = GuildMenuManager.getNameOnlyItem("guildList.next.", "AMETHYST_SHARD");
+        int size = guilds.size();
         regIcon(52, new GuildMenuIcon(next, event -> {
-            GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+            if (size > 36)
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page + 1);
+            else
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page);
         }));
+
         ItemStack create = GuildMenuManager.getNameOnlyItem("guildList.create.", "END_CRYSTAL");
         regIcon(49, new GuildMenuIcon(create, event -> {
             event.getWhoClicked().closeInventory();
@@ -71,6 +81,7 @@ public final class GuildListMenu extends BasicGuildMenu {
                 });
             });
         }));
+        guilds = guilds.subList(page * 36, guilds.size());
         for (int i = 9; i < 45 && i - 9 < guilds.size(); i++) {
             Material material = Material.matchMaterial(guilds.get(i - 9).getIcon());
             if (material == null)

@@ -171,6 +171,7 @@ public final class GuildCommand implements TabExecutor {
         getMenuManager().getMenuFile().reloadConfig();
         getMysqlTool().setConnectDBInfo();
         getCatcher().reloadCatcher();
+        getDataManager().getData();
     }
 
     public static GuildCommand getGuildCommand() {
@@ -180,4 +181,5 @@ public final class GuildCommand implements TabExecutor {
     public GuildCommandManager getCommandManager() {
         return guildCommandManager;
     }
+
 }

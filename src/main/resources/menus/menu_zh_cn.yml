@@ -40,6 +40,12 @@ guildInfo:
   disband:
     material: 'BARRIER'
     name: '&c解散公会'
+  previous:
+    material: 'PRISMARINE_SHARD'
+    name: '&7上一页'
+  next:
+    material: 'AMETHYST_SHARD'
+    name: '&7下一页'
 guildList:
   title: '&3&l绿洲公会列表'
   guilds:

@@ -43,6 +43,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         title = title.replace("%guild%", guildName);
         int inventoryLength;
         List<IGuildMember> members = getDataManager().getGuildMembers().get(guildName);
+        members = members.subList(page * 36, members.size());
         if (members.size() % 9 == 0)
             inventoryLength = 18 + (members.size() / 9) * 9;
         else {
@@ -53,7 +54,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
             inventoryLength = 54;
         }
         Inventory inventory = Bukkit.createInventory(getMenuHolder(), inventoryLength, color(title));
-        regIcons(guildName, menuFile, opener, members, inventoryLength);
+        regIcons(guildName, menuFile, opener, members, inventoryLength, page);
         for (Integer i : getIconMap().keySet()) {
             if (i >= inventoryLength)
                 continue;
@@ -62,13 +63,31 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         return inventory;
     }
 
-    private void regIcons(String gName, ConfigFile menuFile, Player opener, List<IGuildMember> members, int inventoryLength) {
+    private void regIcons(String gName, ConfigFile menuFile, Player opener, List<IGuildMember> members, int inventoryLength, int page) {
         ItemStack frame = GuildMenuManager.getNameOnlyItem("guildInfo.frame.", "GRAY_STAINED_GLASS_PANE");
         int pJob = getDataManager().getPlayerJob(gName, opener.getName());
-        int []frameSlots = {0, 1, 2, 3, 5, 6, 7, 8};
+        int []frameSlots = {1, 2, 3, 5, 6, 7};
         for (int slot : frameSlots) {
             regIcon(slot, frame);
         }
+
+        ItemStack previous = GuildMenuManager.getNameOnlyItem("guildInfo.previous.", "PRISMARINE_SHARD");
+        regIcon(8, new GuildMenuIcon(previous, event -> {
+            if (page > 0)
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page - 1);
+            else {
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+            }
+        }));
+
+        ItemStack next = GuildMenuManager.getNameOnlyItem("guildInfo.next.", "AMETHYST_SHARD");
+        int size = members.size();
+        regIcon(52, new GuildMenuIcon(next, event -> {
+            if (size > 36)
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page + 1);
+            else
+                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page);
+        }));
 
         ItemStack guildInfo = getGuildInfoItem(gName, getDataManager().getPlayerJob(gName, opener.getName()), menuFile);
         regIcon(4, new GuildMenuIcon(guildInfo, event -> {
