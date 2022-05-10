@@ -162,7 +162,7 @@ public final class GuildCommand implements TabExecutor {
                 return;
             }
             guildCommandManager.playerSelChunk((Player) sender, args[1]);
-        }, () -> Arrays.asList("start", "confirm", "cancel"));
+        }, () -> Arrays.asList("add", "confirm", "cancel", "delete"));
     }
 
     private void reloadPlugin() {
@@ -171,7 +171,7 @@ public final class GuildCommand implements TabExecutor {
         getMenuManager().getMenuFile().reloadConfig();
         getMysqlTool().setConnectDBInfo();
         getCatcher().reloadCatcher();
-        getDataManager().getData();
+        getDataManager().reloadData();
     }
 
     public static GuildCommand getGuildCommand() {

@@ -29,6 +29,7 @@ public interface IGuildDao {
     boolean disbandGuild(String gName);
     boolean handleApply(String gName, String type, String pName);
     boolean memberQuit(String gName, String pName);
+    boolean removeGuildChunk(String gName, List<IGuildChunk> chunkList);
 
     //update
     boolean changePvp(String gName, int pvp);

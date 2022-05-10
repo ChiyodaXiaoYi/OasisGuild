@@ -127,17 +127,20 @@ public final class GuildEditMenu extends BasicGuildMenu {
                 String tmpGuildName = DataManager.getDataManager().getGuildNameByPlayer(name);
                 if (tmpGuildName == null || !tmpGuildName.equals(gName)) {
                     sendMsg(event.getWhoClicked(), "menu.transform.failed");
+                    MsgCatcher.getCatcher().endCatch((Player) event.getWhoClicked());
                     return;
                 }
                 GuildTransformEvent event1 = GuildTransformEvent.createGuildTransformEvent(gName, event.getWhoClicked().getName(), name);
                 Bukkit.getPluginManager().callEvent(event1);
 
                 if (event1.isCancelled()) {
+                    MsgCatcher.getCatcher().endCatch((Player) event.getWhoClicked());
                     return;
                 }
 
                 DataManager.getDataManager().getGuildDao().transformGuild(event1.getGuildName(), event1.getOperator(), event1.getNewLeader());
                 sendMsg(event.getWhoClicked(), "menu.transform.success");
+                MsgCatcher.getCatcher().endCatch((Player) event.getWhoClicked());
             });
         }));
     }

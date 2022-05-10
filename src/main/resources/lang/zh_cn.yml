@@ -53,6 +53,8 @@ messages:
       confirm: '&a成功认领选择的区块'
       notSelect: '&c你还没选择任何区块来认领'
       cancel: '&c已取消区块认领'
+      delete: '&a已经删除选择的区块'
+      notOwner: '&c此区块并非本公会所有'
   chunk:
     join: '&e你已进入%guild%&e的领地范围'
     leave: '&e你已离开%guild%&e的领地范围'

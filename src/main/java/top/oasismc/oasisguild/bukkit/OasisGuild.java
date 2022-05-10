@@ -5,6 +5,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.oasismc.oasisguild.bukkit.command.GuildCommand;
 import top.oasismc.oasisguild.bukkit.core.LogWriter;
+import top.oasismc.oasisguild.bukkit.core.MsgSender;
 import top.oasismc.oasisguild.bukkit.data.MysqlTool;
 import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 import top.oasismc.oasisguild.bukkit.listener.GuildEventListener;
@@ -12,6 +13,7 @@ import top.oasismc.oasisguild.bukkit.listener.GuildPvpListener;
 import top.oasismc.oasisguild.bukkit.menu.GuildMenuManager;
 import top.oasismc.oasisguild.bukkit.papi.GuildExpansion;
 import top.oasismc.oasisguild.bukkit.util.MsgCatcher;
+import top.oasismc.oasisguild.bungee.listener.BungeeAdapter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -71,6 +73,15 @@ public final class OasisGuild extends JavaPlugin {
         loadCommands();
         loadListeners();
         regPapiParams();
+        loadBungeeSupport();
+    }
+
+    private void loadBungeeSupport() {
+        if (getConfig().getBoolean("bungee_support", false)) {
+            this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", BungeeAdapter.INSTANCE);
+            MsgSender.info("&3Enable Bungee support");
+        }
     }
 
     private void loadListeners() {

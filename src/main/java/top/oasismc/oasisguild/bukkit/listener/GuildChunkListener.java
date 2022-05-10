@@ -37,7 +37,7 @@ public final class GuildChunkListener implements Listener {
         LISTENER = new GuildChunkListener();
     }
 
-    private final Map<UUID, Boolean> chunkSelSwitchMap;
+    private final Map<UUID, Integer> chunkSelSwitchMap;
     private final Map<String, List<IGuildChunk>> selChunkMap;
 
     public static GuildChunkListener getListener() {
@@ -55,36 +55,45 @@ public final class GuildChunkListener implements Listener {
             return;
         if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR))
             return;
-        if (chunkSelSwitchMap.getOrDefault(event.getPlayer().getUniqueId(), false)) {
+        int stat = chunkSelSwitchMap.getOrDefault(event.getPlayer().getUniqueId(), 0);
+        if (stat != 0) {
             event.setCancelled(true);
             Chunk chunk = Objects.requireNonNull(event.getClickedBlock()).getChunk();
             IGuildChunk gChunk = new GuildChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
             String gName = getDataManager().getGuildNameByPlayer(event.getPlayer().getName());
 
-            //检查该世界是否能创建公会区块
-            if (!getPlugin().getConfig().getStringList("guildSettings.guildChunks.canSetWorlds").contains(chunk.getWorld().getName())) {
-                sendMsg(event.getPlayer(), "command.chunk.notAllowedWorld");
-                return;
-            }
-
-            //检查是否有主人
-            if (getDataManager().getChunkOwner(chunk) != null) {
-                sendMsg(event.getPlayer(), "command.chunk.hasOwner");
-                return;
-            }
-
             if (!selChunkMap.containsKey(gName)) {
                 selChunkMap.put(gName, new ArrayList<>());
             }
 
-            //检查是否到达公会区块上限
-            int defaultMaxChunk = getPlugin().getConfig().getInt("guildSettings.guildChunks.default", 36);
-            int perLvlAdd = getPlugin().getConfig().getInt("guildSettings.guildChunks.perLvlAdd", 8);
-            int maxChunks = getDataManager().getGuildByName(gName).getGuildLevel() * perLvlAdd + defaultMaxChunk;
-            int nowChunkNum = selChunkMap.get(gName).size() + getDataManager().getGuildChunkSet(gName).size();
-            if (nowChunkNum >= maxChunks) {
-                sendMsg(event.getPlayer(), "command.chunk.limit");
-                return;
+            if (stat == 1) {
+                //检查该世界是否能创建公会区块
+                if (!getPlugin().getConfig().getStringList("guildSettings.guildChunks.canSetWorlds").contains(chunk.getWorld().getName())) {
+                    sendMsg(event.getPlayer(), "command.chunk.notAllowedWorld");
+                    return;
+                }
+
+                //检查是否有主人
+                if (getDataManager().getChunkOwner(chunk) != null) {
+                    sendMsg(event.getPlayer(), "command.chunk.hasOwner");
+                    return;
+                }
+
+                //检查是否到达公会区块上限
+                int defaultMaxChunk = getPlugin().getConfig().getInt("guildSettings.guildChunks.default", 36);
+                int perLvlAdd = getPlugin().getConfig().getInt("guildSettings.guildChunks.perLvlAdd", 8);
+                int maxChunks = getDataManager().getGuildByName(gName).getGuildLevel() * perLvlAdd + defaultMaxChunk;
+                int nowChunkNum = selChunkMap.get(gName).size() + getDataManager().getGuildChunkSet(gName).size();
+                if (nowChunkNum >= maxChunks) {
+                    sendMsg(event.getPlayer(), "command.chunk.limit");
+                    return;
+                }
+            } else if (stat == -1) {
+                //检查主人是否为本公会
+                if (!Objects.equals(getDataManager().getChunkOwner(chunk), gName)) {
+                    sendMsg(event.getPlayer(), "command.chunk.notOwner");
+                    return;
+                }
             }
 
             if (!selChunkMap.get(gName).contains(gChunk)) {
@@ -94,8 +103,12 @@ public final class GuildChunkListener implements Listener {
         }
     }
 
-    public void startChunkSelect(Player player) {
-        chunkSelSwitchMap.put(player.getUniqueId(), true);
+    public void startChunkAddSelect(Player player) {
+        chunkSelSwitchMap.put(player.getUniqueId(), 1);
+    }
+
+    public void startChunkRemoveSelect(Player player) {
+        chunkSelSwitchMap.put(player.getUniqueId(), -1);
     }
 
     public void endChunkSelect(Player player) {
@@ -110,6 +123,10 @@ public final class GuildChunkListener implements Listener {
 
     public Map<String, List<IGuildChunk>> getSelChunkMap() {
         return selChunkMap;
+    }
+
+    public Map<UUID, Integer> getChunkSelSwitchMap() {
+        return chunkSelSwitchMap;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

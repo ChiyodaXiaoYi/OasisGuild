@@ -42,7 +42,7 @@ public class DataManager {
         initDataRegister();
         regDefaultDataImpl();
         loadDao();
-        getData();
+        reloadData();
     }
 
     public void regDataImpl(String key, Supplier<IGuildDao> impl) {
@@ -80,7 +80,7 @@ public class DataManager {
     }
 
 
-    public void getData() {
+    public void reloadData() {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             List<IGuild> tmpGuildList = guildDao.getGuilds();
             if (tmpGuildList != null)

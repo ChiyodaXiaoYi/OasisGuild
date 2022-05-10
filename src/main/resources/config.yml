@@ -45,6 +45,8 @@ guildSettings:
 guildBuffSettings:
   periodSecond: 10
 
+bungee_support: false
+velocity_support: false
 
 conditions:
   #Conditions for creating a guild

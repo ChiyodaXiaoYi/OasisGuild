@@ -135,6 +135,11 @@ public final class LogWriter implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onGuildChunkChange(GuildChunkChangeEvent event) {
+        write2LogFile("Guild Chunk Change | " + "Guild: " + event.getGuildName() + " Type: " + event.getType());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onGuildRename(GuildRenameEvent event) {
         write2LogFile("Guild Rename | " + "Old Name: " + event.getGuildName() + "; New Name: " + event.getNewName());
     }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
-import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildAddChunkEvent.createGuildAddChunkEvent;
+import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildChunkChangeEvent.createGuildAddChunkEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildCreateEvent.createGuildCreateEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildDisbandEvent.createGuildDisbandEvent;
 import static top.oasismc.oasisguild.bukkit.api.event.guild.GuildLevelUpEvent.createGuildLevelUpEvent;
@@ -197,11 +197,19 @@ public class GuildManager {
 
     //返回状态码，为2则被取消，0为正常
     public static void addGuildChunks(String guildName, List<IGuildChunk> chunkList) {
-        GuildAddChunkEvent event = createGuildAddChunkEvent(guildName, chunkList);
+        GuildChunkChangeEvent event = createGuildAddChunkEvent(guildName, chunkList);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
         getDataManager().getGuildDao().addGuildChunk(event.getGuildName(), event.getChunkList());
+    }
+
+    public static void removeGuildChunks(String guildName, List<IGuildChunk> chunkList) {
+        GuildChunkChangeEvent event = createGuildAddChunkEvent(guildName, chunkList, GuildChunkChangeEvent.Type.REMOVE);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+        getDataManager().getGuildDao().removeGuildChunk(event.getGuildName(), event.getChunkList());
     }
 
     public static void memberJobChange(String guildName, String member, String leader, int oldJob, int newJob) {

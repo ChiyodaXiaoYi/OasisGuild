@@ -99,9 +99,9 @@ public final class GuildCommandManager {
             return;
         }
         switch (subCmd) {
-            case "start":
+            case "add":
                 sendMsg(player, "command.chunk.start");
-                GuildChunkListener.getListener().startChunkSelect(player);
+                GuildChunkListener.getListener().startChunkAddSelect(player);
                 break;
             case "confirm":
                 List<IGuildChunk> chunkList = GuildChunkListener.getListener().getSelChunkMap().get(gName);
@@ -109,9 +109,21 @@ public final class GuildCommandManager {
                     sendMsg(player, "command.chunk.notSelect");
                     return;
                 }
+                switch (GuildChunkListener.getListener().getChunkSelSwitchMap().getOrDefault(player.getUniqueId(), 1)) {
+                    case 1:
+                        GuildManager.addGuildChunks(gName, chunkList);
+                        sendMsg(player, "command.chunk.confirm");
+                        break;
+                    case -1:
+                        GuildManager.removeGuildChunks(gName, chunkList);
+                        sendMsg(player, "command.chunk.delete");
+                        break;
+                }
                 GuildChunkListener.getListener().endChunkSelect(player);
-                GuildManager.addGuildChunks(gName, chunkList);
-                sendMsg(player, "command.chunk.confirm");
+                break;
+            case "delete":
+                sendMsg(player, "command.chunk.start");
+                GuildChunkListener.getListener().startChunkRemoveSelect(player);
                 break;
             case "cancel":
                 sendMsg(player, "command.chunk.cancel");

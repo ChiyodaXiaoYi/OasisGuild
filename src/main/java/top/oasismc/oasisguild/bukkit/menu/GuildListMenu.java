@@ -34,6 +34,7 @@ public final class GuildListMenu extends BasicGuildMenu {
         String title = menuFile.getConfig().getString("guildList.title", "Guild List");
         List<IGuild> guilds = DataManager.getDataManager().getGuildList();
         Inventory inventory = Bukkit.createInventory(getMenuHolder(), 54, color(title));
+        guilds = guilds.subList(page * 36, guilds.size());
         regIcons(guilds, page, menuFile);
         for (Integer i : getIconMap().keySet()) {
             inventory.setItem(i, getIconMap().get(i).getIcon());
@@ -50,24 +51,26 @@ public final class GuildListMenu extends BasicGuildMenu {
 
         ItemStack previous = GuildMenuManager.getNameOnlyItem("guildList.previous.", "PRISMARINE_SHARD");
         regIcon(46, new GuildMenuIcon(previous, event -> {
+            Inventory previousPage;
             if (page > 0)
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page - 1);
-            else {
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
-            }
+                previousPage = GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page - 1);
+            else
+                previousPage = GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+            event.getWhoClicked().openInventory(previousPage);
         }));
         ItemStack next = GuildMenuManager.getNameOnlyItem("guildList.next.", "AMETHYST_SHARD");
         int size = guilds.size();
         regIcon(52, new GuildMenuIcon(next, event -> {
+            Inventory nextPage;
             if (size > 36)
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page + 1);
+                nextPage = GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page + 1);
             else
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page);
+                nextPage = GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page);
+            event.getWhoClicked().openInventory(nextPage);
         }));
 
         ItemStack create = GuildMenuManager.getNameOnlyItem("guildList.create.", "END_CRYSTAL");
         regIcon(49, new GuildMenuIcon(create, event -> {
-            event.getWhoClicked().closeInventory();
             if (getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName()) != null) {
                 sendMsg(event.getWhoClicked(), "command.create.hasGuild");
                 return;
@@ -81,7 +84,6 @@ public final class GuildListMenu extends BasicGuildMenu {
                 });
             });
         }));
-        guilds = guilds.subList(page * 36, guilds.size());
         for (int i = 9; i < 45 && i - 9 < guilds.size(); i++) {
             Material material = Material.matchMaterial(guilds.get(i - 9).getIcon());
             if (material == null)

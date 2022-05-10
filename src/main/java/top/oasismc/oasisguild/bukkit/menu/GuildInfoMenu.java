@@ -66,27 +66,34 @@ public final class GuildInfoMenu extends BasicGuildMenu {
     private void regIcons(String gName, ConfigFile menuFile, Player opener, List<IGuildMember> members, int inventoryLength, int page) {
         ItemStack frame = GuildMenuManager.getNameOnlyItem("guildInfo.frame.", "GRAY_STAINED_GLASS_PANE");
         int pJob = getDataManager().getPlayerJob(gName, opener.getName());
-        int []frameSlots = {1, 2, 3, 5, 6, 7};
+        int []frameSlots = {0, 1, 2, 3, 5, 6, 7, 8};
         for (int slot : frameSlots) {
             regIcon(slot, frame);
         }
 
         ItemStack previous = GuildMenuManager.getNameOnlyItem("guildInfo.previous.", "PRISMARINE_SHARD");
-        regIcon(8, new GuildMenuIcon(previous, event -> {
-            if (page > 0)
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page - 1);
-            else {
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), 0);
+        regIcon(inventoryLength - 9, new GuildMenuIcon(previous, event -> {
+            Inventory previousPage;
+            if (page > 1) {
+                previousPage = GuildMenuManager.getMenuManager().drawGuildInfoMenu(gName, (Player) event.getWhoClicked(), page - 1);
             }
+            else {
+                previousPage = GuildMenuManager.getMenuManager().drawGuildInfoMenu(gName, (Player) event.getWhoClicked());
+            }
+            event.getWhoClicked().openInventory(previousPage);
         }));
 
         ItemStack next = GuildMenuManager.getNameOnlyItem("guildInfo.next.", "AMETHYST_SHARD");
         int size = members.size();
-        regIcon(52, new GuildMenuIcon(next, event -> {
-            if (size > 36)
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page + 1);
-            else
-                GuildMenuManager.getMenuManager().drawGuildListMenu((Player) event.getWhoClicked(), page);
+        regIcon(inventoryLength - 1, new GuildMenuIcon(next, event -> {
+            Inventory nextPage;
+            if (size > 7) {
+                nextPage = GuildMenuManager.getMenuManager().drawGuildInfoMenu(gName, (Player) event.getWhoClicked(), page + 1);
+            }
+            else {
+                nextPage = GuildMenuManager.getMenuManager().drawGuildInfoMenu(gName, (Player) event.getWhoClicked(), page);
+            }
+            event.getWhoClicked().openInventory(nextPage);
         }));
 
         ItemStack guildInfo = getGuildInfoItem(gName, getDataManager().getPlayerJob(gName, opener.getName()), menuFile);
@@ -114,9 +121,9 @@ public final class GuildInfoMenu extends BasicGuildMenu {
 
         int []frameSlots2;
         if (pJob >= MEDIUM) {
-            frameSlots2 = new int[]{0, 2, 3, 4, 5, 6, 8};
+            frameSlots2 = new int[]{1, 3, 4, 5, 7};
             ItemStack admin = GuildMenuManager.getNameOnlyItem("guildInfo.admin.", "WRITABLE_BOOK");
-            regIcon(inventoryLength - 8, new GuildMenuIcon(admin, event -> {
+            regIcon(inventoryLength - 7, new GuildMenuIcon(admin, event -> {
                 event.getWhoClicked().openInventory(GuildMenuManager.getMenuManager().drawGuildEditMenu((Player) event.getWhoClicked(), gName));
             }));
             ItemStack quit;
@@ -124,7 +131,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                 quit = GuildMenuManager.getNameOnlyItem("guildInfo.disband.", "BARRIER");
             else
                 quit = GuildMenuManager.getNameOnlyItem("guildInfo.quit.", "BARRIER");
-            regIcon(inventoryLength - 2, new GuildMenuIcon(quit, event -> {
+            regIcon(inventoryLength - 3, new GuildMenuIcon(quit, event -> {
                 if (pJob >= LEADER)
                     getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
                 else
@@ -132,7 +139,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                 event.getWhoClicked().closeInventory();
             }));
         } else {
-            frameSlots2 = new int[]{0, 1, 2, 3, 5, 6, 7, 8};
+            frameSlots2 = new int[]{1, 2, 3, 5, 6, 7};
             ItemStack quit = GuildMenuManager.getNameOnlyItem("guildInfo.quit.", "BARRIER");
             regIcon(inventoryLength - 5, new GuildMenuIcon(quit, event -> {
                 getGuildCommand().getCommandManager().playerQuitGuildByCmd((Player) event.getWhoClicked());

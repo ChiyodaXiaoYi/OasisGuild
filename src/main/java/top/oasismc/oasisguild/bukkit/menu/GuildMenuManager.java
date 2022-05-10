@@ -102,6 +102,9 @@ public class GuildMenuManager implements Listener {
     }
 
     public Inventory drawGuildInfoMenu(String gName, Player opener) {
+        return drawGuildInfoMenu(gName, opener, 0);
+    }
+    public Inventory drawGuildInfoMenu(String gName, Player opener, int page) {
         GuildInfoMenu menu = GuildInfoMenu.createGuildInfoMenu(new MenuHolder());
         playerOpenedMenuMap.put(opener.getUniqueId(), menu);
         return menu.draw(0, gName, opener);

@@ -15,6 +15,7 @@ import top.oasismc.oasisguild.bukkit.objects.Guild;
 import top.oasismc.oasisguild.bukkit.objects.GuildApply;
 import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
 import top.oasismc.oasisguild.bukkit.objects.GuildMember;
+import top.oasismc.oasisguild.bungee.listener.BungeeAdapter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -185,7 +186,8 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(2, pName);
                         ps.setInt(3, 0);
                         ps.executeUpdate();
-                        DataManager.getDataManager().getData();
+                        DataManager.getDataManager().reloadData();
+                        BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                     } catch (SQLException e) {
                         getLogWriter().mysqlWarn(e, this.getClass());
                     } finally {
@@ -232,7 +234,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(4, (int) loc.getZ());
                     ps.setString(5, loc.getWorld().getName());
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     getLogWriter().mysqlWarn(e, this.getClass());
                 } finally {
@@ -258,7 +261,8 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setInt(3, chunk.getZ());
                         ps.setString(4, chunk.getWorld());
                         ps.executeUpdate();
-                        DataManager.getDataManager().getData();
+                        DataManager.getDataManager().reloadData();
+                        BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                     } catch (SQLException e) {
                         getLogWriter().mysqlWarn(e, this.getClass());
                     } finally {
@@ -286,7 +290,8 @@ public final class MysqlGuildDao implements IGuildDao {
                 } catch (SQLException e) {
                     getLogWriter().mysqlWarn(e, this.getClass());
                 }
-                DataManager.getDataManager().getData();
+                DataManager.getDataManager().reloadData();
+                BungeeAdapter.INSTANCE.sendUpdateDataMsg();
             }
         }.runTaskAsynchronously(OasisGuild.getPlugin());
         return true;
@@ -321,7 +326,8 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(2, gName);
                     }
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -346,7 +352,8 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps = conn.prepareStatement("DELETE FROM `GuildMembers` WHERE `pName` = ?;");
                         ps.setString(1, pName);
                         ps.executeUpdate();
-                        DataManager.getDataManager().getData();
+                        DataManager.getDataManager().reloadData();
+                        BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     } finally {
@@ -356,6 +363,31 @@ public final class MysqlGuildDao implements IGuildDao {
             }.runTaskAsynchronously(OasisGuild.getPlugin());
         }
         return canKick;
+    }
+
+    @Override
+    public boolean removeGuildChunk(String gName, List<IGuildChunk> chunkList) {
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            Connection conn = MysqlTool.getMysqlTool().getConnection();
+            chunkList.parallelStream().forEach((chunk) -> {
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("delete from GuildChunks where gName = ? and cWorld = ? and cX = ? and cZ = ?;");
+                    ps.setString(1, gName);
+                    ps.setString(2, chunk.getWorld());
+                    ps.setInt(3, chunk.getX());
+                    ps.setInt(4, chunk.getZ());
+                    ps.executeUpdate();
+                } catch (SQLException e) {
+                    getLogWriter().mysqlWarn(e, this.getClass());
+                } finally {
+                    closeStatement(ps, conn);
+                }
+            });
+            DataManager.getDataManager().reloadData();
+            BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+        });
+        return true;
     }
 
     @Override
@@ -370,7 +402,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(1, pvp);
                     ps.setString(2, gName);
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -396,7 +429,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setString(4, loc.getWorld().getName());
                     ps.setString(5, gName);
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -422,7 +456,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.executeUpdate();
                     ps.close();
                     conn.close();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -447,7 +482,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setInt(2, DataManager.getDataManager().getGuildByName(gName).getMaxMember() + perLvlAddMaxMember);
                     ps.setString(3, gName);
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -471,7 +507,8 @@ public final class MysqlGuildDao implements IGuildDao {
                 ps.setInt(1, NORMAL);
                 ps.setString(2, oldLeader);
                 ps.executeUpdate();
-                DataManager.getDataManager().getData();
+                DataManager.getDataManager().reloadData();
+                BungeeAdapter.INSTANCE.sendUpdateDataMsg();
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
@@ -495,8 +532,9 @@ public final class MysqlGuildDao implements IGuildDao {
                         ps.setString(1, newName);
                         ps.setString(2, gName);
                         ps.executeUpdate();
-                        DataManager.getDataManager().getData();
                     }
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -518,7 +556,8 @@ public final class MysqlGuildDao implements IGuildDao {
                     ps.setString(1, newDesc);
                     ps.setString(2, gName);
                     ps.executeUpdate();
-                    DataManager.getDataManager().getData();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
