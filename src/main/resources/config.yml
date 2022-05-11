@@ -1,5 +1,3 @@
-#Support zh_cn and en_us
-#支持zh_cn和en_us
 language: 'zh_cn'
 
 #Some settings of the guild
@@ -42,9 +40,6 @@ guildSettings:
     - 'world_nether'
     - 'world_the_end'
 
-guildBuffSettings:
-  periodSecond: 10
-
 bungee_support: false
 
 conditions:
@@ -70,7 +65,7 @@ log:
 
 data:
   #Choose data storage method, support yaml, sqlite and mysql
-  #选择数据存储的方式,支持yaml,sqlite和mysql
+  #选择数据存储的方式,暂时只支持mysql
   type: 'mysql'
   mysql_host: 'localhost'
   mysql_port: '3306'
