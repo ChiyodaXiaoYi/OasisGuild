@@ -67,14 +67,15 @@ public enum GuildAdminCommand implements TabExecutor {
         if (args.length < 3) {
             return onTab(sender, args, subCommandList, subAdminCommandList, subCommandArgListMap);
         } else {
-            switch (args[1]) {
+            switch (args[0]) {
                 case "setIcon":
                 case "seticon":
                 case "SETICON":
                     return items;
+                default:
+                    return Collections.singletonList("");
             }
         }
-        return null;
     }
 
     private void regDefaultSubCommands() {
@@ -159,7 +160,7 @@ public enum GuildAdminCommand implements TabExecutor {
             }
             DataManager.getDataManager().getGuildDao().setGuildIcon(args[1], args[2]);
             sendMsg(sender, "adminCommand.success");
-        }));
+        }), () -> getDataManager().getGuildNameList());
     }
 
     public List<String> getSubCommandList() {
