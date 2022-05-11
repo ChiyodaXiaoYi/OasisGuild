@@ -44,7 +44,7 @@ dependencies {
 }
 
 group = 'top.oasismc'
-version = '0.0.7-SNAPSHOT'
+version = '0.0.8-SNAPSHOT'
 def pluginVersion = version + "-" + new SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis())
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

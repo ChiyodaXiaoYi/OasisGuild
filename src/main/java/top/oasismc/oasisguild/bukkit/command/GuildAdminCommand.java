@@ -17,7 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.bukkit.command.GuildCommandManager.onTab;
+import static top.oasismc.oasisguild.bukkit.core.GuildManager.checkGuildName;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
@@ -160,6 +162,35 @@ public enum GuildAdminCommand implements TabExecutor {
             }
             DataManager.getDataManager().getGuildDao().setGuildIcon(args[1], args[2]);
             sendMsg(sender, "adminCommand.success");
+        }), () -> getDataManager().getGuildNameList());
+        regSubCommand("setName", ((sender, args) -> {
+            if (args.length < 2) {
+                sendMsg(sender, "adminCommand.notGuild");
+                return;
+            }
+            if (args.length < 3) {
+                sendMsg(sender, "adminCommand.missingParam");
+                return;
+            }
+            IGuild guild = getDataManager().getGuildByName(args[1]);
+            if (guild == null) {
+                sendMsg(sender, "adminCommand.notGuild");
+                return;
+            }
+            String newName = args[2];
+            switch (checkGuildName(args[2])) {
+                case -1:
+                    sendMsg(sender, "command.rename.sameName");
+                    return;
+                case -2:
+                    sendMsg(sender, "command.rename.nameTooLong");
+                    return;
+                case 1:
+                    String defaultColor = getPlugin().getConfig().getString("guildSettings.name.defaultColor", "&f");
+                    newName = defaultColor + newName;
+                    break;
+            }
+            getDataManager().getGuildDao().guildRename(args[1], newName);
         }), () -> getDataManager().getGuildNameList());
     }
 
