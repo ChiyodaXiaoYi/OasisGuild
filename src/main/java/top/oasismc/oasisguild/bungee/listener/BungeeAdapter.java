@@ -5,8 +5,11 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 import top.oasismc.oasisguild.bukkit.OasisGuild;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
 
@@ -14,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public enum BungeeAdapter implements PluginMessageListener {
+public enum BungeeAdapter implements PluginMessageListener, Listener {
 
     INSTANCE;
 
@@ -30,7 +33,19 @@ public enum BungeeAdapter implements PluginMessageListener {
         }
     }
 
+    @EventHandler
+    public void onPlayerJoin(PlayerSpawnLocationEvent event) {
+        if (!OasisGuild.getPlugin().getConfig().getBoolean("bungee_support", false))
+            return;
+        if (event.getPlayer().getServer().getOnlinePlayers().size() < 1) {
+            DataManager.getDataManager().reloadData();
+        }
+    }
+
     public void sendUpdateDataMsg() {
+        if (!OasisGuild.getPlugin().getConfig().getBoolean("bungee_support", false))
+            return;
+
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
         out.writeUTF("Forward");

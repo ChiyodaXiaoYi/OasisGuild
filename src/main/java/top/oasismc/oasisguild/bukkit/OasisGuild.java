@@ -80,6 +80,7 @@ public final class OasisGuild extends JavaPlugin {
         if (getConfig().getBoolean("bungee_support", false)) {
             this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
             this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", BungeeAdapter.INSTANCE);
+            Bukkit.getPluginManager().registerEvents(BungeeAdapter.INSTANCE, this);
             MsgSender.info("&3Enable Bungee support");
         }
     }

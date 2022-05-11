@@ -52,8 +52,7 @@ public final class GuildInfoMenu extends BasicGuildMenu {
 
         if (inventoryLength > 54) {
             inventoryLength = 54;
-        }
-        Inventory inventory = Bukkit.createInventory(getMenuHolder(), inventoryLength, color(title));
+        }        Inventory inventory = Bukkit.createInventory(getMenuHolder(), inventoryLength, color(title));
         regIcons(guildName, menuFile, opener, members, inventoryLength, page);
         for (Integer i : getIconMap().keySet()) {
             if (i >= inventoryLength)
