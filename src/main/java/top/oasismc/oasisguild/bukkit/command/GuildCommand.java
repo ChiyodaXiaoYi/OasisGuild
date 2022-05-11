@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.VICE_LEADER;
+import static top.oasismc.oasisguild.bukkit.command.GuildCommandManager.onTab;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.getMsgSender;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
@@ -19,7 +20,9 @@ import static top.oasismc.oasisguild.bukkit.data.MysqlTool.getMysqlTool;
 import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 
-public final class GuildCommand implements TabExecutor {
+public enum GuildCommand implements TabExecutor {
+
+    INSTANCE;
 
     private final GuildCommandManager guildCommandManager;
     private final List<String> subCommandList;
@@ -27,13 +30,7 @@ public final class GuildCommand implements TabExecutor {
     private final Map<String, BiConsumer<CommandSender, String[]>> subCommandMap;
     private final Map<String, Supplier<List<String>>> subCommandArgListMap;
 
-    private static final GuildCommand guildCommand;
-
-    static {
-        guildCommand = new GuildCommand();
-    }
-
-    public GuildCommand() {
+    GuildCommand() {
         guildCommandManager = new GuildCommandManager();
         subCommandMap = new ConcurrentHashMap<>();
         subCommandList = new ArrayList<>();
@@ -69,7 +66,7 @@ public final class GuildCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sendMsg(sender, "command.noArgs");
+            sendMsg(sender, "command.missingSubCmd");
             return true;
         }
         if (!(sender instanceof Player)) {
@@ -84,18 +81,7 @@ public final class GuildCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            if (!sender.hasPermission("oasis.guild.admin")) {
-                ArrayList<String> subCommands = new ArrayList<>(subCommandList);
-                subCommands.removeAll(subAdminCommandList);
-                return subCommands;
-            } else {
-                return subCommandList;
-            }
-        } else if (args.length == 2) {
-            return subCommandArgListMap.getOrDefault(args[0], () -> Collections.singletonList("")).get();
-        }
-        return Collections.singletonList("");
+        return onTab(sender, args, subCommandList, subAdminCommandList, subCommandArgListMap);
     }
 
     private void regDefaultSubCommands() {
@@ -175,7 +161,7 @@ public final class GuildCommand implements TabExecutor {
     }
 
     public static GuildCommand getGuildCommand() {
-        return guildCommand;
+        return INSTANCE;
     }
 
     public GuildCommandManager getCommandManager() {

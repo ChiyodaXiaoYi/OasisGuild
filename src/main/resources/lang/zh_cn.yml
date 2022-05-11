@@ -5,12 +5,13 @@ messages:
     notPlayer: '&c该命令只能玩家使用!'
     reload: '&a插件重载完毕!'
     version: '插件版本: %version%'
-    noArgs: '&c请输入有效的子命令以执行'
+    missingSubCmd: '&c请输入有效的子命令以执行'
     info:
       notJoinGuild: '&c你还没加入任何公会'
     missingValue:
       guildName: '&c缺少参数,请输入公会名'
       playerName: '&c缺少参数,请输入玩家名'
+      other: '&c缺少参数'
     create:
       success: '&a创建成功!请输入/guild info管理公会'
       notAllowedWorld: '&c公会的传送点不能设置在这里!'
@@ -55,6 +56,11 @@ messages:
       cancel: '&c已取消区块认领'
       delete: '&a已经删除选择的区块'
       notOwner: '&c此区块并非本公会所有'
+  adminCommand:
+    notGuild: '&c请输入一个有效的公会名'
+    success: '&a操作成功'
+    missingParam: '&c缺少参数'
+    illegalItems: '&c不合法的物品类型'
   chunk:
     join: '&e你已进入%guild%&e的领地范围'
     leave: '&e你已离开%guild%&e的领地范围'

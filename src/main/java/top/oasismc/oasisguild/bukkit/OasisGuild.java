@@ -3,6 +3,7 @@ package top.oasismc.oasisguild.bukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.oasismc.oasisguild.bukkit.command.GuildAdminCommand;
 import top.oasismc.oasisguild.bukkit.command.GuildCommand;
 import top.oasismc.oasisguild.bukkit.core.LogWriter;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
@@ -100,6 +101,12 @@ public final class OasisGuild extends JavaPlugin {
             return;
         guildCommand.setExecutor(GuildCommand.getGuildCommand());
         guildCommand.setTabCompleter(GuildCommand.getGuildCommand());
+
+        PluginCommand guildAdminCommand = Bukkit.getPluginCommand("guildadmin");
+        if (guildAdminCommand == null)
+            return;
+        guildAdminCommand.setExecutor(GuildAdminCommand.INSTANCE);
+        guildAdminCommand.setTabCompleter(GuildAdminCommand.INSTANCE);
     }
 
     public void loadStaticClasses() {

@@ -10,6 +10,10 @@ commands:
     aliases:
       - g
       - og
+  guildadmin:
+    aliases:
+      - ga
+    permission: oasis.guild.admin
 permissions:
   oasis.guild.create:
     default: op

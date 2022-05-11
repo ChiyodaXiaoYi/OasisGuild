@@ -3,13 +3,19 @@ package top.oasismc.oasisguild.bukkit.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.oasismc.oasisguild.bukkit.api.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.core.GuildManager;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
 import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.ADVANCED;
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.VICE_LEADER;
@@ -70,7 +76,8 @@ public final class GuildCommandManager {
     }
 
     public void disbandGuildByCmd(Player player) {
-        int code = GuildManager.disbandGuild(player);
+        String guildName = getDataManager().getGuildNameByPlayer(player.getName());
+        int code = GuildManager.disbandGuild(player, guildName);
         switch (code) {
             case -1:
                 sendMsg(player, "command.disband.notJoinGuild");
@@ -85,6 +92,22 @@ public final class GuildCommandManager {
                 sendMsg(player, "command.disband.confirm");
                 break;
         }
+    }
+
+    @Nullable
+    static List<String> onTab(@NotNull CommandSender sender, @NotNull String[] args, List<String> subCommandList, List<String> subAdminCommandList, Map<String, Supplier<List<String>>> subCommandArgListMap) {
+        if (args.length == 1) {
+            if (!sender.hasPermission("oasis.guild.admin")) {
+                ArrayList<String> subCommands = new ArrayList<>(subCommandList);
+                subCommands.removeAll(subAdminCommandList);
+                return subCommands;
+            } else {
+                return subCommandList;
+            }
+        } else if (args.length == 2) {
+            return subCommandArgListMap.getOrDefault(args[0], () -> Collections.singletonList("")).get();
+        }
+        return Collections.singletonList("");
     }
 
     public void playerSelChunk(Player player, String subCmd) {

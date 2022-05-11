@@ -495,6 +495,52 @@ public final class MysqlGuildDao implements IGuildDao {
     }
 
     @Override
+    public void setGuildLevel(String gName, int lvl) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gLevel` = ? WHERE `gName` = ?;");
+                    ps.setInt(1, lvl);
+                    ps.setString(2, gName);
+                    ps.executeUpdate();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    closeStatement(ps, conn);
+                }
+            }
+        }.runTaskAsynchronously(OasisGuild.getPlugin());
+    }
+
+    @Override
+    public void setGuildMaxMember(String gName, int maxMember) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gMaxMember` = ? WHERE `gName` = ?;");
+                    ps.setInt(1, maxMember);
+                    ps.setString(2, gName);
+                    ps.executeUpdate();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    closeStatement(ps, conn);
+                }
+            }
+        }.runTaskAsynchronously(OasisGuild.getPlugin());
+    }
+
+    @Override
     public boolean transformGuild(String gName, String oldLeader, String pName) {
         Bukkit.getScheduler().runTaskAsynchronously(OasisGuild.getPlugin(), () -> {
             Connection conn = MysqlTool.getMysqlTool().getConnection();
@@ -516,6 +562,29 @@ public final class MysqlGuildDao implements IGuildDao {
             }
         });
         return false;
+    }
+
+    @Override
+    public void setGuildIcon(String gName, String icon) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gIcon` = ? WHERE `gName` = ?;");
+                    ps.setString(1, icon);
+                    ps.setString(2, gName);
+                    ps.executeUpdate();
+                    DataManager.getDataManager().reloadData();
+                    BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    closeStatement(ps, conn);
+                }
+            }
+        }.runTaskAsynchronously(getPlugin());
     }
 
     @Override

@@ -79,16 +79,14 @@ public class GuildManager {
     }
 
     //返回-1为未加入公会，-2为不是会长，0为正常，1为需要确认，2为被取消
-    public static int disbandGuild(Player player) {
-        String guildName = getDataManager().getGuildNameByPlayer(player.getName());
+    public static int disbandGuild(Player player, String guildName) {
         if (guildName == null) {
-
             return -1;
         }
         int job = getDataManager().getPlayerJob(guildName, player.getName());
         if (job < LEADER) {
-
-            return -2;
+            if (!player.hasPermission("oasis.guild.admin"))
+                return -2;
         }
         if (disbandGuildConfirmMap.getOrDefault(guildName, false)) {
             GuildDisbandEvent event = createGuildDisbandEvent(guildName, player);

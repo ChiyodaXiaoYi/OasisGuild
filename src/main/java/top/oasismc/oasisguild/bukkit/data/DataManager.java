@@ -80,7 +80,7 @@ public class DataManager {
     }
 
 
-    public void reloadData() {
+    public synchronized void reloadData() {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             List<IGuild> tmpGuildList = guildDao.getGuilds();
             if (tmpGuildList != null)

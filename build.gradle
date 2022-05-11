@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -42,8 +44,8 @@ dependencies {
 }
 
 group = 'top.oasismc'
-version = '0.0.5'
-def pluginVersion = version
+version = '0.0.6-SNAPSHOT'
+def pluginVersion = version + "-" + new SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis())
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {

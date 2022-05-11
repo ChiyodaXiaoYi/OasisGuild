@@ -36,7 +36,10 @@ public interface IGuildDao {
     boolean changeLoc(String gName, Location loc);
     boolean changeMemberJob(String gName, String pName, int newJob);
     boolean levelUp(String gName, int oldLevel);
+    void setGuildLevel(String gName, int lvl);
+    void setGuildMaxMember(String gName, int maxMember);
     boolean transformGuild(String gName, String oldLeader, String pName);
+    void setGuildIcon(String gName, String icon);
 
     void guildRename(String gName, String newName);
     void guildResetDesc(String gName, String newDesc);
