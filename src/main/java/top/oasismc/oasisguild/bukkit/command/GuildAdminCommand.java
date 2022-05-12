@@ -191,6 +191,7 @@ public enum GuildAdminCommand implements TabExecutor {
                     break;
             }
             getDataManager().getGuildDao().guildRename(args[1], newName);
+            sendMsg(sender, "adminCommand.success");
         }), () -> getDataManager().getGuildNameList());
     }
 

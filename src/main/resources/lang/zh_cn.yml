@@ -44,7 +44,7 @@ messages:
       notJoinGuild: '&c你还没加入任何公会'
       notLeader: '&c你不是公会的管理员,无法解散公会!'
     chunk:
-      start: '&a公会区块认领选择器开启'
+      start: '&a公会区块认领选择器开启, 输入&3/g chunk confirm&a确认认领, 输入&3/g chunk cancel&a取消认领'
       notJoinGuild: '&c你还没加入任何公会'
       notLeader: '&c你不是公会的管理员,无法为公会认领区块!'
       click: '&a你已选择区块%chunk%'
@@ -54,7 +54,7 @@ messages:
       confirm: '&a成功认领选择的区块'
       notSelect: '&c你还没选择任何区块来认领'
       cancel: '&c已取消区块认领'
-      delete: '&a已经删除选择的区块'
+      delete: '&a已经删除选择的区块, 输入&3/g confirm&a确认认领, 输入&3/g chunk cancel&a取消认领'
       notOwner: '&c此区块并非本公会所有'
   adminCommand:
     notGuild: '&c请输入一个有效的公会名'

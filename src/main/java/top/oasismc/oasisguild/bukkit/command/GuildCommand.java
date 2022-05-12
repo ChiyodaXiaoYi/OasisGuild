@@ -31,7 +31,7 @@ public enum GuildCommand implements TabExecutor {
     private final Map<String, Supplier<List<String>>> subCommandArgListMap;
 
     GuildCommand() {
-        guildCommandManager = new GuildCommandManager();
+        guildCommandManager = GuildCommandManager.INSTANCE;
         subCommandMap = new ConcurrentHashMap<>();
         subCommandList = new ArrayList<>();
         subCommandArgListMap = new ConcurrentHashMap<>();

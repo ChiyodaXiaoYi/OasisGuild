@@ -126,7 +126,7 @@ public class GuildMenuManager implements Listener {
     }
 
     public static String replaceOnGuild(String str, IGuild guild) {
-        int guildMemberNum = DataManager.getDataManager().getGuildMembers().get(guild.getGuildName()).size();
+        int guildMemberNum = DataManager.getDataManager().getGuildMembersMap().get(guild.getGuildName()).size();
         Location gLoc = getDataManager().getGuildLocationMap().get(guild.getGuildName());
         str = str.replace("%desc%", guild.getDesc());
         str = str.replace("%memberNum%", guildMemberNum + "");

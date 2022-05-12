@@ -46,6 +46,15 @@ guildInfo:
   next:
     material: 'AMETHYST_SHARD'
     name: '&7下一页'
+  chunkAdd:
+    material: 'GRASS_BLOCK'
+    name: '&a开启公会区块认领'
+  chunkRemove:
+    material: 'DIRT'
+    name: '&c开启公会区块移除'
+  apply:
+    material: 'CLOCK'
+    name: '&3点击申请'
 guildList:
   title: '&3&l绿洲公会列表'
   guilds:

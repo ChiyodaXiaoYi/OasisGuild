@@ -24,7 +24,9 @@ import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 
-public final class GuildCommandManager {
+public enum GuildCommandManager {
+
+    INSTANCE;
 
     public void openGuildListMenu(CommandSender sender, int page) {
         Inventory inventory = getMenuManager().drawGuildListMenu((Player) sender, page);

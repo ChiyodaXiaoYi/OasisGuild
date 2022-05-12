@@ -74,6 +74,3 @@ data:
   #Used database
   #使用的数据库
   mysql_database: 'minecraft'
-  #Data cache time
-  #数据的缓存时间
-  dataCacheTime: 2

@@ -66,7 +66,7 @@ public final class GuildApplyMenu extends BasicGuildMenu {
             String gName = getDataManager().getGuildNameByPlayer(clicker.getName());
             String clickedMember = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&").substring(2);
             if (event.isLeftClick()) {
-                int memberNum = getDataManager().getGuildMembers().get(gName).size();
+                int memberNum = getDataManager().getGuildMembersMap().get(gName).size();
                 int maxNum = getDataManager().getGuildByName(gName).getMaxMember();
                 if (memberNum < maxNum) {
                     playerJoinGuild(gName, clickedMember, PlayerJoinGuildEvent.JoinReason.ACCEPT);

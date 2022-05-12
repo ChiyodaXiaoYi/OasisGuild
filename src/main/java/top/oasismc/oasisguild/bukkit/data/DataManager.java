@@ -108,7 +108,7 @@ public class DataManager {
         return guildList;
     }
 
-    public Map<String, List<IGuildMember>> getGuildMembers() {
+    public Map<String, List<IGuildMember>> getGuildMembersMap() {
         return guildMembers;
     }
 
@@ -171,8 +171,8 @@ public class DataManager {
     }
 
     public int getPlayerJob(String gName, String pName) {
-        int job = 0;
-        List<IGuildMember> playerList = getGuildMembers().get(gName);
+        int job = -1;
+        List<IGuildMember> playerList = getGuildMembersMap().get(gName);
         for (IGuildMember player : playerList) {
             if (player.getPlayerName().equals(pName)) {
                 job = player.getJob();
