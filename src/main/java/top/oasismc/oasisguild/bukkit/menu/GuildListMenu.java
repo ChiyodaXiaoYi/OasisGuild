@@ -76,6 +76,7 @@ public final class GuildListMenu extends BasicGuildMenu {
                 return;
             }
             sendMsg(event.getWhoClicked(), "menu.create.needGName");
+            event.getWhoClicked().closeInventory();
             getCatcher().startCatch((Player) event.getWhoClicked(), guild -> {
                 sendMsg(event.getWhoClicked(), "menu.create.needDesc");
                 getCatcher().startCatch((Player) event.getWhoClicked(), desc -> {

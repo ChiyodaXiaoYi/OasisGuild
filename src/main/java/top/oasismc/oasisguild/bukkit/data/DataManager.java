@@ -3,12 +3,15 @@ package top.oasismc.oasisguild.bukkit.data;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import top.oasismc.oasisguild.bukkit.api.data.IDataLoader;
 import top.oasismc.oasisguild.bukkit.api.data.IGuildDao;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildApply;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
-import top.oasismc.oasisguild.bukkit.data.dao.MysqlGuildDao;
+import top.oasismc.oasisguild.bukkit.data.dao.SqlGuildDao;
+import top.oasismc.oasisguild.bukkit.data.loader.MysqlLoader;
+import top.oasismc.oasisguild.bukkit.data.loader.SqliteLoader;
 import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
 
 import javax.annotation.Nullable;
@@ -25,9 +28,12 @@ public class DataManager {
     private Map<String, Location> guildLocationMap;
     private Map<String, List<IGuildApply>> guildApplyListMap;
     private Map<String, Set<IGuildChunk>> guildChunkSetMap;
-    private final Map<String, Supplier<IGuildDao>> guildDataImplMap;
+    private final Map<String, Supplier<IGuildDao>> guildDataDaoImplMap;
+    private final Map<String, Supplier<IDataLoader>> guildDataLoaderImplMap;
     private IGuildDao guildDao;
+    private IDataLoader dataLoader;
     private static DataManager dataManager;
+    private final String dataType;
 
     static {
         try {
@@ -38,33 +44,33 @@ public class DataManager {
     }
 
     private DataManager() throws ClassNotFoundException {
-        guildDataImplMap = new ConcurrentHashMap<>();
+        dataType = getPlugin().getConfig().getString("data.type", "sqlite");
+        guildDataDaoImplMap = new ConcurrentHashMap<>();
+        guildDataLoaderImplMap = new ConcurrentHashMap<>();
         initDataRegister();
-        regDefaultDataImpl();
-        loadDao();
+        regDefaultDataDaoImpl();
+        loadDataLoaderImpl();
+        loadDataDaoImpl();
         reloadData();
     }
 
-    public void regDataImpl(String key, Supplier<IGuildDao> impl) {
-        guildDataImplMap.put(key, impl);
+    public void regDataDaoImpl(String key, Supplier<IGuildDao> impl) {
+        guildDataDaoImplMap.put(key, impl);
     }
 
-    private void regDefaultDataImpl() {
-        regDataImpl("mysql", () -> {
-            try {
-                Class.forName("top.oasismc.oasisguild.bukkit.data.MysqlTool");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            if (!getPlugin().isEnabled())
-                return null;
-            return new MysqlGuildDao();
-        });
+    private void regDefaultDataDaoImpl() {
+        regDataLoaderImpl("mysql", () -> MysqlLoader.INSTANCE);
+        regDataLoaderImpl("sqlite", () -> SqliteLoader.INSTANCE);
+        regDataDaoImpl("mysql", () -> SqlGuildDao.INSTANCE);
+        regDataDaoImpl("sqlite", () -> SqlGuildDao.INSTANCE);
     }
 
-    private void loadDao() {
-        String dataType = getPlugin().getConfig().getString("data.type", "sqlite");
-        guildDao = guildDataImplMap.getOrDefault(dataType, MysqlGuildDao::new).get();
+    private void loadDataDaoImpl() {
+        setGuildDao(guildDataDaoImplMap.getOrDefault(dataType, () -> SqlGuildDao.INSTANCE).get());
+    }
+
+    private void loadDataLoaderImpl() {
+        setDataLoader(guildDataLoaderImplMap.getOrDefault(dataType, () -> MysqlLoader.INSTANCE).get());
     }
 
     private void initDataRegister() {
@@ -79,26 +85,30 @@ public class DataManager {
         return dataManager;
     }
 
+    public void regDataLoaderImpl(String type, Supplier<IDataLoader> loader) {
+        guildDataLoaderImplMap.put(type, loader);
+    }
+
 
     public synchronized void reloadData() {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            List<IGuild> tmpGuildList = guildDao.getGuilds();
+            List<IGuild> tmpGuildList = getGuildDao().getGuilds();
             if (tmpGuildList != null)
                 guildList = tmpGuildList;
 
-            Map<String, Location> tmpGuildLocMap = guildDao.getGuildLocationMap(guildList);
+            Map<String, Location> tmpGuildLocMap = getGuildDao().getGuildLocationMap(guildList);
             if (tmpGuildLocMap != null)
                 guildLocationMap = tmpGuildLocMap;
 
-            Map<String, List<IGuildMember>> tmpGuildMembers = guildDao.getGuildMembers(guildList);
+            Map<String, List<IGuildMember>> tmpGuildMembers = getGuildDao().getGuildMembers(guildList);
             if (guildMembers != null)
                 guildMembers = tmpGuildMembers;
 
-            Map<String, List<IGuildApply>> tmpGuildApplyListMap = guildDao.getGuildApplyListMap(guildList);
+            Map<String, List<IGuildApply>> tmpGuildApplyListMap = getGuildDao().getGuildApplyListMap(guildList);
             if (guildApplyListMap != null)
                 guildApplyListMap = tmpGuildApplyListMap;
 
-            Map<String, Set<IGuildChunk>> tmpGuildChunkSetMap = guildDao.getGuildChunkSetMap(guildList);
+            Map<String, Set<IGuildChunk>> tmpGuildChunkSetMap = getGuildDao().getGuildChunkSetMap(guildList);
             if (guildChunkSetMap != null)
                 guildChunkSetMap = tmpGuildChunkSetMap;
         });
@@ -126,6 +136,10 @@ public class DataManager {
 
     public IGuildDao getGuildDao() {
         return guildDao;
+    }
+
+    public void setGuildDao(IGuildDao guildDao) {
+        this.guildDao = guildDao;
     }
 
     @Nullable
@@ -193,4 +207,17 @@ public class DataManager {
     public Set<IGuildChunk> getGuildChunkSet(String guildName) {
         return guildChunkSetMap.getOrDefault(guildName, new HashSet<>());
     }
+
+    public IDataLoader getDataLoader() {
+        return dataLoader;
+    }
+
+    public void setDataLoader(IDataLoader loader) {
+        this.dataLoader = loader;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
 }

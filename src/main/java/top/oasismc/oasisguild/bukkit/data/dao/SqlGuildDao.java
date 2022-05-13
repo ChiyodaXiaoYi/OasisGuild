@@ -10,7 +10,6 @@ import top.oasismc.oasisguild.bukkit.api.objects.IGuildApply;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildChunk;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
-import top.oasismc.oasisguild.bukkit.data.MysqlTool;
 import top.oasismc.oasisguild.bukkit.objects.Guild;
 import top.oasismc.oasisguild.bukkit.objects.GuildApply;
 import top.oasismc.oasisguild.bukkit.objects.GuildChunk;
@@ -30,20 +29,26 @@ import static top.oasismc.oasisguild.bukkit.api.job.Jobs.LEADER;
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.NORMAL;
 import static top.oasismc.oasisguild.bukkit.core.LogWriter.getLogWriter;
 
-public final class MysqlGuildDao implements IGuildDao {
+public enum SqlGuildDao implements IGuildDao {
+
+    INSTANCE;
 
     @Override
     public List<IGuild> getGuilds() {
         List<IGuild> guilds = new ArrayList<>();
-        Connection conn = MysqlTool.getMysqlTool().getConnection();
+        Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
         PreparedStatement ps = null;
         try {
             if (conn.isClosed())
-                conn = MysqlTool.getMysqlTool().getConnection();
-            ps = conn.prepareStatement(
-                    "SELECT * FROM `GuildInfo` ORDER BY `gLevel` DESC",
-                    ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
+                conn = DataManager.getDataManager().getDataLoader().getConnection();
+            if (DataManager.getDataManager().getDataType().equals("mysql"))
+                ps = conn.prepareStatement(
+                        "SELECT * FROM `GuildInfo` ORDER BY `gLevel` DESC",
+                        ResultSet.TYPE_SCROLL_SENSITIVE,
+                        ResultSet.CONCUR_READ_ONLY);
+            else {
+                ps = conn.prepareStatement("SELECT * FROM `GuildInfo` ORDER BY `gLevel` DESC");
+            }
             ResultSet resultSet = ps.executeQuery();
             guilds = createGuildList(resultSet);
         } catch (SQLException e) {
@@ -56,16 +61,19 @@ public final class MysqlGuildDao implements IGuildDao {
 
     @Override
     public Map<String, List<IGuildMember>> getGuildMembers(List<IGuild> guildList) {
-        Connection conn = MysqlTool.getMysqlTool().getConnection();
+        Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
         Map<String, List<IGuildMember>> guildMemberMap = new ConcurrentHashMap<>();
         PreparedStatement ps = null;
         try {
             for (IGuild guild : guildList) {
                 List<IGuildMember> players;
-                ps = conn.prepareStatement(
-                        "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob` DESC;",
-                        ResultSet.TYPE_SCROLL_SENSITIVE,
-                        ResultSet.CONCUR_READ_ONLY);
+                if (DataManager.getDataManager().getDataType().equals("mysql"))
+                    ps = conn.prepareStatement(
+                            "SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob` DESC;",
+                            ResultSet.TYPE_SCROLL_SENSITIVE,
+                            ResultSet.CONCUR_READ_ONLY);
+                else
+                    ps = conn.prepareStatement("SELECT * FROM `GuildMembers` WHERE `gName` = ? ORDER BY `pJob` DESC;");
                 ps.setString(1, guild.getGuildName());
                 ResultSet resultSet = ps.executeQuery();
                 players = createPlayerList(resultSet);
@@ -82,24 +90,27 @@ public final class MysqlGuildDao implements IGuildDao {
 
     @Override
     public Map<String, Location> getGuildLocationMap(List<IGuild> guildList) {
-        Connection conn = MysqlTool.getMysqlTool().getConnection();
+        Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
         Map<String, Location> guildLocationMap = new ConcurrentHashMap<>();
 
         PreparedStatement ps = null;
         try {
-            for (IGuild guild : guildList) {
-                Location location;
+            if (DataManager.getDataManager().getDataType().equals("mysql"))
                 ps = conn.prepareStatement(
-                        "SELECT * FROM `GuildLocation` WHERE `gName` = ?;",
+                        "SELECT * FROM `GuildLocation`",
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
-                ps.setString(1, guild.getGuildName());
-                ResultSet resultSet = ps.executeQuery();
-                resultSet.first();
-                location = new Location(Bukkit.getWorld(
-                        resultSet.getString("gWorld")), resultSet.getInt("gX"), resultSet.getInt("gY"), resultSet.getInt("gZ")
+            else
+                ps = conn.prepareStatement("SELECT * FROM `GuildLocation`;");
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Location location;
+                String guildName = resultSet.getString("gName");
+                location = new Location(
+                        Bukkit.getWorld(
+                                resultSet.getString("gWorld")), resultSet.getInt("gX"), resultSet.getInt("gY"), resultSet.getInt("gZ")
                 );
-                guildLocationMap.put(guild.getGuildName(), location);
+                guildLocationMap.put(guildName, location);
             }
         } catch (SQLException e) {
             getLogWriter().mysqlWarn(e, this.getClass());
@@ -111,14 +122,17 @@ public final class MysqlGuildDao implements IGuildDao {
 
     @Override
     public Map<String, List<IGuildApply>> getGuildApplyListMap(List<IGuild> guildList) {
-        Connection conn = MysqlTool.getMysqlTool().getConnection();
+        Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
         Map<String, List<IGuildApply>> applyListMap = new ConcurrentHashMap<>();
         PreparedStatement ps = null;
         try {
             for (IGuild guild : guildList) {
                 List<IGuildApply> applyList;
-                conn = MysqlTool.getMysqlTool().getConnection();
-                ps = conn.prepareStatement("SELECT * FROM `GuildApply` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                conn = DataManager.getDataManager().getDataLoader().getConnection();
+                if (DataManager.getDataManager().getDataType().equals("mysql"))
+                    ps = conn.prepareStatement("SELECT * FROM `GuildApply` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                else
+                    ps = conn.prepareStatement("SELECT * FROM `GuildApply` WHERE `gName` = ?");
                 ps.setString(1, guild.getGuildName());
                 ResultSet set = ps.executeQuery();
                 applyList = createGuildApplyList(set);
@@ -134,14 +148,17 @@ public final class MysqlGuildDao implements IGuildDao {
 
     @Override
     public Map<String, Set<IGuildChunk>> getGuildChunkSetMap(List<IGuild> guildList) {
-        Connection conn = MysqlTool.getMysqlTool().getConnection();
+        Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
         Map<String, Set<IGuildChunk>> guildChunkSetMap = new ConcurrentHashMap<>();
 
         PreparedStatement ps = null;
         try {
             for (IGuild guild : guildList) {
                 Set<IGuildChunk> chunkSet;
-                ps = conn.prepareStatement("SELECT * FROM `GuildChunks` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                if (DataManager.getDataManager().getDataType().equals("mysql"))
+                    ps = conn.prepareStatement("SELECT * FROM `GuildChunks` WHERE `gName` = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                else
+                    ps = conn.prepareStatement("SELECT * FROM `GuildChunks` WHERE `gName` = ?");
                 ps.setString(1, guild.getGuildName());
                 ResultSet set = ps.executeQuery();
                 chunkSet = createGuildChunkSet(set);
@@ -178,7 +195,7 @@ public final class MysqlGuildDao implements IGuildDao {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Connection conn = MysqlTool.getMysqlTool().getConnection();
+                    Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                     PreparedStatement ps = null;
                     try {
                         ps = conn.prepareStatement("INSERT INTO `GuildApply`(`gName`, `pName`, `state`) VALUES (?, ?, ?);");
@@ -204,7 +221,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("INSERT " +
@@ -251,7 +268,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 chunkList.parallelStream().forEach((chunk) -> {
                     PreparedStatement ps = null;
                     try {
@@ -279,7 +296,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 try {
                     execSql4disband("DELETE FROM `GuildInfo` WHERE `gName` = ?;", gName, conn);
                     execSql4disband("DELETE FROM `GuildMembers` WHERE `gName` = ?;", gName, conn);
@@ -308,7 +325,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     if ("accept".equals(type)) {
@@ -346,7 +363,7 @@ public final class MysqlGuildDao implements IGuildDao {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Connection conn = MysqlTool.getMysqlTool().getConnection();
+                    Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                     PreparedStatement ps = null;
                     try {
                         ps = conn.prepareStatement("DELETE FROM `GuildMembers` WHERE `pName` = ?;");
@@ -368,7 +385,7 @@ public final class MysqlGuildDao implements IGuildDao {
     @Override
     public boolean removeGuildChunk(String gName, List<IGuildChunk> chunkList) {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Connection conn = MysqlTool.getMysqlTool().getConnection();
+            Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
             chunkList.parallelStream().forEach((chunk) -> {
                 PreparedStatement ps = null;
                 try {
@@ -395,7 +412,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gPvp` = ? WHERE `gName` = ?;");
@@ -419,7 +436,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildLocation` SET `gX` = ?, `gY` = ?, `gZ` = ?, `gWorld` = ? WHERE `gName` = ?;");
@@ -446,7 +463,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildMembers` SET `pJob` = ? WHERE `pName` = ? AND `gName` = ?;");
@@ -473,7 +490,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gLevel` = ?, `gMaxMember` = ? WHERE `gName` = ?;");
@@ -499,7 +516,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gLevel` = ? WHERE `gName` = ?;");
@@ -522,7 +539,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gMaxMember` = ? WHERE `gName` = ?;");
@@ -543,7 +560,7 @@ public final class MysqlGuildDao implements IGuildDao {
     @Override
     public boolean transformGuild(String gName, String oldLeader, String pName) {
         Bukkit.getScheduler().runTaskAsynchronously(OasisGuild.getPlugin(), () -> {
-            Connection conn = MysqlTool.getMysqlTool().getConnection();
+            Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
             PreparedStatement ps = null;
             try {
                 ps = conn.prepareStatement("UPDATE `GuildMembers` SET `pJob` = ? WHERE `pName` = ?");
@@ -569,7 +586,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gIcon` = ? WHERE `gName` = ?;");
@@ -592,7 +609,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     String []tableNameList = {"GuildInfo", "GuildMembers", "GuildApply", "GuildChunks", "GuildLocation"};
@@ -618,7 +635,7 @@ public final class MysqlGuildDao implements IGuildDao {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Connection conn = MysqlTool.getMysqlTool().getConnection();
+                Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement("UPDATE `GuildInfo` SET `gDesc` = ? WHERE `gName` = ?;");
@@ -638,17 +655,12 @@ public final class MysqlGuildDao implements IGuildDao {
 
     private List<IGuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {
         List<IGuildApply> applyList = new ArrayList<>();
-        if (resultSet.next()) {
-            resultSet.first();
-        } else {
+        if (!resultSet.next()) {
             return applyList;
         }
-        String pName = resultSet.getString("pName");
-        int state = resultSet.getInt("state");
-        applyList.add(new GuildApply(pName, state));
         while (resultSet.next()) {
-            pName = resultSet.getString("pName");
-            state = resultSet.getInt("state");
+            String pName = resultSet.getString("pName");
+            int state = resultSet.getInt("state");
             applyList.add(new GuildApply(pName, state));
         }
         return applyList;
@@ -656,9 +668,7 @@ public final class MysqlGuildDao implements IGuildDao {
 
     private List<IGuildMember> createPlayerList(ResultSet resultSet) throws SQLException {
         List<IGuildMember> players = new ArrayList<>();
-        if (resultSet.next()) {
-            resultSet.first();
-        } else {
+        if (!resultSet.next()) {
             return players;
         }
         String pName = resultSet.getString("pName");
@@ -674,25 +684,13 @@ public final class MysqlGuildDao implements IGuildDao {
     
     private List<IGuild> createGuildList(ResultSet resultSet) throws SQLException {
         List<IGuild> guilds = new ArrayList<>();
-        if (resultSet.next()) {
-            resultSet.first();
-        } else {
-            return guilds;
-        }
-        String gName = resultSet.getString("gName");
-        String icon = resultSet.getString("gIcon");
-        short maxMember = resultSet.getShort("gMaxMember");
-        short level = resultSet.getShort("gLevel");
-        byte pvp = resultSet.getByte("gPvp");
-        String desc = resultSet.getString("gDesc");
-        guilds.add(new Guild(gName, level, maxMember, icon, pvp, desc));
         while (resultSet.next()) {
-            gName = resultSet.getString("gName");
-            icon = resultSet.getString("gIcon");
-            maxMember = resultSet.getShort("gMaxMember");
-            level = resultSet.getShort("gLevel");
-            pvp = resultSet.getByte("gPvp");
-            desc = resultSet.getString("gDesc");
+            String gName = resultSet.getString("gName");
+            String icon = resultSet.getString("gIcon");
+            short maxMember = resultSet.getShort("gMaxMember");
+            short level = resultSet.getShort("gLevel");
+            byte pvp = resultSet.getByte("gPvp");
+            String desc = resultSet.getString("gDesc");
             guilds.add(new Guild(gName, level, maxMember, icon, pvp, desc));
         }
         return guilds;
@@ -700,19 +698,13 @@ public final class MysqlGuildDao implements IGuildDao {
 
     private Set<IGuildChunk> createGuildChunkSet(ResultSet resultSet) throws SQLException {
         Set<IGuildChunk> chunkSet = new HashSet<>();
-        if (resultSet.next()) {
-            resultSet.first();
-        } else {
+        if (!resultSet.next()) {
             return chunkSet;
         }
-        int cX = resultSet.getInt("cX");
-        int cZ = resultSet.getInt("cZ");
-        String cWorld = resultSet.getString("cWorld");
-        chunkSet.add(new GuildChunk(cX, cZ, cWorld));
         while (resultSet.next()) {
-            cX = resultSet.getInt("cX");
-            cZ = resultSet.getInt("cZ");
-            cWorld = resultSet.getString("cWorld");
+            int cX = resultSet.getInt("cX");
+            int cZ = resultSet.getInt("cZ");
+            String cWorld = resultSet.getString("cWorld");
             chunkSet.add(new GuildChunk(cX, cZ, cWorld));
         }
         return chunkSet;

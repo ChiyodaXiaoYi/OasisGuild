@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.core.GuildManager;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
-import top.oasismc.oasisguild.bukkit.data.MysqlTool;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

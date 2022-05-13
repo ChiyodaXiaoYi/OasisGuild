@@ -1,7 +1,8 @@
-package top.oasismc.oasisguild.bukkit.data;
+package top.oasismc.oasisguild.bukkit.data.loader;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
+import top.oasismc.oasisguild.bukkit.api.data.IDataLoader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,25 +12,23 @@ import java.sql.SQLException;
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 import static top.oasismc.oasisguild.bukkit.core.LogWriter.getLogWriter;
 
-public class MysqlTool {
+public enum MysqlLoader implements IDataLoader {
+
+    INSTANCE;
 
     private String dbUserName, dbPassword, dbUrl;
-    private static final MysqlTool mysqlTool;
 
-    static {
-        mysqlTool = new MysqlTool();
-    }
-
-    private MysqlTool() {
+    MysqlLoader() {
         initDriver();
         getConnection();
-        loadDatabase();
+        loadTables();
     }
 
-    public static MysqlTool getMysqlTool() {
-        return mysqlTool;
+    public static MysqlLoader getMysqlTool() {
+        return INSTANCE;
     }
 
+    @Override
     public Connection getConnection() {
         Connection conn = null;
         try {
@@ -63,7 +62,8 @@ public class MysqlTool {
         dbPassword = config.getString("data.mysql_userPwd");
     }
 
-    private void loadDatabase() {
+    @Override
+    public void loadTables() {
         new BukkitRunnable() {
             @Override
             public void run() {

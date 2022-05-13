@@ -64,9 +64,9 @@ log:
   writePreLine: 100
 
 data:
-  #Choose data storage method, support yaml, sqlite and mysql
-  #选择数据存储的方式,暂时只支持mysql
-  type: 'mysql'
+  #Choose data storage method, support sqlite and mysql
+  #选择数据存储的方式,支持mysql和sqlite
+  type: 'sqlite'
   mysql_host: 'localhost'
   mysql_port: '3306'
   mysql_username: 'root'

@@ -50,20 +50,12 @@ public enum GuildCommandManager {
     }
 
     public void createGuildByCmd(CommandSender sender, String gName, String desc) {
-        if (!sender.hasPermission("oasis.guild.create")) {
-            sendMsg(sender, "command.noPerm");
-            return;
-        }
         if (GuildManager.createGuild(gName, (Player) sender, desc)) {
             sendMsg(sender, "command.create.success");
         }
     }
 
     public void guildRenameByCmd(Player player, String newName) {
-        if (!player.hasPermission("oasis.guild.rename")) {
-            sendMsg(player, "command.noPerm");
-            return;
-        }
         String gName = getDataManager().getGuildNameByPlayer(player.getName());
         if (gName == null) {
             sendMsg(player, "command.rename.notJoinGuild");
@@ -86,10 +78,6 @@ public enum GuildCommandManager {
     }
 
     public void disbandGuildByCmd(Player player) {
-        if (!player.hasPermission("oasis.guild.disband")) {
-            sendMsg(player, "command.noPerm");
-            return;
-        }
         String guildName = getDataManager().getGuildNameByPlayer(player.getName());
         int code = GuildManager.disbandGuild(player, guildName);
         switch (code) {
@@ -114,12 +102,17 @@ public enum GuildCommandManager {
             if (!sender.hasPermission("oasis.guild.admin")) {
                 ArrayList<String> subCommands = new ArrayList<>(subCommandList);
                 subCommands.removeAll(subAdminCommandList);
+                subCommands.removeIf(str -> !str.startsWith(args[0]));
                 return subCommands;
             } else {
                 return subCommandList;
             }
         } else if (args.length == 2) {
-            return subCommandArgListMap.getOrDefault(args[0], () -> Collections.singletonList("")).get();
+            List<String> returnList = subCommandArgListMap.getOrDefault(args[0], () -> Collections.singletonList("")).get();
+            if (returnList instanceof ArrayList) {
+                returnList.removeIf(str -> !str.startsWith(args[0]));
+            }
+            return returnList;
         }
         return Collections.singletonList("");
     }

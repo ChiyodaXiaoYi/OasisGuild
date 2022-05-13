@@ -16,7 +16,7 @@ import static top.oasismc.oasisguild.bukkit.command.GuildCommandManager.onTab;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.getMsgSender;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
-import static top.oasismc.oasisguild.bukkit.data.MysqlTool.getMysqlTool;
+import static top.oasismc.oasisguild.bukkit.data.loader.MysqlLoader.getMysqlTool;
 import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 

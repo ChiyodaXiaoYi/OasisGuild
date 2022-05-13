@@ -54,7 +54,7 @@ messages:
       confirm: '&a成功认领选择的区块'
       notSelect: '&c你还没选择任何区块来认领'
       cancel: '&c已取消区块认领'
-      delete: '&a已经删除选择的区块, 输入&3/g confirm&a确认认领, 输入&3/g chunk cancel&a取消认领'
+      delete: '&a已经删除选择的区块'
       notOwner: '&c此区块并非本公会所有'
   adminCommand:
     notGuild: '&c请输入一个有效的公会名'
@@ -109,10 +109,10 @@ messages:
       success: '&a转让成功'
       failed: '&c转让失败, 对象非同公会成员'
 job:
-  299: '会长'
-  249: '副会长'
-  199: '干部'
-  149: '精英'
+  250: '会长'
+  200: '副会长'
+  150: '干部'
+  100: '精英'
   0: '成员'
 papi:
   noGuild: '&a游民'

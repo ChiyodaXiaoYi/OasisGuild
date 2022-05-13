@@ -7,7 +7,7 @@ import top.oasismc.oasisguild.bukkit.command.GuildAdminCommand;
 import top.oasismc.oasisguild.bukkit.command.GuildCommand;
 import top.oasismc.oasisguild.bukkit.core.LogWriter;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
-import top.oasismc.oasisguild.bukkit.data.MysqlTool;
+import top.oasismc.oasisguild.bukkit.data.loader.MysqlLoader;
 import top.oasismc.oasisguild.bukkit.listener.GuildChunkListener;
 import top.oasismc.oasisguild.bukkit.listener.GuildEventListener;
 import top.oasismc.oasisguild.bukkit.listener.GuildPvpListener;
@@ -40,9 +40,9 @@ public final class OasisGuild extends JavaPlugin {
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
         if (getConfig().getString("data.type", "sqlite").equals("mysql")) {
-            if (MysqlTool.getMysqlTool() != null && MysqlTool.getMysqlTool().getConnection() != null) {
+            if (MysqlLoader.getMysqlTool() != null && MysqlLoader.getMysqlTool().getConnection() != null) {
                 try {
-                    MysqlTool.getMysqlTool().getConnection().close();
+                    MysqlLoader.getMysqlTool().getConnection().close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
