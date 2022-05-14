@@ -19,6 +19,7 @@ import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.color;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
+import static top.oasismc.oasisguild.bukkit.menu.GuildMenuManager.getMenuManager;
 import static top.oasismc.oasisguild.bukkit.util.MsgCatcher.getCatcher;
 
 public final class GuildListMenu extends BasicGuildMenu {
@@ -110,7 +111,8 @@ public final class GuildListMenu extends BasicGuildMenu {
             regIcon(i, new GuildMenuIcon(guild, event -> {
                 String holderGuildName = getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName());
                 if (holderGuildName != null) {
-                    GuildCommand.getGuildCommand().getSubCommandMap().get("info").onCommand(event.getWhoClicked(), null);
+                    Inventory inventory = getMenuManager().drawGuildInfoMenu(holderGuildName, (Player) event.getWhoClicked());
+                    event.getWhoClicked().openInventory(inventory);
                 }
             }));
         }

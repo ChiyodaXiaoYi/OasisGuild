@@ -33,14 +33,14 @@ public enum GuildCommand implements TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         List<String> argList = Arrays.asList(args);
         if (argList.size() < 1) {
-            MsgSender.sendMsg(sender, "missing_param");
+            MsgSender.sendMsg(sender, "command.missingSubCmd");
             return true;
         }
         ISubCommand subCommand = subCommandMap.get(argList.get(0));
         if (subCommand != null)
             return subCommand.onCommand(sender, argList.subList(1, argList.size()));
         else {
-            MsgSender.sendMsg(sender, "unknown_cmd");
+            MsgSender.sendMsg(sender, "command.missingSubCmd");
             return true;
         }
     }

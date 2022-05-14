@@ -27,7 +27,7 @@ public abstract class AbstractSubCommand implements ISubCommand {
         }
         ISubCommand subCommand = subCommandMap.get(args.get(0));
         if (subCommand == null) {
-            MsgSender.sendMsg(sender, "unknown_cmd");
+            MsgSender.sendMsg(sender, "command.missingSubCmd");
         } else {
             subCommand.onCommand(sender, args.subList(1, args.size()));
         }

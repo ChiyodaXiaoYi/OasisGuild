@@ -13,7 +13,7 @@ import java.util.List;
 import static top.oasismc.oasisguild.bukkit.core.MsgSender.sendMsg;
 import static top.oasismc.oasisguild.bukkit.data.DataManager.getDataManager;
 
-public class SetIconCommand extends AbstractSubCommand {
+public final class SetIconCommand extends AbstractSubCommand {
 
     public static final ISubCommand INSTANCE = new SetIconCommand();
     private final List<String> items;
