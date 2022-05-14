@@ -1,6 +1,5 @@
 package top.oasismc.oasisguild.bukkit.data.loader;
 
-import org.bukkit.Bukkit;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 import top.oasismc.oasisguild.bukkit.OasisGuild;

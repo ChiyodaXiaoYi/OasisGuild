@@ -8,16 +8,13 @@ import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
 import static top.oasismc.oasisguild.bukkit.OasisGuild.getPlugin;
 
-public final class MsgSender {
+public enum MsgSender {
+
+    INSTANCE;
 
     private ConfigFile langFile;
-    private static final MsgSender MSG_SENDER;
 
-    static {
-        MSG_SENDER = new MsgSender();
-    }
-
-    private MsgSender() {
+    MsgSender() {
         setLangFile();
     }
 
@@ -64,7 +61,7 @@ public final class MsgSender {
     }
 
     public static MsgSender getMsgSender() {
-        return MSG_SENDER;
+        return INSTANCE;
     }
 
     public void setLangFile() {

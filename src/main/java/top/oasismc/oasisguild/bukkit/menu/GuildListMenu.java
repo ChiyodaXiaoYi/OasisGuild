@@ -7,9 +7,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
+import top.oasismc.oasisguild.bukkit.command.GuildCommand;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
@@ -73,6 +76,7 @@ public final class GuildListMenu extends BasicGuildMenu {
         regIcon(49, new GuildMenuIcon(create, event -> {
             if (getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName()) != null) {
                 sendMsg(event.getWhoClicked(), "command.create.hasGuild");
+                event.getWhoClicked().closeInventory();
                 return;
             }
             sendMsg(event.getWhoClicked(), "menu.create.needGName");
@@ -80,7 +84,7 @@ public final class GuildListMenu extends BasicGuildMenu {
             getCatcher().startCatch((Player) event.getWhoClicked(), guild -> {
                 sendMsg(event.getWhoClicked(), "menu.create.needDesc");
                 getCatcher().startCatch((Player) event.getWhoClicked(), desc -> {
-                    getGuildCommand().getCommandManager().createGuildByCmd(event.getWhoClicked(), guild, desc);
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("create").onCommand(event.getWhoClicked(), Arrays.asList(guild, desc));
                     getCatcher().endCatch((Player) event.getWhoClicked());
                 });
             });
@@ -104,10 +108,9 @@ public final class GuildListMenu extends BasicGuildMenu {
                 guild.setItemMeta(meta);
             }
             regIcon(i, new GuildMenuIcon(guild, event -> {
-                String gName = event.getCurrentItem().getItemMeta().getDisplayName().replace("§", "&");
                 String holderGuildName = getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName());
                 if (holderGuildName != null) {
-                    getGuildCommand().getCommandManager().openGuildInfoMenu(event.getWhoClicked(), gName);
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("info").onCommand(event.getWhoClicked(), null);
                 }
             }));
         }

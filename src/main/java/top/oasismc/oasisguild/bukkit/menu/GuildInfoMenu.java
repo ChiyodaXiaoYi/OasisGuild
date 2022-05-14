@@ -13,11 +13,13 @@ import top.oasismc.oasisguild.bukkit.api.event.player.PlayerQuitGuildEvent;
 import top.oasismc.oasisguild.bukkit.api.event.player.PlayerTpGuildLocEvent;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuild;
 import top.oasismc.oasisguild.bukkit.api.objects.IGuildMember;
-import top.oasismc.oasisguild.bukkit.command.GuildCommandManager;
+import top.oasismc.oasisguild.bukkit.command.GuildCommand;
+import top.oasismc.oasisguild.bukkit.command.subcmd.guild.ChunkCommand;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.core.GuildManager;
 import top.oasismc.oasisguild.bukkit.core.MsgSender;
 
+import java.util.Collections;
 import java.util.List;
 
 import static top.oasismc.oasisguild.bukkit.api.event.player.PlayerTpGuildLocEvent.createPlayerTpGuildLocEvent;
@@ -70,12 +72,12 @@ public final class GuildInfoMenu extends BasicGuildMenu {
         if (pJob >= ADVANCED) {
             ItemStack chunkAdd = GuildMenuManager.getNameOnlyItem("guildInfo.chunkAdd.", "GRASS_BLOCK");
             regIcon(1, new GuildMenuIcon(chunkAdd, event -> {
-                GuildCommandManager.INSTANCE.playerSelChunk(opener, "add");
+                ChunkCommand.INSTANCE.getSubCommands().get("add").onCommand(event.getWhoClicked(), null);
                 opener.closeInventory();
             }));
             ItemStack chunkRemove = GuildMenuManager.getNameOnlyItem("guildInfo.chunkRemove.", "DIRT");
             regIcon(7, new GuildMenuIcon(chunkRemove, event -> {
-                GuildCommandManager.INSTANCE.playerSelChunk(opener, "delete");
+                ChunkCommand.INSTANCE.getSubCommands().get("remove").onCommand(event.getWhoClicked(), null);
                 opener.closeInventory();
             }));
             frameSlots = new int[]{0, 2, 3, 5, 6, 8};
@@ -152,9 +154,9 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                 quit = GuildMenuManager.getNameOnlyItem("guildInfo.quit.", "BARRIER");
             regIcon(inventoryLength - 3, new GuildMenuIcon(quit, event -> {
                 if (pJob >= LEADER)
-                    getGuildCommand().getCommandManager().disbandGuildByCmd((Player) event.getWhoClicked());
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("disband").onCommand(event.getWhoClicked(), null);
                 else
-                    getGuildCommand().getCommandManager().playerQuitGuildByCmd((Player) event.getWhoClicked());
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("quit").onCommand(event.getWhoClicked(), null);
                 event.getWhoClicked().closeInventory();
             }));
         } else {
@@ -163,13 +165,13 @@ public final class GuildInfoMenu extends BasicGuildMenu {
             if (pJob < NORMAL) {
                 ItemStack apply = GuildMenuManager.getNameOnlyItem("guildInfo.apply.", "CLOCK");
                 regIcon(inventoryLength - 5, new GuildMenuIcon(apply, event -> {
-                    getGuildCommand().getCommandManager().playerApplyGuildByCmd(event.getWhoClicked(), gName);
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("apply").onCommand(event.getWhoClicked(), Collections.singletonList(gName));
                     event.getWhoClicked().closeInventory();
                 }));
             } else {
                 ItemStack quit = GuildMenuManager.getNameOnlyItem("guildInfo.quit.", "BARRIER");
                 regIcon(inventoryLength - 5, new GuildMenuIcon(quit, event -> {
-                    getGuildCommand().getCommandManager().playerQuitGuildByCmd((Player) event.getWhoClicked());
+                    GuildCommand.getGuildCommand().getSubCommandMap().get("quit").onCommand(event.getWhoClicked(), null);
                     event.getWhoClicked().closeInventory();
                 }));
             }

@@ -9,9 +9,12 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.oasismc.oasisguild.bukkit.api.event.guild.GuildTransformEvent;
+import top.oasismc.oasisguild.bukkit.command.GuildCommand;
 import top.oasismc.oasisguild.bukkit.core.ConfigFile;
 import top.oasismc.oasisguild.bukkit.data.DataManager;
 import top.oasismc.oasisguild.bukkit.util.MsgCatcher;
+
+import java.util.Collections;
 
 import static top.oasismc.oasisguild.bukkit.api.job.Jobs.*;
 import static top.oasismc.oasisguild.bukkit.command.GuildCommand.getGuildCommand;
@@ -55,7 +58,7 @@ public final class GuildEditMenu extends BasicGuildMenu {
             event.getWhoClicked().closeInventory();
             sendMsg(event.getWhoClicked(), "menu.rename.needNewName");
             getCatcher().startCatch((Player) event.getWhoClicked(), newName -> {
-                getGuildCommand().getCommandManager().guildRenameByCmd((Player) event.getWhoClicked(), newName);
+                GuildCommand.getGuildCommand().getSubCommandMap().get("create").onCommand(event.getWhoClicked(), Collections.singletonList(newName));
                 getCatcher().endCatch((Player) event.getWhoClicked());
             });
         }));

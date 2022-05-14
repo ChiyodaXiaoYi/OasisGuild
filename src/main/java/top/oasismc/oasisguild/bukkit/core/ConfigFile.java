@@ -17,7 +17,8 @@ public final class ConfigFile {
     private final File configFile;
     private FileConfiguration config;
     private final String path;
-
+    
+    
     //构造函数，将对应路径的配置文件读取或创建
     public ConfigFile(String path) {
         this.path = path;
