@@ -108,10 +108,11 @@ public final class GuildListMenu extends BasicGuildMenu {
                 meta.setLore(lore);
                 guild.setItemMeta(meta);
             }
+            int finalI = i - 9;
             regIcon(i, new GuildMenuIcon(guild, event -> {
                 String holderGuildName = getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName());
                 if (holderGuildName != null) {
-                    Inventory inventory = getMenuManager().drawGuildInfoMenu(holderGuildName, (Player) event.getWhoClicked());
+                    Inventory inventory = getMenuManager().drawGuildInfoMenu(guilds.get(finalI).getGuildName(), (Player) event.getWhoClicked());
                     event.getWhoClicked().openInventory(inventory);
                 }
             }));
