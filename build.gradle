@@ -44,7 +44,7 @@ dependencies {
     compileOnly 'org.xerial:sqlite-jdbc:3.36.0.3'
 }
 group = 'top.oasismc'
-version = '0.1.0'
+version = '0.1.1'
 def pluginVersion = version + "-" + new SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis())
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

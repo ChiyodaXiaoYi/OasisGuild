@@ -58,7 +58,7 @@ public final class GuildEditMenu extends BasicGuildMenu {
             event.getWhoClicked().closeInventory();
             sendMsg(event.getWhoClicked(), "menu.rename.needNewName");
             getCatcher().startCatch((Player) event.getWhoClicked(), newName -> {
-                GuildCommand.getGuildCommand().getSubCommandMap().get("create").onCommand(event.getWhoClicked(), Collections.singletonList(newName));
+                GuildCommand.getGuildCommand().getSubCommandMap().get("rename").onCommand(event.getWhoClicked(), Collections.singletonList(newName));
                 getCatcher().endCatch((Player) event.getWhoClicked());
             });
         }));
