@@ -110,11 +110,8 @@ public final class GuildListMenu extends BasicGuildMenu {
             }
             int finalI = i - 9;
             regIcon(i, new GuildMenuIcon(guild, event -> {
-                String holderGuildName = getDataManager().getGuildNameByPlayer(event.getWhoClicked().getName());
-                if (holderGuildName != null) {
-                    Inventory inventory = getMenuManager().drawGuildInfoMenu(guilds.get(finalI).getGuildName(), (Player) event.getWhoClicked());
-                    event.getWhoClicked().openInventory(inventory);
-                }
+                Inventory inventory = getMenuManager().drawGuildInfoMenu(guilds.get(finalI).getGuildName(), (Player) event.getWhoClicked());
+                event.getWhoClicked().openInventory(inventory);
             }));
         }
     }
