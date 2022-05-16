@@ -180,7 +180,7 @@ public enum SqlGuildDao implements IGuildDao {
         }
         List<IGuildApply> guildApplyList = DataManager.getDataManager().getGuildApplyListMap().get(gName);
         if (guildApplyList != null) {
-            guildApplyList.parallelStream().forEach(apply -> {
+            guildApplyList.forEach(apply -> {
                 if (apply.getPName().equals(pName)) {
                     canPut.set(1);
                 }
@@ -269,23 +269,23 @@ public enum SqlGuildDao implements IGuildDao {
             @Override
             public void run() {
                 Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
-                chunkList.parallelStream().forEach((chunk) -> {
-                    PreparedStatement ps = null;
-                    try {
+                PreparedStatement ps = null;
+                try {
+                    for (IGuildChunk chunk : chunkList) {
                         ps = conn.prepareStatement("INSERT INTO `GuildChunks`(`gName`, `cX`, `cZ`, `cWorld`) VALUES (?, ?, ?, ?);");
                         ps.setString(1, gName);
                         ps.setInt(2, chunk.getX());
                         ps.setInt(3, chunk.getZ());
                         ps.setString(4, chunk.getWorld());
                         ps.executeUpdate();
-                        DataManager.getDataManager().reloadData();
-                        BungeeAdapter.INSTANCE.sendUpdateDataMsg();
-                    } catch (SQLException e) {
-                        getLogWriter().mysqlWarn(e, this.getClass());
-                    } finally {
-                        closeStatement(ps, conn);
                     }
-                });
+                } catch (SQLException e) {
+                    getLogWriter().mysqlWarn(e, this.getClass());
+                } finally {
+                    closeStatement(ps, conn);
+                }
+                BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+                DataManager.getDataManager().reloadData();
             }
         }.runTaskAsynchronously(getPlugin());
         return 0;
@@ -386,23 +386,24 @@ public enum SqlGuildDao implements IGuildDao {
     public boolean removeGuildChunk(String gName, List<IGuildChunk> chunkList) {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             Connection conn = DataManager.getDataManager().getDataLoader().getConnection();
-            chunkList.parallelStream().forEach((chunk) -> {
-                PreparedStatement ps = null;
-                try {
+            PreparedStatement ps = null;
+            try {
+                for (IGuildChunk chunk : chunkList) {
                     ps = conn.prepareStatement("delete from GuildChunks where gName = ? and cWorld = ? and cX = ? and cZ = ?;");
                     ps.setString(1, gName);
                     ps.setString(2, chunk.getWorld());
                     ps.setInt(3, chunk.getX());
                     ps.setInt(4, chunk.getZ());
                     ps.executeUpdate();
-                } catch (SQLException e) {
-                    getLogWriter().mysqlWarn(e, this.getClass());
-                } finally {
-                    closeStatement(ps, conn);
                 }
-            });
-            DataManager.getDataManager().reloadData();
-            BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+                DataManager.getDataManager().reloadData();
+                BungeeAdapter.INSTANCE.sendUpdateDataMsg();
+            } catch (SQLException e) {
+                getLogWriter().mysqlWarn(e, this.getClass());
+            } finally {
+                closeStatement(ps, conn);
+            }
+
         });
         return true;
     }

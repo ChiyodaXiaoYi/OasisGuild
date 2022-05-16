@@ -301,13 +301,13 @@ public final class GuildInfoMenu extends BasicGuildMenu {
             case SHIFT_LEFT:
                 int newJob;
                 if (pJob < MEDIUM) {
-                    newJob = 149;
+                    newJob = ADVANCED;
                 } else if (pJob < ADVANCED) {
-                    newJob = 199;
+                    newJob = VICE_LEADER;
                 } else if (pJob < VICE_LEADER) {
-                    newJob = 249;
+                    newJob = VICE_LEADER;
                 } else if (pJob < LEADER) {
-                    newJob = 299;
+                    newJob = LEADER;
                 } else {
                     sendMsg4replacePlayer(clicker, "menu.jobChange.highest", pName);
                     clicker.closeInventory();
@@ -334,9 +334,9 @@ public final class GuildInfoMenu extends BasicGuildMenu {
                     clicker.closeInventory();
                     return;
                 } else if (pJob >= ADVANCED && pJob < VICE_LEADER) {
-                    newJob = 149;
+                    newJob = MEDIUM;
                 } else if (pJob >= VICE_LEADER && pJob < LEADER) {
-                    newJob = 199;
+                    newJob = ADVANCED;
                 }
                 GuildManager.memberJobChange(gName, pName, clicker.getName(), pJob, newJob);
                 sendMsg4replacePlayer(clicker, "menu.jobChange.down", pName);
