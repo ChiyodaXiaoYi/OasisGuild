@@ -185,9 +185,8 @@ public enum SqlGuildDao implements IGuildDao {
                     canPut.set(1);
                 }
             });
-        } else {
-            canPut.set(1);
         }
+
         if (DataManager.getDataManager().getGuildNameByPlayer(pName) != null) {
             canPut.set(-1);
         }
@@ -656,9 +655,6 @@ public enum SqlGuildDao implements IGuildDao {
 
     private List<IGuildApply> createGuildApplyList(ResultSet resultSet) throws SQLException {
         List<IGuildApply> applyList = new ArrayList<>();
-        if (!resultSet.next()) {
-            return applyList;
-        }
         while (resultSet.next()) {
             String pName = resultSet.getString("pName");
             int state = resultSet.getInt("state");
@@ -669,15 +665,9 @@ public enum SqlGuildDao implements IGuildDao {
 
     private List<IGuildMember> createPlayerList(ResultSet resultSet) throws SQLException {
         List<IGuildMember> players = new ArrayList<>();
-        if (!resultSet.next()) {
-            return players;
-        }
-        String pName = resultSet.getString("pName");
-        int pJob = resultSet.getInt("pJob");
-        players.add(new GuildMember(pName, pJob));
         while (resultSet.next()) {
-            pName = resultSet.getString("pName");
-            pJob = resultSet.getInt("pJob");
+            String pName = resultSet.getString("pName");
+            int pJob = resultSet.getInt("pJob");
             players.add(new GuildMember(pName, pJob));
         }
         return players;
@@ -699,9 +689,6 @@ public enum SqlGuildDao implements IGuildDao {
 
     private Set<IGuildChunk> createGuildChunkSet(ResultSet resultSet) throws SQLException {
         Set<IGuildChunk> chunkSet = new HashSet<>();
-        if (!resultSet.next()) {
-            return chunkSet;
-        }
         while (resultSet.next()) {
             int cX = resultSet.getInt("cX");
             int cZ = resultSet.getInt("cZ");
